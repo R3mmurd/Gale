@@ -11,5 +11,5 @@ base class that handles the screen and the game loop.
 You can install this by using the command `pip` like follows:
 
 ```bash
-pip install https://github.com/R3mmurd/gale/archive/master.zip
+pip install https://github.com/R3mmurd/Gale/archive/master.zip
 ```
