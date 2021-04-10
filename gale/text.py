@@ -54,5 +54,3 @@ class Text:
 
         surface.blit(self.text, self.rect)
 
-
-

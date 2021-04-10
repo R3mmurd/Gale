@@ -170,3 +170,4 @@ class Game:
         Mark the game to exit.
         """
         self.running = False
+

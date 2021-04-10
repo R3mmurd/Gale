@@ -117,3 +117,4 @@ class ParticleSystem:
         for particle in self.particles:
             if self.timer < particle.life_time:
                 particle.render(surface)
+
