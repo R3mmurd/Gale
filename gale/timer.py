@@ -18,7 +18,7 @@ class TimerItemBase:
 
 class Every(TimerItemBase):
     def __init__(self, time, function, limit=None, on_finish=None):
-        super(Every, self).__init__(time, on_finish=on_finish)
+        super().__init__(time, on_finish=on_finish)
         self.function = function
         self.limit = limit
 
@@ -41,7 +41,7 @@ class Every(TimerItemBase):
 
 class After(TimerItemBase):
     def __init__(self, time, function):
-        super(After, self).__init__(time, on_finish=function)
+        super().__init__(time, on_finish=function)
     
     def update(self, dt):
         self.timer += dt
@@ -52,7 +52,7 @@ class After(TimerItemBase):
 
 class Tween(TimerItemBase):
     def __init__(self, time, params, on_finish=lambda: None):
-        super(Tween, self).__init__(time, on_finish=on_finish)
+        super().__init__(time, on_finish=on_finish)
         self.objs = {}
 
         for obj, attrs in params.items():
