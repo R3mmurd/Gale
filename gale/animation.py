@@ -61,3 +61,4 @@ class Animation:
         :return: The current frame of the animation.
         """
         return self.frames[self.current_frame]
+
