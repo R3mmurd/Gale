@@ -92,6 +92,8 @@ class Game:
 
         self.running = False
 
+        pygame.font.init()
+
         self.init()
 
     def init(self):
@@ -163,6 +165,7 @@ class Game:
             self.update(dt)
             self._render()
 
+        pygame.font.quit()
         pygame.quit()
 
     def quit(self):
