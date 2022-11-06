@@ -92,8 +92,6 @@ class Game:
 
         self.running = False
 
-        pygame.font.init()
-
         self.init()
 
     def init(self):
