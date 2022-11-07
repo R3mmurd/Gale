@@ -164,6 +164,7 @@ class Game:
             self._render()
 
         pygame.font.quit()
+        pygame.mixer.quit()
         pygame.quit()
 
     def quit(self):
