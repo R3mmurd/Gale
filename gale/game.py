@@ -121,7 +121,6 @@ class Game:
         """
         pass
 
-    @DeprecationWarning
     def keydown(self, key):
         """
         Empty. This should be implemented by the extension class.
@@ -133,7 +132,6 @@ class Game:
         """
         pass
 
-    @DeprecationWarning
     def keyup(self, key):
         """
         Empty. This should be implemented by the extension class.
