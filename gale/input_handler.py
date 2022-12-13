@@ -7,6 +7,8 @@ Author: Alejandro Mujica
 
 from enum import Enum
 
+import pygame
+
 INPUT_EVENTS = (
     pygame.KEYDOWN,
     pygame.KEYUP,
