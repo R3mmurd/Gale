@@ -133,6 +133,18 @@ class Game:
         """
         pass
 
+    @DeprecationWarning
+    def keyup(self, key):
+        """
+        Empty. This should be implemented by the extension class.
+
+        Args:
+            :param key: The value of the key that has been released.
+            Check the constant names for keys here:
+            https://www.pygame.org/docs/ref/key.html
+        """
+        pass
+
     def _render(self):
         """
         Prepare screen for render and calls the method render
@@ -160,6 +172,8 @@ class Game:
                     InputHandler.handle_input(event)
                     if event.type == pygame.KEYDOWN:
                         self.keydown(event.key)
+                    elif event.type == pygame.KEYUP:
+                        self.keyup(event.key)
             
             dt = self.clock.tick() / 1000
             Timer.update(dt)
