@@ -32,3 +32,4 @@ def generate_frames(spritesheet, sprite_width, sprite_height):
                     sprite_width, sprite_height
                 )
             )
+    return frames
