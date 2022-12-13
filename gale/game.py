@@ -12,9 +12,9 @@ import sys
 import pygame
 
 from .timer import Timer
+from .input_handler import InputHandler, INPUT_EVENTS
 
 pygame.init()
-
 
 class Game:
     """
@@ -121,6 +121,7 @@ class Game:
         """
         pass
 
+    @DeprecationWarning
     def keydown(self, key):
         """
         Empty. This should be implemented by the extension class.
@@ -154,9 +155,11 @@ class Game:
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    sys.exit()  
-                elif event.type == pygame.KEYDOWN:
-                    self.keydown(event.key)
+                    sys.exit()
+                elif event.type in INPUT_EVENTS:
+                    InputHandler.handle_input(event)
+                    if event.type == pygame.KEYDOWN:
+                        self.keydown(event.key)
             
             dt = self.clock.tick() / 1000
             Timer.update(dt)
