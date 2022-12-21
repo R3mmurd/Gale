@@ -21,6 +21,8 @@ Usage:
         })
         state_machine.change('start')
 """
+from typing import TypeVar, Tuple, Dict, Any
+
 class BaseState:
     """
     This class represents an empty state. Any state machines
@@ -29,25 +31,25 @@ class BaseState:
     It also is the base for any state. You should extend
     this class to implement any new state class.
     """
-    def __init__(self, state_machine):
-        self.state_machine = state_machine
+    def __init__(self, state_machine: TypeVar('StateMachine')) -> None:
+        self.state_machine: TypeVar('StateMachine') = state_machine
 
-    def enter(self, *args, **kwargs):
+    def enter(self, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
         """
         Method to be executed when the state machine enters in the state.
         """
         pass
 
-    def exit(self):
+    def exit(self) -> None:
         """
         Method to be executed when the state machine exits from the state.
         """
         pass
 
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         pass
 
-    def render(self, surface):
+    def render(self, surface: pygame.Surface) -> None:
         pass
 
 
@@ -55,7 +57,7 @@ class StateMachine:
     """
     The state machine.
     """
-    def __init__(self, states={}):
+    def __init__(self, states: Dict[BaseState]={}) -> None:
         """
         Set the state machine on its initial value.
 
@@ -66,12 +68,12 @@ class StateMachine:
             or a function that instantiates the state. That value should
             receive the instance of the state machine when it is called.
         """
-        self.states = states
+        self.states: Dict[BaseState] = states
 
         # The initial state is the empty state
         self.current = BaseState(self)
 
-    def change(self, state_name, *args, **kwargs):
+    def change(self, state_name: str, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
         """
         Change the state of the machine.
 
@@ -89,7 +91,7 @@ class StateMachine:
         self.current = self.states[state_name](self)
         self.current.enter(*args, **kwargs)
     
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         """
         Call to update of the current state of the machine.
 
@@ -98,7 +100,7 @@ class StateMachine:
         """
         self.current.update(dt)
 
-    def render(self, surface):
+    def render(self, surface: pygame.Surface) -> None:
         """
         Call to render of the current state of the machine.
 
@@ -106,4 +108,3 @@ class StateMachine:
             :param surface: The surface where the state should be rendered on.
         """
         self.current.render(surface)
-

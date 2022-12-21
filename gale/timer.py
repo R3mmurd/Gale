@@ -3,29 +3,29 @@ This file contains utility classes that perform as timers.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
-
+from typing import Callable, Optional, Any, Sequence, Tuple, Dict, Union
 
 class TimerItemBase:
-    def __init__(self, time, on_finish=None):
-        self.timer = 0
-        self.time = time
-        self.on_finish = (lambda: None) if on_finish is None else on_finish
-        self.to_remove = False
+    def __init__(self, time: float, on_finish: Optional[Callable[[], None]]=None) -> None:
+        self.timer: float = 0
+        self.time: float = time
+        self.on_finish: Callable[[], None] = (lambda: None) if on_finish is None else on_finish
+        self.to_remove: bool = False
     
-    def remove(self):
+    def remove(self) -> None:
         self.to_remove = True
 
 
 class Every(TimerItemBase):
-    def __init__(self, time, function, limit=None, on_finish=None):
+    def __init__(self, time: float, function: Callable[[], None], limit: Optional[int]=None, on_finish: Optional[Callable[[], None]]=None) -> None:
         super().__init__(time, on_finish=on_finish)
-        self.function = function
-        self.limit = limit
+        self.function: Callable[[], None] = function
+        self.limit: Optional[int] = limit
 
-    def finish(self, on_finish):
+    def finish(self, on_finish: Callable[[], None]) -> None:
         self.on_finish = on_finish   
 
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         self.timer += dt
 
         if self.timer >= self.time:
@@ -40,10 +40,10 @@ class Every(TimerItemBase):
 
 
 class After(TimerItemBase):
-    def __init__(self, time, function):
+    def __init__(self, time: float, function: Callable[[], None]) -> None:
         super().__init__(time, on_finish=function)
     
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         self.timer += dt
         if self.timer >= self.time:
             self.on_finish()
@@ -51,68 +51,71 @@ class After(TimerItemBase):
 
 
 class Tween(TimerItemBase):
-    def __init__(self, time, params, on_finish=lambda: None):
+    def __init__(self, time: float, params: Sequence[Tuple[Any, Dict[str, Any]]],
+                 on_finish: Optional[Callable[[], None]]=lambda: None) -> None:
         super().__init__(time, on_finish=on_finish)
-        self.objs = {}
+        self.plan: Sequence[Tuple[Any, Dict[str, Any]]] = []
 
-        for obj, attrs in params.items():
-            self.objs[obj] = {
-                var: {
-                    'target': val,
-                    'velocity': (val - getattr(obj, var))/time
-                }
-                for var, val in attrs.items()
-            }
+        for obj, attrs in params:
+            for key, final in attrs.items():
+                initial = getattr(obj, key)
 
-    def finish(self, on_finish):
-        self.on_finish = on_finish
-
-    def update(self, dt):
-        self.timer += dt
-
-        for obj, attrs in self.objs.items():    
-            for var, val in attrs.items():
-                setattr(
-                    obj, var, getattr(obj, var) + val['velocity']*dt
+                self.plan.append(
+                    (
+                        obj, {
+                            'key': key,
+                            'initial': initial,
+                            'final': final,
+                            'change': final - initial
+                        }
+                    )
                 )
 
-        if self.timer >= self.time:
-            for obj, attrs in self.objs.items():    
-                for var, val in attrs.items():
-                    setattr(
-                        obj, var, val['target']
-                    )
 
+        
+    def finish(self, on_finish: Callable[[], None]) -> None:
+        self.on_finish = on_finish
+
+    def update(self, dt: float) -> None:
+        self.timer += dt
+
+        if self.timer >= self.time:
+            for obj, data in self.plan:
+                setattr(obj, data['key'], data['final'])
             self.on_finish()
             self.remove()
-
+            return
+        
+        for obj, data in self.plan:
+            setattr(obj, data['key'], data['change'] * self.timer / self.time + data['initial'])
+            
 
 class Timer:
-    items = []
+    items: Union[Every, After, Tween] = []
 
     @classmethod
-    def update(cls, dt):
+    def update(cls, dt: float) -> None:
         for item in cls.items:
             item.update(dt)
         
         cls.items = [item for item in cls.items if not item.to_remove]
 
     @classmethod
-    def every(cls, time, function, limit=None, on_finish=None):
+    def every(cls, time: float, function: Callable[[], None],
+              limit: Optional[int]=None, on_finish: Optional[Callable[[], None]]=None) -> Every:
         cls.items.append(
             Every(time, function, limit=limit, on_finish=on_finish)
         )
         return cls.items[-1]
     
     @classmethod
-    def after(cls, time, function):
+    def after(cls, time: float, function: Callable[[], None]) -> After:
         cls.items.append(
             After(time, function)
         )
         return cls.items[-1]
 
     @classmethod
-    def tween(cls, time, objs, on_finish=None):
+    def tween(cls, time: float, objs: Sequence[Tuple[Any, Dict[str, Any]]], on_finish: Optional[Callable[[], None]]=None) -> Tween:
         cls.items.append(Tween(time, objs, on_finish=on_finish))
         return cls.items[-1]
-

@@ -9,6 +9,8 @@ Author: Alejandro Mujica
 """
 import sys
 
+from typing import Optional, Any, Tuple, Dict
+
 import pygame
 
 from .timer import Timer
@@ -53,8 +55,14 @@ class Game:
         game = MyGame(title='Title of my game')
         game.exec()
     """
-    def __init__(self, title=None, window_width=800, window_height=600,
-                 virtual_width=None, virtual_height=None, *args, **kwargs):
+    def __init__(self,
+                 title: Optional[str]=None,
+                 window_width: int=800,
+                 window_height: int=600,
+                 virtual_width: Optional[int]=None,
+                 virtual_height: Optional[int]=None,
+                 *args: Tuple[Any],
+                 **kwargs: Dict[str, Any]):
         """
         Set the basic elements of the game in their initial values.
 
@@ -72,16 +80,16 @@ class Game:
             *args and **kwargs Any argument list of keyword arguments that
             are accepted by pygame.display.set_mode.
         """
-        self.window_width = window_width
-        self.window_height = window_height
-        self.virtual_width = virtual_width or self.window_width
-        self.virtual_height = virtual_height or self.window_height
+        self.window_width: int = window_width
+        self.window_height: int = window_height
+        self.virtual_width: int = virtual_width or self.window_width
+        self.virtual_height: int = virtual_height or self.window_height
             
         # Setting the screen
-        self.screen = pygame.display.set_mode(
+        self.screen: pygame.Surface = pygame.display.set_mode(
             (self.window_width, self.window_height), *args, **kwargs
         )
-        self.title = title or 'Game'
+        self.title: str = title or 'Game'
         pygame.display.set_caption(self.title)
 
         # Creating the virtual screen
@@ -90,17 +98,17 @@ class Game:
         )
         self.clock = pygame.time.Clock()
 
-        self.running = False
+        self.running: bool = False
 
         self.init()
 
-    def init(self):
+    def init(self) -> None:
         """
         Empty. This should be implemented by the extension class.
         """
         pass
 
-    def update(self, dt):
+    def update(self, dt: float) -> None:
         """
         Empty. This should be implemented by the extension class.
 
@@ -110,7 +118,7 @@ class Game:
         """
         pass
 
-    def render(self, surface):
+    def render(self, surface: pygame.Surface) -> None:
         """
         Empty. This should be implemented by the extension class.
 
@@ -121,7 +129,7 @@ class Game:
         """
         pass
 
-    def keydown(self, key):
+    def keydown(self, key: int) -> None:
         """
         Empty. This should be implemented by the extension class.
 
@@ -132,7 +140,7 @@ class Game:
         """
         pass
 
-    def keyup(self, key):
+    def keyup(self, key: int) -> None:
         """
         Empty. This should be implemented by the extension class.
 
@@ -143,7 +151,7 @@ class Game:
         """
         pass
 
-    def _render(self):
+    def _render(self) -> None:
         """
         Prepare screen for render and calls the method render
         that you should implmenent.
@@ -156,7 +164,7 @@ class Game:
         )
         pygame.display.update()
 
-    def exec(self):
+    def exec(self) -> None:
         """
         Execute the game loop.
         """
@@ -182,7 +190,7 @@ class Game:
         pygame.mixer.quit()
         pygame.quit()
 
-    def quit(self):
+    def quit(self) -> None:
         """
         Mark the game to exit.
         """
