@@ -7,7 +7,7 @@ from typing import Optional
 
 import pygame
 
-def render_text(surface: pygame.Surface, text: str, font: pygame.Font, x: float, y: float,
+def render_text(surface: pygame.Surface, text: str, font: pygame.font.Font, x: float, y: float,
                 color: pygame.Color, bgcolor: Optional[pygame.Color]=None,
                 center: bool=False, shadowed: bool=False):
     text_obj: pygame.Surface = font.render(text, True, color, bgcolor)
@@ -30,11 +30,11 @@ def render_text(surface: pygame.Surface, text: str, font: pygame.Font, x: float,
 
 
 class Text:
-    def __init__(self, text_str: str, font: pygame.Font, x: float, y: float,
+    def __init__(self, text_str: str, font: pygame.font.Font, x: float, y: float,
                  color: pygame.Color, bgcolor: Optional[pygame.Color]=None,
                  center: bool=False, shadowed: bool=False):
         self.text_str. str = text_str
-        self.font: pygame.Font = font
+        self.font: pygame.font.Font = font
         self.text: pygame.Surface = font.render(self.text_str, True, color, bgcolor)
         self.rect: pygame.Rect = self.text.get_rect()
         self.x: float = x
