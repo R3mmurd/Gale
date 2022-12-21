@@ -59,7 +59,7 @@ class StateMachine:
     """
     The state machine.
     """
-    def __init__(self, states: Dict[BaseState]={}) -> None:
+    def __init__(self, states: Dict[str, BaseState]={}) -> None:
         """
         Set the state machine on its initial value.
 
@@ -70,7 +70,7 @@ class StateMachine:
             or a function that instantiates the state. That value should
             receive the instance of the state machine when it is called.
         """
-        self.states: Dict[BaseState] = states
+        self.states: Dict[str, BaseState] = states
 
         # The initial state is the empty state
         self.current = BaseState(self)
