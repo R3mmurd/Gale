@@ -60,7 +60,7 @@ class MouseMotionData:
         self.buttons: Tuple[int, int, int] = buttons
 
 
-ActionData = TypeVar('ActionData', Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData])
+ActionData = TypeVar('ActionData', bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData])
 
 
 class InputListener:
