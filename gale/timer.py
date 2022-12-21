@@ -103,16 +103,12 @@ class Timer:
     @classmethod
     def every(cls, time: float, function: Callable[[], None],
               limit: Optional[int]=None, on_finish: Optional[Callable[[], None]]=None) -> Every:
-        cls.items.append(
-            Every(time, function, limit=limit, on_finish=on_finish)
-        )
+        cls.items.append(Every(time, function, limit=limit, on_finish=on_finish))
         return cls.items[-1]
     
     @classmethod
     def after(cls, time: float, function: Callable[[], None]) -> After:
-        cls.items.append(
-            After(time, function)
-        )
+        cls.items.append(After(time, function))
         return cls.items[-1]
 
     @classmethod
