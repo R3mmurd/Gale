@@ -18,7 +18,7 @@ def generate_frames(spritesheet: pygame.Surface, sprite_width: int, sprite_heigh
     :param sprite_width: width of the sprite.
     :param sprite_height: height of the sprite.
     """
-    w, h: int = spritesheet.get_size()
+    w, h = spritesheet.get_size()
 
     num_cols: int = w // sprite_width
     num_rows: int = h // sprite_height
