@@ -60,7 +60,7 @@ class MouseMotionData:
         self.buttons: Tuple[int, int, int] = buttons
 
 
-ActionData = TypeVar('ActionData', bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData])
+InputData = TypeVar('InputData', bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData])
 
 
 class InputListener:
@@ -68,7 +68,7 @@ class InputListener:
     This is an interface to any class that need to be an
     input listener.
     """
-    def on_input(self, input_id: str, input_data: ActionData) -> NoReturn:
+    def on_input(self, input_id: str, input_data: InputData) -> NoReturn:
         raise NotImplementedError()
 
 
@@ -270,7 +270,7 @@ class InputHandler:
         cls.listeners = [l for l in cls.listeners if l != listener]
 
     @classmethod
-    def notify(cls, action_id: str, action_data: ActionData) -> None:
+    def notify(cls, action_id: str, action_data: InputData) -> None:
         for l in cls.listeners:
             l.on_input(action_id, action_data)
 
