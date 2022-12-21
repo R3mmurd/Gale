@@ -23,6 +23,8 @@ Usage:
 """
 from typing import TypeVar, Tuple, Dict, Any
 
+import pygame
+
 class BaseState:
     """
     This class represents an empty state. Any state machines
