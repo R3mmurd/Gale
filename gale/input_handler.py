@@ -291,7 +291,7 @@ class InputHandler:
         cls.input_binding["mouse_motion"][direction] = action_id
 
     @classmethod
-    def handle_input(cls, event: pygame.Event) -> None:
+    def handle_input(cls, event: pygame.event.Event) -> None:
         if event.type in (pygame.KEYDOWN, pygame.KEYUP):
             action: Optional[str] = cls.input_binding["keyboard"].get(event.key)
             if action is not None:
