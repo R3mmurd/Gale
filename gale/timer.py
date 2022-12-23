@@ -115,3 +115,7 @@ class Timer:
     def tween(cls, time: float, objs: Sequence[Tuple[Any, Dict[str, Any]]], on_finish: Optional[Callable[[], None]]=None) -> Tween:
         cls.items.append(Tween(time, objs, on_finish=on_finish))
         return cls.items[-1]
+
+    @classmethod
+    def clear(cls) -> None:
+        cls.items = []
