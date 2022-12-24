@@ -33,7 +33,7 @@ class Text:
     def __init__(self, text_str: str, font: pygame.font.Font, x: float, y: float,
                  color: pygame.Color, bgcolor: Optional[pygame.Color]=None,
                  center: bool=False, shadowed: bool=False):
-        self.text_str. str = text_str
+        self.text_str = text_str
         self.font: pygame.font.Font = font
         self.text: pygame.Surface = font.render(self.text_str, True, color, bgcolor)
         self.rect: pygame.Rect = self.text.get_rect()
