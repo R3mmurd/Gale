@@ -22,5 +22,3 @@ setuptools.setup(
     python_requires='>=3.7',
     install_requires=["wheel", "pygame", "click"]
 )
-
-os.environ['GALE'] = f"{Path(__file__).parent / 'gale'}"

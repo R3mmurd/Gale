@@ -30,7 +30,7 @@ from gale.game import Game
 from gale.state_machine import StateMachine
 
 
-class {game_name}(Game):
+class {game_class}(Game):
     def init(self) -> None:
         self.state_machine = StateMachine()
 
