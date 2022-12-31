@@ -125,7 +125,7 @@ class StateStack:
         Creates an empty stack.
         """
         self.states = []
-    
+
     def update(self, dt: float) -> None:
         """
         Call to update of the top state of the stack.
@@ -147,13 +147,13 @@ class StateStack:
         """
         for state in self.states:
             state.render(surface)
-        
+
     def clear(self) -> None:
         """
         Clear the stack.
         """
         self.states = []
-    
+
     def push(self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
         """
         Add a new state on the top of the stack.
@@ -165,7 +165,7 @@ class StateStack:
         """
         self.states.append(state)
         state.enter(*args, **kwargs)
-    
+
     def pop(self) -> None:
         """
         Remove the top state of the stack.
@@ -175,6 +175,6 @@ class StateStack:
         """
         if (len(self.states) == 0):
             raise RuntimeError("State stacks is empty")
-        
+
         self.states[-1].exit()
         self.states.pop()
