@@ -15,6 +15,11 @@ def to_pascal_case(identifier: str) -> str:
     return  "".join([w.capitalize() for w in words])
 
 
+def to_spaced_name(identifier: str) -> str:
+    words = identifier.split('_')
+    return  " ".join([w.capitalize() for w in words])
+
+
 @click.group
 def cli():
     pass
@@ -50,7 +55,7 @@ from src.{game_class} import {game_class}
 
 if __name__ == '__main__':
     game = {game_class}(
-        "{game_class}",
+        "{game_title}",
         settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT,
         settings.VIRTUAL_WIDTH, settings.VIRTUAL_HEIGHT
     )
@@ -68,7 +73,7 @@ import pygame
 from gale import frames
 from gale import input_handler
 
-input_handler.InputHandler.set_keyboard_action(input_handler.KEY_SCAPE, 'quit')
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, 'quit')
 
 # Size we want to emulate
 VIRTUAL_WIDTH = 320
@@ -125,7 +130,7 @@ def create_project(name: str) -> None:
 
     touch(
         os.path.join(app_path, 'main.py'),
-        GAME_MAIN_TEMPLATE.format(game_class=game_class)
+        GAME_MAIN_TEMPLATE.format(game_class=game_class, game_title=to_spaced_name(name))
     )
     touch(os.path.join(app_path, 'settings.py'), SETTINGS_TEMPLATE)
 
