@@ -113,3 +113,68 @@ class StateMachine:
             :param surface: The surface where the state should be rendered on.
         """
         self.current.render(surface)
+
+
+class StateStack:
+    """
+    Class to stack states. It renders all of then but it only updates the top state.
+    """
+
+    def __init__(self) -> None:
+        """
+        Creates an empty stack.
+        """
+        self.states = []
+    
+    def update(self, dt: float) -> None:
+        """
+        Call to update of the top state of the stack.
+
+        Args:
+            :param dt: Time elapsed of the game loop.
+        Raises:
+            RuntimeError: If the stack is empty.
+        """
+        if (len(self.states) == 0):
+            raise RuntimeError("State stacks is empty")
+
+    def render(self, surface: pygame.Surface) -> None:
+        """
+        Call to render all of the states in the stack.
+
+        Args:
+            :param surface: The surface where the state should be rendered on.
+        """
+        for state in self.states:
+            state.render(surface)
+        
+    def clear(self) -> None:
+        """
+        Clear the stack.
+        """
+        self.states = []
+    
+    def push(self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
+        """
+        Add a new state on the top of the stack.
+
+        Args:
+            :param state: The state to be added based on BaseState.
+            *args and **kwargs: Any argument list of keyword arguments
+            that are accepted by the enter method of the new state.
+        """
+        self.states.append(state)
+        state.enter(*args, **kwargs)
+    
+    def pop(self) -> None:
+        """
+        Remove the top state of the stack.
+
+        Raises:
+            RuntimeError: If the stack is empty.
+        """
+        if (len(self.states) == 0):
+            raise RuntimeError("State stacks is empty")
+        
+        self.states[-1].exit()
+        self.states.pop()
