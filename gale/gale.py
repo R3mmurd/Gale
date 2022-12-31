@@ -118,7 +118,6 @@ pygame.font.init()
 #     'small': pygame.font.Font(BASE_DIR / 'fonts/font.ttf', 8)
 # }
 FONTS = {}
-
 '''
 
 
