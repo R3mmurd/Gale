@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="Gale",
-    version="0.0.1",
+    version="0.0.2",
     author="Alejandro Mujica",
     author_email="aledrums@gmail.com",
     description="Collection of reusable codes to make games by using pygame",
@@ -19,4 +19,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
+    install_requires=['wheel', 'click'],
+    )
 )
