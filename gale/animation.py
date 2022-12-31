@@ -11,7 +11,8 @@ class Animation:
     This class represents animations as a sequence of frames. Those
     frames change in a given time interval.
     """
-    def __init__(self, frames: Sequence[Any], time_interval: float=0, loops: Optional[int]=None) -> None:
+
+    def __init__(self, frames: Sequence[Any], time_interval: float = 0, loops: Optional[int] = None) -> None:
         """
         Initialize a new Animation.
 
@@ -46,12 +47,13 @@ class Animation:
         """
         if self.size <= 1 or (self.loops is not None and self.times_played > self.loops):
             return
-        
+
         self.timer += dt
 
         if self.timer >= self.interval:
             self.timer %= self.interval
-            self.current_frame_index = (self.current_frame_index + 1) % self.size
+            self.current_frame_index = (
+                self.current_frame_index + 1) % self.size
 
             if self.current_frame_index == 0:
                 self.times_played += 1

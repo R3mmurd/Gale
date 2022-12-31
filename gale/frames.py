@@ -8,6 +8,7 @@ from typing import List
 
 import pygame
 
+
 def generate_frames(spritesheet: pygame.Surface, sprite_width: int, sprite_height: int) -> List[pygame.Rect]:
     """
     Given a spritesheet, this functions builds a list of frames
@@ -30,7 +31,7 @@ def generate_frames(spritesheet: pygame.Surface, sprite_width: int, sprite_heigh
             frames.append(
                 pygame.Rect(
                     j * sprite_width,  # x position
-                    i * sprite_height, # y position,
+                    i * sprite_height,  # y position,
                     sprite_width, sprite_height
                 )
             )

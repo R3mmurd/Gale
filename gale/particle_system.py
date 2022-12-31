@@ -40,13 +40,14 @@ class Particle:
         self.vx += self.ax * dt
         self.vy += self.ay * dt
         self.x += self.vx
-        self.y += self.vy 
+        self.y += self.vy
 
     def render(self, surface: pygame.Surface) -> None:
         s = pygame.Surface((4, 4))
         s.set_alpha(self.color[3])
         pygame.draw.circle(s, self.color, (2, 2), 2)
         surface.blit(s, (int(self.x), int(self.y)))
+
 
 class ParticleSystem:
     def __init__(self, x: float, y: float, n: int) -> None:
@@ -73,7 +74,7 @@ class ParticleSystem:
 
         self.colors: List[pygame.Color] = []
         self.particles: List[Particle] = []
-    
+
     def set_life_time(self, minimum: float, maximum: float) -> None:
         self.min_life_time = minimum
         self.max_life_time = maximum
@@ -98,7 +99,8 @@ class ParticleSystem:
             px: float = random.gauss(self.x_mean, self.x_desv)
             py: float = random.gauss(self.y_mean, self.y_desv)
             color: pygame.Color = random.choice(self.colors)
-            life_time: float = random.uniform(self.min_life_time, self.max_life_time)
+            life_time: float = random.uniform(
+                self.min_life_time, self.max_life_time)
             self.particles.append(Particle(px, py, ax, ay, life_time, color))
         self.timer = 0
 
@@ -112,7 +114,7 @@ class ParticleSystem:
             if self.timer < particle.life_time:
                 particle.update(dt)
 
-    def render(self, surface: pygame.Surface) -> None:        
+    def render(self, surface: pygame.Surface) -> None:
         for particle in self.particles:
             if self.timer < particle.life_time:
                 particle.render(surface)

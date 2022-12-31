@@ -25,6 +25,7 @@ from typing import TypeVar, Tuple, Dict, Any
 
 import pygame
 
+
 class BaseState:
     """
     This class represents an empty state. Any state machines
@@ -33,6 +34,7 @@ class BaseState:
     It also is the base for any state. You should extend
     this class to implement any new state class.
     """
+
     def __init__(self, state_machine: TypeVar('StateMachine')) -> None:
         self.state_machine: TypeVar('StateMachine') = state_machine
 
@@ -59,7 +61,8 @@ class StateMachine:
     """
     The state machine.
     """
-    def __init__(self, states: Dict[str, BaseState]={}) -> None:
+
+    def __init__(self, states: Dict[str, BaseState] = {}) -> None:
         """
         Set the state machine on its initial value.
 
@@ -92,7 +95,7 @@ class StateMachine:
         self.current.exit()
         self.current = self.states[state_name](self)
         self.current.enter(*args, **kwargs)
-    
+
     def update(self, dt: float) -> None:
         """
         Call to update of the current state of the machine.

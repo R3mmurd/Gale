@@ -18,6 +18,7 @@ from .input_handler import InputHandler, INPUT_EVENTS
 
 pygame.init()
 
+
 class Game:
     """
     Base class to implemente a game by using pygame.
@@ -33,7 +34,7 @@ class Game:
                 # Set your own initial configuration of the game.
                 self.player = Player()
                 self.world = World()
-        
+
             def update(self, dt):
                 # Update of all your game elements here.
                 # dt is the elapsed time in secconds.
@@ -51,16 +52,17 @@ class Game:
                 # Make your action when key has been pressed.
                 if key == pygame.K_ESCAPE:
                     self.quit()
-    
+
         game = MyGame(title='Title of my game')
         game.exec()
     """
+
     def __init__(self,
-                 title: Optional[str]=None,
-                 window_width: int=800,
-                 window_height: int=600,
-                 virtual_width: Optional[int]=None,
-                 virtual_height: Optional[int]=None,
+                 title: Optional[str] = None,
+                 window_width: int = 800,
+                 window_height: int = 600,
+                 virtual_width: Optional[int] = None,
+                 virtual_height: Optional[int] = None,
                  *args: Tuple[Any],
                  **kwargs: Dict[str, Any]):
         """
@@ -84,7 +86,7 @@ class Game:
         self.window_height: int = window_height
         self.virtual_width: int = virtual_width or self.window_width
         self.virtual_height: int = virtual_height or self.window_height
-            
+
         # Setting the screen
         self.screen: pygame.Surface = pygame.display.set_mode(
             (self.window_width, self.window_height), *args, **kwargs
@@ -180,7 +182,7 @@ class Game:
                         self.keydown(event.key)
                     elif event.type == pygame.KEYUP:
                         self.keyup(event.key)
-            
+
             dt = self.clock.tick() / 1000
             Timer.update(dt)
             self.update(dt)
