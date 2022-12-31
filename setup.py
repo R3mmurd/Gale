@@ -1,4 +1,5 @@
-import setuptools
+import os, setuptools
+from pathlib import Path
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -19,5 +20,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
-    install_requires=['wheel', 'pygame', 'click']
+    install_requires=["wheel", "pygame", "click"]
 )
+
+os.environ['GALE'] = Path(__file__).parent / "gale"

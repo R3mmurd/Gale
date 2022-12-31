@@ -10,6 +10,11 @@ def touch(path: Path, text: str = None):
             f.write(text)
 
 
+def to_pascal_case(identifier: str) -> str:
+    words = identifier.split('_')
+    return  "".join([w.capitalize() for w in words])
+
+
 @click.group
 def cli():
     pass
@@ -34,7 +39,6 @@ class {game_name}(Game):
 
     def render(self, surface: pygame.Surface) -> None:
         self.state_machine.render(surface)
-
 '''
 
 GAME_MAIN_TEMPLATE = '''
@@ -51,7 +55,6 @@ if __name__ == '__main__':
         settings.VIRTUAL_WIDTH, settings.VIRTUAL_HEIGHT
     )
     game.exec()
-
 '''
 
 SETTINGS_TEMPLATE = '''
@@ -118,7 +121,7 @@ def create_project(name: str) -> None:
     os.mkdir(name)
     app_path = os.path.join(os.getcwd(), name)
 
-    game_class = name.capitalize()
+    game_class = to_pascal_case(name)
 
     touch(
         os.path.join(app_path, 'main.py'),
@@ -128,6 +131,8 @@ def create_project(name: str) -> None:
 
     for directory in ['src', 'sounds', 'graphics', 'fonts']:
         os.mkdir(os.path.join(app_path, directory))
+    
+    touch(os.path.join(app_path, f'src/{game_class}.py'), GAME_CLASS_TEMPLATE.format(game_class=game_class))
 
     click.echo('Project {} created'.format(name))
 
