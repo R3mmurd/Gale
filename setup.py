@@ -1,5 +1,6 @@
 import os, setuptools
-from pathlib import Path
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
