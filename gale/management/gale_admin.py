@@ -129,12 +129,15 @@ def create_project(name: str) -> None:
     app_path = os.path.join(os.getcwd(), name)
 
     game_class = to_pascal_case(name)
+    game_title = to_spaced_name(name)
 
     touch(
         os.path.join(app_path, "main.py"),
-        GAME_MAIN_TEMPLATE.format(game_class=game_class, game_title=to_spaced_name(name))
+        GAME_MAIN_TEMPLATE.format(game_class=game_class, game_title=game_title)
     )
     touch(os.path.join(app_path, "settings.py"), SETTINGS_TEMPLATE)
+
+    touch(os.path.join(app_path, "README.md"), f"# {game_title}")
 
     for directory in ["src", "sounds", "graphics", "fonts"]:
         os.mkdir(os.path.join(app_path, directory))
