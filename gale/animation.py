@@ -55,10 +55,11 @@ class Animation:
             self.current_frame_index = (
                 self.current_frame_index + 1) % self.size
 
-            if self.current_frame_index == 0:
+            # Only increments times played if there is a value for loops.
+            if self.current_frame_index == 0 and self.loops is not None:
                 self.times_played += 1
 
-    def get_current_frame(self):
+    def get_current_frame(self) -> Any:
         """
         :return: The current frame of the animation.
         """

@@ -13,6 +13,8 @@ from typing import Optional, Any, Tuple, Dict
 
 import pygame
 
+from deprecated import deprecated
+
 from .timer import Timer
 from .input_handler import InputHandler, INPUT_EVENTS
 
@@ -64,7 +66,7 @@ class Game:
                  virtual_width: Optional[int] = None,
                  virtual_height: Optional[int] = None,
                  *args: Tuple[Any],
-                 **kwargs: Dict[str, Any]):
+                 **kwargs: Dict[str, Any]) -> None:
         """
         Set the basic elements of the game in their initial values.
 
@@ -131,6 +133,7 @@ class Game:
         """
         pass
 
+    @deprecated(version="0.0.2", reason="You should use the module input_handler")
     def keydown(self, key: int) -> None:
         """
         Empty. This should be implemented by the extension class.
@@ -142,6 +145,7 @@ class Game:
         """
         pass
 
+    @deprecated(version="0.0.2", reason="You should use the module input_handler")
     def keyup(self, key: int) -> None:
         """
         Empty. This should be implemented by the extension class.

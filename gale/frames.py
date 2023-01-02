@@ -31,7 +31,7 @@ def generate_frames(spritesheet: pygame.Surface, sprite_width: int, sprite_heigh
             frames.append(
                 pygame.Rect(
                     j * sprite_width,  # x position
-                    i * sprite_height,  # y position,
+                    i * sprite_height, # y position,
                     sprite_width, sprite_height
                 )
             )

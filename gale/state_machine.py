@@ -89,7 +89,7 @@ class StateMachine:
             that are accepted by the enter method of the new state.
 
         Raises:
-            ValueError: If the arg state_name is not as a key in
+            KeyError: If the arg state_name is not as a key in
             the states dictionary.
         """
         self.current.exit()
