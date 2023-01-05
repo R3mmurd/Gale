@@ -65,6 +65,7 @@ class Game:
                  window_height: int = 600,
                  virtual_width: Optional[int] = None,
                  virtual_height: Optional[int] = None,
+                 fps: int = 60,
                  *args: Tuple[Any],
                  **kwargs: Dict[str, Any]) -> None:
         """
@@ -81,6 +82,7 @@ class Game:
             is None to set the same value of window_width.
             :param virtual_height: Height we're trying to emulate. By default
             is None to set the same value of window_height.
+            :param fps: Amount of frame per seconds.
             *args and **kwargs Any argument list of keyword arguments that
             are accepted by pygame.display.set_mode.
         """
@@ -88,6 +90,7 @@ class Game:
         self.window_height: int = window_height
         self.virtual_width: int = virtual_width or self.window_width
         self.virtual_height: int = virtual_height or self.window_height
+        self.fps = fps
 
         # Setting the screen
         self.screen: pygame.Surface = pygame.display.set_mode(
@@ -187,7 +190,7 @@ class Game:
                     elif event.type == pygame.KEYUP:
                         self.keyup(event.key)
 
-            dt = self.clock.tick() / 1000
+            dt = self.clock.tick(self.fps) / 1000
             Timer.update(dt)
             self.update(dt)
             self._render()
