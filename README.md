@@ -1,8 +1,9 @@
 # Gale
 
-Collection of some reusable codes to make games by using pygame.
+Collection of reusable codes to ease your life when building games
+with Python and Pygame.
 
-## Gale Modules
+## Modules
 
  - `gale.animation`: Contains the class `Animation`.
  - `gale.frames`: Contains a util function to generate rectangle frames from a sprite sheet.
