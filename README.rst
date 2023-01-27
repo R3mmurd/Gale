@@ -1,11 +1,11 @@
 .. image:: logo.png
-  :alt: gale
+  :alt: Gale
   :target: https://github.com/R3mmurd/Gale/
+  :align: center
 
-Gale_ is a collection of reusable codes to ease your life when building games
-with Python_ and Pygame_.
+|Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge|
 
-|Python3| |Pygame| |License| |GithubCommits| |BlackFormatBadge|
+Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
 
 Modules
 -------
@@ -156,7 +156,7 @@ It will create a directory with the same name with the following structure:
    
    from gale.game import Game
    from gale.input_handler import InputData, InputHandler, InputListener
-   from gale.state_machine import StateMachine
+   from gale.state_machine docs/LGPL.txtimport StateMachine
    
    
    class MyFirstArpgGame(Game, InputListener):
@@ -174,12 +174,28 @@ It will create a directory with the same name with the following structure:
            if (input_id == 'quit' and input_data.pressed):
                self.quit()
 
+
+Contributors
+------------
+.. image:: https://github.com/R3mmurd/Gale/graphs/contributors
+   :target: https://contrib.rocks/image?repo=R3mmurd/Gale
+
+License
+-------
+
+This library is distributed under `the MIT License`_, which can
+be found in the file ``LICENSE``.  We reserve the right to place
+future versions of this library under a different license.
+
+
 .. |Python3| image:: https://img.shields.io/badge/python-3-blue.svg?v=1
+   :target: https://docs.python.org/3/
 
-.. |Pygame| https://img.shields.io/badge/pygame-green.svg?v=1
+.. |Pygame2| image:: https://img.shields.io/badge/pygame-green.svg?v=1
+   :target: https://www.pygame.org/docs/
+
+.. |License| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
-
-.. |License| https://img.shields.io/badge/License-MIT-yellow.svg
 
 .. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.0.0.svg
    :target: https://github.com/R3mmurd/Gale/compare/v1.0.0...main
@@ -188,6 +204,6 @@ It will create a directory with the same name with the following structure:
     :target: https://github.com/psf/black
 
 .. _gale: https://github.com/R3mmurd/Gale
-.. _python: https://www.python.org/
-.. _pygame: https://www.pygame.org
+.. _Python: https://www.python.org/
+.. _Pygame: https://www.pygame.org
 .. _The MIT License: https://opensource.org/licenses
