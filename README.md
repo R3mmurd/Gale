@@ -3,7 +3,7 @@
 Collection of reusable codes to ease your life when building games
 with Python and Pygame.
 
-![logo](logo.png)
+![logo](logo.png#center)
 
 ## Modules
 
