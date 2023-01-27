@@ -1,7 +1,7 @@
 .. image:: logo.png
-  :alt: Gale
-  :target: https://github.com/R3mmurd/Gale/
-  :align: center
+   :align: center
+   :alt: Gale
+   :target: https://github.com/R3mmurd/Gale/
 
 |Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge|
 
@@ -177,8 +177,8 @@ It will create a directory with the same name with the following structure:
 
 Contributors
 ------------
-.. image:: https://github.com/R3mmurd/Gale/graphs/contributors
-   :target: https://contrib.rocks/image?repo=R3mmurd/Gale
+.. image:: https://contrib.rocks/image?repo=R3mmurd/Gale
+   :target: https://github.com/R3mmurd/Gale/graphs/contributors
 
 License
 -------
