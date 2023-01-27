@@ -1,9 +1,10 @@
 .. image:: logo.png
   :alt: gale
 
-Gale_ is a collection of reusable codes to ease your life when building games
+Gale is a collection of reusable codes to ease your life when building games
 with Python and Pygame.
 
+|Python3| |GithubCommits|
 
 Modules
 -------
