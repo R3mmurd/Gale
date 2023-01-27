@@ -1,5 +1,5 @@
 .. image:: logo.png
-    :alt: gale
+  :alt: gale
 
 Gale is a collection of reusable codes to ease your life when building games
 with Python and Pygame.
@@ -25,10 +25,11 @@ Installation
 
 ::
 
-pip install https://github.com/R3mmurd/Gale/archive/master.zip
+   pip install https://github.com/R3mmurd/Gale/archive/master.zip
 
 
-### Creating a template for your project
+Create a template for your project
+----------------------------------
 
 You can organize the source code of your project as you want. However, this library provides
 the a command to create a basic template for your project. If you want to use it, you only need
