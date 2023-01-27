@@ -12,7 +12,12 @@ class Animation:
     frames change in a given time interval.
     """
 
-    def __init__(self, frames: Sequence[Any], time_interval: float = 0, loops: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        frames: Sequence[Any],
+        time_interval: float = 0,
+        loops: Optional[int] = None,
+    ) -> None:
         """
         Initialize a new Animation.
 
@@ -45,15 +50,16 @@ class Animation:
         it has executed the number of times defined by loops, then
         this operation does not execute.
         """
-        if self.size <= 1 or (self.loops is not None and self.times_played > self.loops):
+        if self.size <= 1 or (
+            self.loops is not None and self.times_played > self.loops
+        ):
             return
 
         self.timer += dt
 
         if self.timer >= self.interval:
             self.timer %= self.interval
-            self.current_frame_index = (
-                self.current_frame_index + 1) % self.size
+            self.current_frame_index = (self.current_frame_index + 1) % self.size
 
             # Only increments times played if there is a value for loops.
             if self.current_frame_index == 0 and self.loops is not None:

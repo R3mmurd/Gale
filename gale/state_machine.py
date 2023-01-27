@@ -35,8 +35,8 @@ class BaseState:
     this class to implement any new state class.
     """
 
-    def __init__(self, state_machine: TypeVar('StateMachine')) -> None:
-        self.state_machine: TypeVar('StateMachine') = state_machine
+    def __init__(self, state_machine: TypeVar("StateMachine")) -> None:
+        self.state_machine: TypeVar("StateMachine") = state_machine
 
     def enter(self, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
         """
@@ -78,7 +78,9 @@ class StateMachine:
         # The initial state is the empty state
         self.current = BaseState(self)
 
-    def change(self, state_name: str, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
+    def change(
+        self, state_name: str, *args: Tuple[Any], **kwargs: Dict[str, Any]
+    ) -> None:
         """
         Change the state of the machine.
 
@@ -135,7 +137,7 @@ class StateStack:
         Raises:
             RuntimeError: If the stack is empty.
         """
-        if (len(self.states) == 0):
+        if len(self.states) == 0:
             raise RuntimeError("State stacks is empty")
 
     def render(self, surface: pygame.Surface) -> None:
@@ -154,7 +156,9 @@ class StateStack:
         """
         self.states = []
 
-    def push(self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
+    def push(
+        self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]
+    ) -> None:
         """
         Add a new state on the top of the stack.
 
@@ -173,7 +177,7 @@ class StateStack:
         Raises:
             RuntimeError: If the stack is empty.
         """
-        if (len(self.states) == 0):
+        if len(self.states) == 0:
             raise RuntimeError("State stacks is empty")
 
         self.states[-1].exit()

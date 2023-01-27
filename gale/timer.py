@@ -7,11 +7,14 @@ from typing import Callable, Optional, Any, Sequence, Tuple, Dict, Union
 
 
 class TimerItemBase:
-    def __init__(self, time: float, on_finish: Optional[Callable[[], None]] = None) -> None:
+    def __init__(
+        self, time: float, on_finish: Optional[Callable[[], None]] = None
+    ) -> None:
         self.timer: float = 0
         self.time: float = time
         self.on_finish: Callable[[], None] = (
-            lambda: None) if on_finish is None else on_finish
+            (lambda: None) if on_finish is None else on_finish
+        )
         self.to_remove: bool = False
 
     def remove(self) -> None:
@@ -19,7 +22,13 @@ class TimerItemBase:
 
 
 class Every(TimerItemBase):
-    def __init__(self, time: float, function: Callable[[], None], limit: Optional[int] = None, on_finish: Optional[Callable[[], None]] = None) -> None:
+    def __init__(
+        self,
+        time: float,
+        function: Callable[[], None],
+        limit: Optional[int] = None,
+        on_finish: Optional[Callable[[], None]] = None,
+    ) -> None:
         super().__init__(time, on_finish=on_finish)
         self.function: Callable[[], None] = function
         self.limit: Optional[int] = limit
@@ -53,8 +62,12 @@ class After(TimerItemBase):
 
 
 class Tween(TimerItemBase):
-    def __init__(self, time: float, params: Sequence[Tuple[Any, Dict[str, Any]]],
-                 on_finish: Optional[Callable[[], None]] = lambda: None) -> None:
+    def __init__(
+        self,
+        time: float,
+        params: Sequence[Tuple[Any, Dict[str, Any]]],
+        on_finish: Optional[Callable[[], None]] = lambda: None,
+    ) -> None:
         super().__init__(time, on_finish=on_finish)
         self.plan: Sequence[Tuple[Any, Dict[str, Any]]] = []
 
@@ -64,12 +77,13 @@ class Tween(TimerItemBase):
 
                 self.plan.append(
                     (
-                        obj, {
-                            'key': key,
-                            'initial': initial,
-                            'final': final,
-                            'change': final - initial
-                        }
+                        obj,
+                        {
+                            "key": key,
+                            "initial": initial,
+                            "final": final,
+                            "change": final - initial,
+                        },
                     )
                 )
 
@@ -81,14 +95,17 @@ class Tween(TimerItemBase):
 
         if self.timer >= self.time:
             for obj, data in self.plan:
-                setattr(obj, data['key'], data['final'])
+                setattr(obj, data["key"], data["final"])
             self.on_finish()
             self.remove()
             return
 
         for obj, data in self.plan:
-            setattr(obj, data['key'], data['change'] *
-                    self.timer / self.time + data['initial'])
+            setattr(
+                obj,
+                data["key"],
+                data["change"] * self.timer / self.time + data["initial"],
+            )
 
 
 class Timer:
@@ -102,10 +119,14 @@ class Timer:
         cls.items = [item for item in cls.items if not item.to_remove]
 
     @classmethod
-    def every(cls, time: float, function: Callable[[], None],
-              limit: Optional[int] = None, on_finish: Optional[Callable[[], None]] = None) -> Every:
-        cls.items.append(
-            Every(time, function, limit=limit, on_finish=on_finish))
+    def every(
+        cls,
+        time: float,
+        function: Callable[[], None],
+        limit: Optional[int] = None,
+        on_finish: Optional[Callable[[], None]] = None,
+    ) -> Every:
+        cls.items.append(Every(time, function, limit=limit, on_finish=on_finish))
         return cls.items[-1]
 
     @classmethod
@@ -114,7 +135,12 @@ class Timer:
         return cls.items[-1]
 
     @classmethod
-    def tween(cls, time: float, objs: Sequence[Tuple[Any, Dict[str, Any]]], on_finish: Optional[Callable[[], None]] = None) -> Tween:
+    def tween(
+        cls,
+        time: float,
+        objs: Sequence[Tuple[Any, Dict[str, Any]]],
+        on_finish: Optional[Callable[[], None]] = None,
+    ) -> Tween:
         cls.items.append(Tween(time, objs, on_finish=on_finish))
         return cls.items[-1]
 

@@ -1,3 +1,4 @@
+black
 click
 deprecated
 pygame

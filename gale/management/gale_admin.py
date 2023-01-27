@@ -5,19 +5,19 @@ import click
 
 
 def touch(path: Path, text: str = None):
-    with open(path, 'w') as f:
+    with open(path, "w") as f:
         if text is not None:
             f.write(text)
 
 
 def to_pascal_case(identifier: str) -> str:
-    words = identifier.split('_')
-    return  "".join([w.capitalize() for w in words])
+    words = identifier.split("_")
+    return "".join([w.capitalize() for w in words])
 
 
 def to_spaced_name(identifier: str) -> str:
-    words = identifier.split('_')
-    return  " ".join([w.capitalize() for w in words])
+    words = identifier.split("_")
+    return " ".join([w.capitalize() for w in words])
 
 
 @click.group
@@ -119,7 +119,7 @@ FONTS = {}
 
 
 @click.command
-@click.argument('name')
+@click.argument("name")
 def create_project(name: str) -> None:
     if os.path.exists(name):
         click.echo(f"Project {name} already exists.")
@@ -133,7 +133,7 @@ def create_project(name: str) -> None:
 
     touch(
         os.path.join(app_path, "main.py"),
-        GAME_MAIN_TEMPLATE.format(game_class=game_class, game_title=game_title)
+        GAME_MAIN_TEMPLATE.format(game_class=game_class, game_title=game_title),
     )
     touch(os.path.join(app_path, "settings.py"), SETTINGS_TEMPLATE)
 
@@ -141,8 +141,11 @@ def create_project(name: str) -> None:
 
     for directory in ["src", "sounds", "graphics", "fonts"]:
         os.mkdir(os.path.join(app_path, directory))
-    
-    touch(os.path.join(app_path, "src", f"{game_class}.py"), GAME_CLASS_TEMPLATE.format(game_class=game_class))
+
+    touch(
+        os.path.join(app_path, "src", f"{game_class}.py"),
+        GAME_CLASS_TEMPLATE.format(game_class=game_class),
+    )
 
     click.echo(f"Project {name} created")
 

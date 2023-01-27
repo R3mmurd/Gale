@@ -10,7 +10,15 @@ import pygame
 
 
 class Particle:
-    def __init__(self, x: float, y: float, ax: float, ay: float, life_time: float, color: pygame.Color) -> None:
+    def __init__(
+        self,
+        x: float,
+        y: float,
+        ax: float,
+        ay: float,
+        life_time: float,
+        color: pygame.Color,
+    ) -> None:
         """
         Set the initial value for a particle
 
@@ -79,7 +87,9 @@ class ParticleSystem:
         self.min_life_time = minimum
         self.max_life_time = maximum
 
-    def set_linear_acceleration(self, x1: float, y1: float, x2: float, y2: float) -> None:
+    def set_linear_acceleration(
+        self, x1: float, y1: float, x2: float, y2: float
+    ) -> None:
         self.ax1 = x1
         self.ay1 = y1
         self.ax2 = x2
@@ -99,8 +109,7 @@ class ParticleSystem:
             px: float = random.gauss(self.x_mean, self.x_desv)
             py: float = random.gauss(self.y_mean, self.y_desv)
             color: pygame.Color = random.choice(self.colors)
-            life_time: float = random.uniform(
-                self.min_life_time, self.max_life_time)
+            life_time: float = random.uniform(self.min_life_time, self.max_life_time)
             self.particles.append(Particle(px, py, ax, ay, life_time, color))
         self.timer = 0
 

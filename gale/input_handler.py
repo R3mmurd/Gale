@@ -14,7 +14,7 @@ INPUT_EVENTS: Tuple[int, int, int, int, int, int] = (
     pygame.MOUSEBUTTONDOWN,
     pygame.MOUSEBUTTONUP,
     pygame.MOUSEWHEEL,
-    pygame.MOUSEMOTION
+    pygame.MOUSEMOTION,
 )
 
 
@@ -27,7 +27,9 @@ class KeyboardData:
     Group the data associated to a keyboad input event.
     """
 
-    def __init__(self, pressed: bool, released: bool, modifier: int, unicode: str) -> None:
+    def __init__(
+        self, pressed: bool, released: bool, modifier: int, unicode: str
+    ) -> None:
         self.pressed: bool = pressed
         self.released: bool = released
         self.modifier: int = modifier
@@ -39,7 +41,9 @@ class MouseClickData:
     Group the data associated to a mouse click event.
     """
 
-    def __init__(self, pressed: bool, released: bool, button: int, position: Tuple[int, int]) -> None:
+    def __init__(
+        self, pressed: bool, released: bool, button: int, position: Tuple[int, int]
+    ) -> None:
         self.pressed: bool = pressed
         self.released: bool = released
         self.button: int = button
@@ -60,13 +64,17 @@ class MouseMotionData:
     Group the data associated to a mouse motion event.
     """
 
-    def __init__(self, position: Tuple[int, int], buttons: Tuple[int, int, int]) -> None:
+    def __init__(
+        self, position: Tuple[int, int], buttons: Tuple[int, int, int]
+    ) -> None:
         self.position: Tuple[int, int] = position
         self.buttons: Tuple[int, int, int] = buttons
 
 
 InputData = TypeVar(
-    'InputData', bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData])
+    "InputData",
+    bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData],
+)
 
 
 class InputListener:
@@ -257,6 +265,7 @@ class InputHandler:
     - Any pair (mouse_wheel, input_id) should be added to input_binding["mouse_wheel"].
     - Any pair (mouse_motion, input_id) should be added to input_binding["mouse_motion"].
     """
+
     input_binding: Dict[str, Union[Dict[int, str], Dict[Tuple[int, int], str]]] = {
         "keyboard": {},
         "mouse_click": {},
@@ -268,9 +277,10 @@ class InputHandler:
 
     @classmethod
     def register_listener(cls, listener: InputListener) -> None:
-        if not hasattr(listener, 'on_input'):
+        if not hasattr(listener, "on_input"):
             raise InvalidListenerException(
-                "Listener should implement the method on_input(input_id, input_data)")
+                "Listener should implement the method on_input(input_id, input_data)"
+            )
         cls.listeners.append(listener)
 
     @classmethod
@@ -301,8 +311,7 @@ class InputHandler:
     @classmethod
     def handle_input(cls, event: pygame.event.Event) -> None:
         if event.type in (pygame.KEYDOWN, pygame.KEYUP):
-            action: Optional[str] = cls.input_binding["keyboard"].get(
-                event.key)
+            action: Optional[str] = cls.input_binding["keyboard"].get(event.key)
             if action is not None:
                 data = KeyboardData(
                     event.type == pygame.KEYDOWN,
@@ -312,25 +321,24 @@ class InputHandler:
                 )
                 cls.notify(action, data)
         elif event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
-            action: Optional[str] = cls.input_binding["mouse_click"].get(
-                event.button)
+            action: Optional[str] = cls.input_binding["mouse_click"].get(event.button)
             if action is not None:
                 data = MouseClickData(
                     event.type == pygame.MOUSEBUTTONDOWN,
                     event.type == pygame.MOUSEBUTTONUP,
                     event.button,
-                    event.pos
+                    event.pos,
                 )
                 cls.notify(action, data)
         elif event.type == pygame.MOUSEWHEEL:
-            action: Optional[str] = cls.input_binding.get(
-                "mouse_wheel").get((event.x, event.y))
+            action: Optional[str] = cls.input_binding.get("mouse_wheel").get(
+                (event.x, event.y)
+            )
             if action is not None:
                 data = MouseWheelData(event.flipped)
                 cls.notify(action, data)
         elif event.type == pygame.MOUSEMOTION:
-            action: Optional[str] = cls.input_binding.get(
-                "mouse_motion").get(event.rel)
+            action: Optional[str] = cls.input_binding.get("mouse_motion").get(event.rel)
             if action is not None:
                 data = MouseMotionData(event.pos, event.buttons)
                 cls.notify(action, data)
