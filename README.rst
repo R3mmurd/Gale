@@ -9,6 +9,7 @@
 
 Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
 
+
 Modules
 -------
 - ``gale.animation``: Contains the class ``Animation``.
@@ -19,6 +20,7 @@ Modules
 - ``gale.state_machine``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``.
 - ``gale.text``: Contains a util function to ease text rendering and a class ``Text``.
 - ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening.
+
 
 Installation
 ------------
@@ -182,12 +184,21 @@ Contributors
 .. image:: https://contrib.rocks/image?repo=R3mmurd/Gale
    :target: https://github.com/R3mmurd/Gale/graphs/contributors
 
+
+Dependencies
+------------
+Gale is obviously strongly dependent on Python and Pygame. It also depends on the
+library Click for our command line implementation.
+
+
 License
 -------
 
 This library is distributed under `the MIT License`_, which can
 be found in the file ``LICENSE``.  We reserve the right to place
 future versions of this library under a different license.
+
+See docs/licenses for licenses of dependencies.
 
 
 .. |Python3| image:: https://img.shields.io/badge/python-3-blue.svg?v=1
