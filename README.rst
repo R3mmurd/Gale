@@ -160,7 +160,7 @@ It will create a directory with the same name with the following structure:
    
    from gale.game import Game
    from gale.input_handler import InputData, InputHandler, InputListener
-   from gale.state_machine docs/LGPL.txtimport StateMachine
+   from gale.state_machine import StateMachine
    
    
    class MyFirstArpgGame(Game, InputListener):
