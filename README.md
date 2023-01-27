@@ -3,6 +3,8 @@
 Collection of reusable codes to ease your life when building games
 with Python and Pygame.
 
+![logo](logo.png)
+
 ## Modules
 
  - `gale.animation`: Contains the class `Animation`.
