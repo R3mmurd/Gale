@@ -25,20 +25,20 @@ class AnimationTestCase(unittest.TestCase):
         self.assertEqual(self.infinite_animation.get_current_frame(), 2)
         self.limited_animation.update(0.2)
         self.assertEqual(self.limited_animation.get_current_frame(), 5)
-    
+
     def test_no_change_frame(self) -> None:
         self.infinite_animation.update(0.09)
         self.assertEqual(self.infinite_animation.get_current_frame(), 1)
         self.limited_animation.update(0.19)
         self.assertEqual(self.limited_animation.get_current_frame(), 4)
-    
+
     def test_times_played(self) -> None:
         for _ in range(3):
             self.infinite_animation.update(0.1)
             self.limited_animation.update(0.2)
         self.assertEqual(self.infinite_animation.times_played, 0)
         self.assertEqual(self.limited_animation.times_played, 1)
-    
+
     def test_loop(self) -> None:
         for _ in range(3):
             self.infinite_animation.update(0.1)
