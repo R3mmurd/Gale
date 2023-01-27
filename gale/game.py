@@ -59,15 +59,17 @@ class Game:
         game.exec()
     """
 
-    def __init__(self,
-                 title: Optional[str] = None,
-                 window_width: int = 800,
-                 window_height: int = 600,
-                 virtual_width: Optional[int] = None,
-                 virtual_height: Optional[int] = None,
-                 fps: int = 60,
-                 *args: Tuple[Any],
-                 **kwargs: Dict[str, Any]) -> None:
+    def __init__(
+        self,
+        title: Optional[str] = None,
+        window_width: int = 800,
+        window_height: int = 600,
+        virtual_width: Optional[int] = None,
+        virtual_height: Optional[int] = None,
+        fps: int = 60,
+        *args: Tuple[Any],
+        **kwargs: Dict[str, Any]
+    ) -> None:
         """
         Set the basic elements of the game in their initial values.
 
@@ -96,13 +98,11 @@ class Game:
         self.screen: pygame.Surface = pygame.display.set_mode(
             (self.window_width, self.window_height), *args, **kwargs
         )
-        self.title: str = title or 'Game'
+        self.title: str = title or "Game"
         pygame.display.set_caption(self.title)
 
         # Creating the virtual screen
-        self.surface = pygame.Surface(
-            (self.virtual_width, self.virtual_height)
-        )
+        self.surface = pygame.Surface((self.virtual_width, self.virtual_height))
         self.clock = pygame.time.Clock()
 
         self.running: bool = False
@@ -168,8 +168,7 @@ class Game:
         self.surface.fill((0, 0, 0))
         self.render(self.surface)
         self.screen.blit(
-            pygame.transform.scale(self.surface, self.screen.get_size()),
-            (0, 0)
+            pygame.transform.scale(self.surface, self.screen.get_size()), (0, 0)
         )
         pygame.display.update()
 

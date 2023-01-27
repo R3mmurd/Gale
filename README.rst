@@ -1,25 +1,22 @@
 .. image:: logo.png
   :alt: gale
+  :target: https://github.com/R3mmurd/Gale/
 
-Gale is a collection of reusable codes to ease your life when building games
-with Python and Pygame.
+Gale_ is a collection of reusable codes to ease your life when building games
+with Python_ and Pygame_.
 
-|Python3| |GithubCommits|
+|Python3| |Pygame| |License| |GithubCommits| |BlackFormatBadge|
 
 Modules
 -------
 - ``gale.animation``: Contains the class ``Animation``.
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet.
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building.
-- ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input 
-definitions, mouse move input definitions, classes to store the information about an input, an
-interface to listen the input handler and the class ``InputHandler``.
+- ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``.
 - ``gale.particle_system``: Contains classes to handle particle systems in your game.
-- ``gale.state_machine``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic
-class ``StateStack``.
+- ``gale.state_machine``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``.
 - ``gale.text``: Contains a util function to ease text rendering and a class ``Text``.
-- ``gale.timer``: Contains clas
-ses to handle timers that execute action every x seconds, after x seconds, and tweening.
+- ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening.
 
 Installation
 ------------
@@ -93,8 +90,7 @@ It will create a directory with the same name with the following structure:
        game.exec()
 
 
-- ``settings.py`` contains some contants and the registering of the key escape to quit the game.
-Its contents is the following:
+- ``settings.py`` contains some contants and the registering of the key escape to quit the game. Its contents is the following:
 
 ::
 
@@ -146,11 +142,10 @@ Its contents is the following:
    # SOUNDS = {
    #     'small': pygame.font.Font(BASE_DIR / 'fonts/font.ttf', 8)
    # }
-   FONTS = {}
+   FONTS = {}https://img.shields.io/badge/License-MIT-yellow.svg
    ```
 
-- ``src/MyFirstArpgGame.py`` contains the class to define your game. Its contents is the 
-following:
+- ``src/MyFirstArpgGame.py`` contains the class to define your game. Its contents is the following:
 
 ::
        
@@ -181,5 +176,18 @@ following:
 
 .. |Python3| image:: https://img.shields.io/badge/python-3-blue.svg?v=1
 
+.. |Pygame| https://img.shields.io/badge/pygame-green.svg?v=1
+   :target: https://opensource.org/licenses/MIT
+
+.. |License| https://img.shields.io/badge/License-MIT-yellow.svg
+
 .. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.0.0.svg
    :target: https://github.com/R3mmurd/Gale/compare/v1.0.0...main
+
+.. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+
+.. _gale: https://github.com/R3mmurd/Gale
+.. _python: https://www.python.org/
+.. _pygame: https://www.pygame.org
+.. _The MIT License: https://opensource.org/licenses
