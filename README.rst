@@ -178,3 +178,8 @@ following:
        def on_input(self, input_id: str, input_data: InputData) -> None:
            if (input_id == 'quit' and input_data.pressed):
                self.quit()
+
+.. |Python3| image:: https://img.shields.io/badge/python-3-blue.svg?v=1
+
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.0.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.0.0...main
