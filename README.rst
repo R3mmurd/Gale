@@ -3,7 +3,9 @@
    :alt: Gale
    :target: https://github.com/R3mmurd/Gale/
 
+
 |Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge|
+
 
 Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
 
