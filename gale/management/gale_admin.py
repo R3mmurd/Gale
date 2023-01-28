@@ -90,7 +90,7 @@ BASE_DIR = pathlib.Path(__file__).parent
 
 # Register your textures from the graphics folder, for instance:
 # TEXTURES = {
-#     'my_texture': pygame.image.load(BASE_DIR / 'graphics/my_texture.png')
+#     'my_texture': pygame.image.load(BASE_DIR / "graphics" / "my_texture.png")
 # }
 TEXTURES = {}
 
@@ -104,7 +104,7 @@ pygame.mixer.init()
 
 # Register your sound from the sounds folder, for instance:
 # SOUNDS = {
-#     'my_sound': pygame.mixer.Sound(BASE_DIR / 'sounds/my_sound.wav'),
+#     'my_sound': pygame.mixer.Sound(BASE_DIR / "sounds" / "my_sound.wav"),
 # }
 SOUNDS = {}
 
@@ -112,7 +112,7 @@ pygame.font.init()
 
 # Register your fonts from the fonts folder, for instance:
 # SOUNDS = {
-#     'small': pygame.font.Font(BASE_DIR / 'fonts/font.ttf', 8)
+#     'small': pygame.font.Font(BASE_DIR / "fonts" / "font.ttf", 8)
 # }
 FONTS = {}
 '''
