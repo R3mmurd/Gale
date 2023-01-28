@@ -139,6 +139,8 @@ class StateStack:
         """
         if len(self.states) == 0:
             raise RuntimeError("State stacks is empty")
+        
+        self.states[-1].update(dt)
 
     def render(self, surface: pygame.Surface) -> None:
         """
