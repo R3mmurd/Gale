@@ -13,8 +13,6 @@ from typing import Optional, Any, Tuple, Dict
 
 import pygame
 
-from deprecated import deprecated
-
 from .timer import Timer
 from .input_handler import InputHandler, INPUT_EVENTS
 
@@ -136,34 +134,18 @@ class Game:
         """
         pass
 
-    @deprecated(version="0.0.2", reason="You should use the module input_handler")
-    def keydown(self, key: int) -> None:
+    def _update(self, dt: float) -> None:
         """
-        Empty. This should be implemented by the extension class.
-
-        Args:
-            :param key: The value of the key that has been pressed.
-            Check the constant names for keys here:
-            https://www.pygame.org/docs/ref/key.html
+        Update the timer and call the the method update
+        that you should implement.
         """
-        pass
-
-    @deprecated(version="0.0.2", reason="You should use the module input_handler")
-    def keyup(self, key: int) -> None:
-        """
-        Empty. This should be implemented by the extension class.
-
-        Args:
-            :param key: The value of the key that has been released.
-            Check the constant names for keys here:
-            https://www.pygame.org/docs/ref/key.html
-        """
-        pass
+        Timer.update(dt)
+        self.update(dt)
 
     def _render(self) -> None:
         """
         Prepare screen for render and calls the method render
-        that you should implmenent.
+        that you should implement.
         """
         self.surface.fill((0, 0, 0))
         self.render(self.surface)
@@ -184,14 +166,9 @@ class Game:
                     sys.exit()
                 elif event.type in INPUT_EVENTS:
                     InputHandler.handle_input(event)
-                    if event.type == pygame.KEYDOWN:
-                        self.keydown(event.key)
-                    elif event.type == pygame.KEYUP:
-                        self.keyup(event.key)
 
-            dt = self.clock.tick(self.fps) / 1000
-            Timer.update(dt)
-            self.update(dt)
+            dt = self.clock.tick(self.fps) / 1000.0
+            self._update(dt)
             self._render()
 
         pygame.font.quit()
