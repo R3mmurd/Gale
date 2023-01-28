@@ -305,7 +305,9 @@ class InputHandler:
         cls.input_binding["mouse_wheel"][direction] = action_id
 
     @classmethod
-    def set_mouse_motion_action(cls, direction: Tuple[int, int], action_id: str) -> None:
+    def set_mouse_motion_action(
+        cls, direction: Tuple[int, int], action_id: str
+    ) -> None:
         cls.input_binding["mouse_motion"][direction] = action_id
 
     @classmethod
