@@ -42,11 +42,11 @@ class Game:
                 self.player.update(dt)
                 self.player.interact_with(self.world)
 
-            def render(self, surface):
+            def render(self, render_surface):
                 # Render all of your game elements on the virtual
-                # screen surface.
-                self.world.render(surface)
-                self.player.render(surface)
+                # screen render_surface.
+                self.world.render(render_surface)
+                self.player.render(render_surface)
 
             def keydown(self, key):
                 # Make your action when key has been pressed.
@@ -100,7 +100,7 @@ class Game:
         pygame.display.set_caption(self.title)
 
         # Creating the virtual screen
-        self.surface = pygame.Surface((self.virtual_width, self.virtual_height))
+        self.render_surface = pygame.Surface((self.virtual_width, self.virtual_height))
         self.clock = pygame.time.Clock()
 
         self.running: bool = False
@@ -123,14 +123,13 @@ class Game:
         """
         pass
 
-    def render(self, surface: pygame.Surface) -> None:
+    def render(self, render_surface: pygame.Surface) -> None:
         """
         Empty. This should be implemented by the extension class.
 
         Args:
-            :param surface: The surface where you should render all
-                of the game elements on. Its dimensions are
-                virtual_width x virtual_height.
+            :param render_surface: The surface where you should render all
+            of the game elements on. Its dimensions are virtual_width x virtual_height.
         """
         pass
 
@@ -147,10 +146,10 @@ class Game:
         Prepare screen for render and calls the method render
         that you should implement.
         """
-        self.surface.fill((0, 0, 0))
-        self.render(self.surface)
+        self.render_surface.fill((0, 0, 0))
+        self.render(self.render_surface)
         self.screen.blit(
-            pygame.transform.scale(self.surface, self.screen.get_size()), (0, 0)
+            pygame.transform.scale(self.render_surface, self.screen.get_size()), (0, 0)
         )
         pygame.display.update()
 
