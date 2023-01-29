@@ -1,5 +1,5 @@
 black
 click
-deprecated
+numpy
 pygame
 wheel
