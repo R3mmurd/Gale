@@ -3,8 +3,9 @@ This file contains the implementation of a particle systems.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
-import random
 from typing import List
+
+import numpy as np
 
 import pygame
 
@@ -104,12 +105,12 @@ class ParticleSystem:
 
     def generate(self) -> None:
         for _ in range(self.size):
-            ax: float = random.uniform(self.ax1, self.ax2)
-            ay: float = random.uniform(self.ay1, self.ay2)
-            px: float = random.gauss(self.x_mean, self.x_desv)
-            py: float = random.gauss(self.y_mean, self.y_desv)
-            color: pygame.Color = random.choice(self.colors)
-            life_time: float = random.uniform(self.min_life_time, self.max_life_time)
+            ax: float = np.random.uniform(self.ax1, self.ax2)
+            ay: float = np.random.uniform(self.ay1, self.ay2)
+            px: float = np.random.gauss(self.x_mean, self.x_desv)
+            py: float = np.random.gauss(self.y_mean, self.y_desv)
+            color: pygame.Color = np.random.choice(self.colors)
+            life_time: float = np.random.uniform(self.min_life_time, self.max_life_time)
             self.particles.append(Particle(px, py, ax, ay, life_time, color))
         self.timer = 0
 
