@@ -111,8 +111,8 @@ class ParticleSystem:
         for _ in range(self.size):
             ax: float = np.random.uniform(self.ax1, self.ax2)
             ay: float = np.random.uniform(self.ay1, self.ay2)
-            px: float = np.random.gauss(self.x_mean, self.x_desv)
-            py: float = np.random.gauss(self.y_mean, self.y_desv)
+            px: float = np.random.normal(self.x_mean, self.x_desv)
+            py: float = np.random.normal(self.y_mean, self.y_desv)
             color: pygame.Color = np.random.choice(self.colors)
             life_time: float = np.random.uniform(self.min_life_time, self.max_life_time)
             self.particles.append(Particle(px, py, ax, ay, life_time, color))
