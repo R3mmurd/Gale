@@ -55,14 +55,15 @@ It will create a directory with the same name with the following structure:
 .. code-block:: bash
 
    my_first_arpg_game
-   ├── fonts
-   ├── graphics
+   ├── assets
+   │   ├── fonts
+   │   ├── graphics
+   │   └── sounds
    ├── main.py
    ├── README.md
    ├── settings.py
-   ├── sounds
-   ├── src
-   |   ├── MyFirstArpgGame.py
+   └── src
+      └── TestGame.py
 
 
 - ``fonts`` is an empty directory where you should store your font files.
@@ -85,7 +86,7 @@ It will create a directory with the same name with the following structure:
    import settings
    from src.MyFirstArpgGame import MyFirstArpgGame
    
-   if __name__ == '__main__':
+   if __name__ == "__main__":
        game = MyFirstArpgGame(
            "My First Arpg Game",
            settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT,
@@ -108,7 +109,7 @@ It will create a directory with the same name with the following structure:
    from gale import frames
    from gale import input_handler
    
-   input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, 'quit')
+   input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, "quit")
    
    # Size we want to emulate
    VIRTUAL_WIDTH = 320
@@ -122,13 +123,13 @@ It will create a directory with the same name with the following structure:
    
    # Register your textures from the graphics folder, for instance:
    # TEXTURES = {
-   #     'my_texture': pygame.image.load(BASE_DIR / 'graphics/my_texture.png')
+   #     "my_texture": pygame.image.load(BASE_DIR / "graphics/my_texture.png")
    # }
    TEXTURES = {}
    
    # Register your frames, for instance:
    # FRAMES = {
-   #     'my_frames': frames.generate_frames(TEXTURES['my_texture'], 16, 16)
+   #     "my_frames": frames.generate_frames(TEXTURES["my_texture"], 16, 16)
    # }
    FRAMES = {}
    
@@ -136,7 +137,7 @@ It will create a directory with the same name with the following structure:
    
    # Register your sound from the sounds ```folder, for instance:
    # SOUNDS = {
-   #     'my_sound': pygame.mixer.Sound(BASE_DIR / 'sounds/my_sound.wav'),
+   #     "my_sound": pygame.mixer.Sound(BASE_DIR, "assets" / "sounds/my_sound.wav"),
    # }
    SOUNDS = {}
    
@@ -144,10 +145,9 @@ It will create a directory with the same name with the following structure:
    
    # Register your fonts from the fonts folder, for instance:
    # SOUNDS = {
-   #     'small': pygame.font.Font(BASE_DIR / 'fonts/font.ttf', 8)
+   #     "small": pygame.font.Font(BASE_DIR / "fonts/font.ttf", 8)
    # }
-   FONTS = {}https://img.shields.io/badge/License-MIT-yellow.svg
-
+   FONTS = {}
 
 - ``src/MyFirstArpgGame.py`` contains the class to define your game. Its contents is the following:
 
@@ -175,7 +175,7 @@ It will create a directory with the same name with the following structure:
            self.state_machine.render(surface)
    
        def on_input(self, input_id: str, input_data: InputData) -> None:
-           if (input_id == 'quit' and input_data.pressed):
+           if (input_id == "quit" and input_data.pressed):
                self.quit()
 
 
