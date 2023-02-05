@@ -211,8 +211,8 @@ See docs/licenses for licenses of dependencies.
 .. |License| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.0.1.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.0.1...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.1.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.1.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
