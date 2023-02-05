@@ -39,6 +39,7 @@ class Factory:
         properties.update(dict(x=x, y=y))
         return self._prototype(**properties)
 
+
 class AbstractFactory:
     def __init__(self, module_name: str) -> None:
         """
@@ -47,10 +48,8 @@ class AbstractFactory:
         """
         if module_name not in sys.modules:
             raise ValueError(f"{module_name} is not a module.")
-        
+
         self.module_name = module_name
-
-
 
     def get_factory(self, prototype_name: str) -> Factory:
         """
