@@ -13,6 +13,7 @@ Gale_ is a collection of reusable codes to ease your life when building games wi
 Modules
 -------
 - ``gale.animation``: Contains the class ``Animation``.
+- ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``.
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet.
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building.
 - ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``.

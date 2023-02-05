@@ -6,16 +6,13 @@ from gale.factory import AbstractFactory, Factory
 
 
 class GameObject:
-    def __init__(
-        self, x: float, y: float, texture_name: Optional[str] = None
-    ) -> None:
+    def __init__(self, x: float, y: float, texture_name: Optional[str] = None) -> None:
         self.x = x
         self.y = y
         self.texture_name = texture_name or "default_texture.png"
 
 
 class FactoryTestCase(unittest.TestCase):
-    
     def setUp(self) -> None:
         self.factory = Factory(GameObject)
 
@@ -40,10 +37,9 @@ class FactoryTestCase(unittest.TestCase):
 
 
 class AbstractFactoryTestCase(unittest.TestCase):
-
     def setUp(self) -> None:
         self.abstract_factory = AbstractFactory(__name__)
-    
+
     def test_create_game_object_factory_successfully(self) -> None:
         game_object_factory = self.abstract_factory.get_factory("GameObject")
         self.assertIs(game_object_factory._prototype, GameObject)
