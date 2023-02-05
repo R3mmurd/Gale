@@ -90,7 +90,7 @@ BASE_DIR = pathlib.Path(__file__).parent
 
 # Register your textures from the graphics folder, for instance:
 # TEXTURES = {
-#     'my_texture': pygame.image.load(BASE_DIR / "graphics" / "my_texture.png")
+#     'my_texture': pygame.image.load(BASE_DIR / "assets" / "graphics" / "my_texture.png")
 # }
 TEXTURES = {}
 
@@ -104,7 +104,7 @@ pygame.mixer.init()
 
 # Register your sound from the sounds folder, for instance:
 # SOUNDS = {
-#     'my_sound': pygame.mixer.Sound(BASE_DIR / "sounds" / "my_sound.wav"),
+#     'my_sound': pygame.mixer.Sound(BASE_DIR / "assets"  / "sounds" / "my_sound.wav"),
 # }
 SOUNDS = {}
 
@@ -112,7 +112,7 @@ pygame.font.init()
 
 # Register your fonts from the fonts folder, for instance:
 # SOUNDS = {
-#     'small': pygame.font.Font(BASE_DIR / "fonts" / "font.ttf", 8)
+#     'small': pygame.font.Font(BASE_DIR / "assets"  / "fonts" / "font.ttf", 8)
 # }
 FONTS = {}
 '''
@@ -139,13 +139,17 @@ def create_project(name: str) -> None:
 
     touch(os.path.join(app_path, "README.md"), f"# {game_title}")
 
-    for directory in ["src", "sounds", "graphics", "fonts"]:
-        os.mkdir(os.path.join(app_path, directory))
+    os.mkdir(os.path.join(app_path, "src"))
 
     touch(
         os.path.join(app_path, "src", f"{game_class}.py"),
         GAME_CLASS_TEMPLATE.format(game_class=game_class),
     )
+
+    os.mkdir(os.path.join(app_path, "assets"))
+
+    for directory in ["sounds", "graphics", "fonts"]:
+        os.mkdir(os.path.join(app_path, "assets", directory))
 
     click.echo(f"Project {name} created")
 

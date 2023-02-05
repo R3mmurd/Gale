@@ -66,12 +66,11 @@ class StateMachine:
         """
         Set the state machine on its initial value.
 
-        Args:
-            :param states: Dictionary of states. Each pair in the dictionary
-            have to be the name of the state associated with the generator
-            of the state. This could be either the name of the state class
-            or a function that instantiates the state. That value should
-            receive the instance of the state machine when it is called.
+        :param states: Dictionary of states. Each pair in the dictionary
+        have to be the name of the state associated with the generator
+        of the state. This could be either the name of the state class
+        or a function that instantiates the state. That value should
+        receive the instance of the state machine when it is called.
         """
         self.states: Dict[str, BaseState] = states
 
@@ -84,15 +83,10 @@ class StateMachine:
         """
         Change the state of the machine.
 
-        Args:
-            :param state_name: The name of the state that
-            will be set.
-            *args and **kwargs: Any argument list of keyword arguments
-            that are accepted by the enter method of the new state.
+        :param state_name: The name of the state that will be set.
+        *args and **kwargs: Any argument list of keyword arguments that are accepted by the enter method of the new state.
 
-        Raises:
-            KeyError: If the arg state_name is not as a key in
-            the states dictionary.
+        :raises KeyError: If the arg state_name is not as a key in the states dictionary.
         """
         self.current.exit()
         self.current = self.states[state_name](self)
@@ -102,8 +96,7 @@ class StateMachine:
         """
         Call to update of the current state of the machine.
 
-        Args:
-            :param dt: Time elapsed of the game loop.
+        :param dt: Time elapsed of the game loop.
         """
         self.current.update(dt)
 
@@ -111,8 +104,7 @@ class StateMachine:
         """
         Call to render of the current state of the machine.
 
-        Args:
-            :param surface: The surface where the state should be rendered on.
+        :param surface: The surface where the state should be rendered on.
         """
         self.current.render(surface)
 
@@ -132,10 +124,8 @@ class StateStack:
         """
         Call to update of the top state of the stack.
 
-        Args:
-            :param dt: Time elapsed of the game loop.
-        Raises:
-            RuntimeError: If the stack is empty.
+        :param dt: Time elapsed of the game loop.
+        :raises RuntimeError: If the stack is empty.
         """
         if len(self.states) == 0:
             raise RuntimeError("State stacks is empty")
@@ -146,8 +136,7 @@ class StateStack:
         """
         Call to render all of the states in the stack.
 
-        Args:
-            :param surface: The surface where the state should be rendered on.
+        :param surface: The surface where the state should be rendered on.
         """
         for state in self.states:
             state.render(surface)
@@ -164,10 +153,8 @@ class StateStack:
         """
         Add a new state on the top of the stack.
 
-        Args:
-            :param state: The state to be added based on BaseState.
-            *args and **kwargs: Any argument list of keyword arguments
-            that are accepted by the enter method of the new state.
+        :param state: The state to be added based on BaseState.
+        :*args and **kwargs: Any argument list of keyword arguments that are accepted by the enter method of the new state.
         """
         self.states.append(state)
         state.enter(*args, **kwargs)
@@ -176,8 +163,7 @@ class StateStack:
         """
         Remove the top state of the stack.
 
-        Raises:
-            RuntimeError: If the stack is empty.
+        :raises RuntimeError: If the stack is empty.
         """
         if len(self.states) == 0:
             raise RuntimeError("State stacks is empty")
