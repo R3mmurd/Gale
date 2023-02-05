@@ -3,7 +3,7 @@ This file contains the implementation of a particle systems.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
-from typing import List
+from typing import Callable, List, Optional
 
 import numpy as np
 
@@ -59,7 +59,9 @@ class Particle:
 
 
 class ParticleSystem:
-    def __init__(self, x: float, y: float, n: int) -> None:
+    def __init__(
+        self, x: float, y: float, n: int, on_finish: Optional[Callable[[], None]] = None
+    ) -> None:
         """
         Builds a particle system.
 
@@ -83,6 +85,8 @@ class ParticleSystem:
 
         self.colors: List[pygame.Color] = []
         self.particles: List[Particle] = []
+
+        self.on_finish = on_finish or (lambda: None)
 
     def set_life_time(self, minimum: float, maximum: float) -> None:
         self.min_life_time = minimum
@@ -112,13 +116,17 @@ class ParticleSystem:
             color: pygame.Color = np.random.choice(self.colors)
             life_time: float = np.random.uniform(self.min_life_time, self.max_life_time)
             self.particles.append(Particle(px, py, ax, ay, life_time, color))
-        self.timer = 0
 
     def update(self, dt: float) -> None:
+        if len(self.particles) == 0:
+            return
+
         self.timer += dt
 
         if self.timer >= self.max_life_time:
+            self.timer = 0
             self.particles = []
+            self.on_finish()
 
         for particle in self.particles:
             if self.timer < particle.life_time:

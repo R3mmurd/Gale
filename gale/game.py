@@ -71,20 +71,12 @@ class Game:
         """
         Set the basic elements of the game in their initial values.
 
-        Args:
-            :param title: Title of the game to show in the window title.
-            By default is None to set the title 'Game'.
-            :param window_width: Width of the window to show the game.
-            By default is 800.
-            :param window_height: Height of the window to show the game.
-            By default is 600.
-            :param virtual_width: Width we're trying to emulate. By default
-            is None to set the same value of window_width.
-            :param virtual_height: Height we're trying to emulate. By default
-            is None to set the same value of window_height.
-            :param fps: Amount of frame per seconds.
-            *args and **kwargs Any argument list of keyword arguments that
-            are accepted by pygame.display.set_mode.
+        :param title: Title of the game to show in the window title. By default is None to set the title 'Game'.
+        :param window_width: Width of the window to show the game. By default is 800.
+        :param window_height: Height of the window to show the game. By default is 600.
+        :param virtual_width: Width we're trying to emulate. By default is None to set the same value of window_width.
+        :param virtual_height: Height we're trying to emulate. By default is None to set the same value of window_height.
+        :param fps: Number of frame per seconds. *args and **kwargs Any argument list of keyword arguments that are accepted by pygame.display.set_mode.
         """
         self.window_width: int = window_width
         self.window_height: int = window_height
@@ -117,9 +109,7 @@ class Game:
         """
         Empty. This should be implemented by the extension class.
 
-        Args:
-            :param dt: Time elapsed (in seconds) since the last time
-            this function has been executed.
+        :param dt: Time elapsed (in seconds) since the last time this function has been executed.
         """
         pass
 
@@ -127,9 +117,8 @@ class Game:
         """
         Empty. This should be implemented by the extension class.
 
-        Args:
-            :param render_surface: The surface where you should render all
-            of the game elements on. Its dimensions are virtual_width x virtual_height.
+
+        :param render_surface: The surface where you should render all of the game elements on. Its dimensions are virtual_width x virtual_height.
         """
         pass
 
