@@ -63,7 +63,7 @@ It will create a directory with the same name with the following structure:
    ├── README.md
    ├── settings.py
    └── src
-      └── TestGame.py
+      └── MyFirstArpgGame.py
 
 
 - ``fonts`` is an empty directory where you should store your font files.
