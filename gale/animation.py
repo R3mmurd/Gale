@@ -21,11 +21,9 @@ class Animation:
         """
         Initialize a new Animation.
 
-        Args:
-            :param frames: Sequence of frames
-            :param time_interval: Duration time (in seconds) of each frame.
-            :param loops: Number of times that this animation shall execute.
-            The default value is None to execute infinitely.
+        :param frames: Sequence of frames
+        :param time_interval: Duration time (in seconds) of each frame.
+        :param loops: Number of times that this animation shall execute. The default value is None to execute infinitely.
         """
         self.frames: Sequence[Any] = frames
         self.interval: float = time_interval
@@ -67,6 +65,6 @@ class Animation:
 
     def get_current_frame(self) -> Any:
         """
-        :return: The current frame of the animation.
+        :returns: The current frame of the animation.
         """
         return self.frames[self.current_frame_index]
