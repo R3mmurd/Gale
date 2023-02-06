@@ -111,7 +111,7 @@ SOUNDS = {}
 pygame.font.init()
 
 # Register your fonts from the fonts folder, for instance:
-# SOUNDS = {
+# FONTS = {
 #     'small': pygame.font.Font(BASE_DIR / "assets"  / "fonts" / "font.ttf", 8)
 # }
 FONTS = {}
