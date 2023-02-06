@@ -145,7 +145,7 @@ It will create a directory with the same name with the following structure:
    pygame.font.init()
    
    # Register your fonts from the fonts folder, for instance:
-   # SOUNDS = {
+   # FONTS = {
    #     "small": pygame.font.Font(BASE_DIR / "fonts/font.ttf", 8)
    # }
    FONTS = {}
