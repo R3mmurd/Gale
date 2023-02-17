@@ -33,7 +33,7 @@ class StateMachineTestCase(unittest.TestCase):
             self.state_machine.update(0.1)
         update_method.assert_called_once_with(0.1)
 
-    def test_render(self) -> None:
+    def test__render(self) -> None:
         with patch.object(BaseState, "render", return_value=None) as render_method:
             self.state_machine.render("a surface")
         render_method.assert_called_once_with("a surface")
