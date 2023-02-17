@@ -122,7 +122,7 @@ class Game:
         """
         pass
 
-    def _update(self, dt: float) -> None:
+    def __update(self, dt: float) -> None:
         """
         Update the timer and call the the method update
         that you should implement.
@@ -130,7 +130,7 @@ class Game:
         Timer.update(dt)
         self.update(dt)
 
-    def _render(self) -> None:
+    def __render(self) -> None:
         """
         Prepare screen for render and calls the method render
         that you should implement.
@@ -156,8 +156,8 @@ class Game:
                     InputHandler.handle_input(event)
 
             dt = self.clock.tick(self.fps) / 1000.0
-            self._update(dt)
-            self._render()
+            self.__update(dt)
+            self.__render()
 
         pygame.font.quit()
         pygame.mixer.quit()
