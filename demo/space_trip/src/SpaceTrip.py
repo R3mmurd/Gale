@@ -12,10 +12,8 @@ from src.states import PlayState
 
 class SpaceTrip(Game, InputListener):
     def init(self) -> None:
-        self.state_machine = StateMachine({
-            'play': PlayState
-        })
-        self.state_machine.change('play')
+        self.state_machine = StateMachine({"play": PlayState})
+        self.state_machine.change("play")
 
         InputHandler.register_listener(self)
 
@@ -26,5 +24,5 @@ class SpaceTrip(Game, InputListener):
         self.state_machine.render(surface)
 
     def on_input(self, input_id: str, input_data: InputData) -> None:
-        if (input_id == 'quit' and input_data.pressed):
+        if input_id == "quit" and input_data.pressed:
             self.quit()
