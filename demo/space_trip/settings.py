@@ -7,11 +7,11 @@ import pygame
 
 from gale import input_handler
 
-input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, 'quit')
-input_handler.InputHandler.set_keyboard_action(input_handler.KEY_LEFT, 'left')
-input_handler.InputHandler.set_keyboard_action(input_handler.KEY_DOWN, 'down')
-input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RIGHT, 'right')
-input_handler.InputHandler.set_keyboard_action(input_handler.KEY_UP, 'up')
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, "quit")
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_LEFT, "left")
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_DOWN, "down")
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RIGHT, "right")
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_UP, "up")
 
 # Size we want to emulate
 VIRTUAL_WIDTH = 640
@@ -36,21 +36,21 @@ STAR_SPEED = 150
 BASE_DIR = pathlib.Path(__file__).parent
 
 TEXTURES = {
-    'background': pygame.image.load(BASE_DIR / "assets" / "graphics" / "background.png"),
-    'ufo': pygame.image.load(BASE_DIR / "assets" / "graphics" / "ufo.png"),
-    'star': pygame.image.load(BASE_DIR / "assets" / "graphics" / "star.png")
+    "background": pygame.image.load(
+        BASE_DIR / "assets" / "graphics" / "background.png"
+    ),
+    "ufo": pygame.image.load(BASE_DIR / "assets" / "graphics" / "ufo.png"),
+    "star": pygame.image.load(BASE_DIR / "assets" / "graphics" / "star.png"),
 }
 
 pygame.mixer.init()
 
 SOUNDS = {
-    'take_star': pygame.mixer.Sound(BASE_DIR / "assets"  / "sounds" / "take_star.flac")
+    "take_star": pygame.mixer.Sound(BASE_DIR / "assets" / "sounds" / "take_star.flac")
 }
 
-pygame.mixer.music.load(BASE_DIR / "assets"  / "sounds" / "space.ogg")
+pygame.mixer.music.load(BASE_DIR / "assets" / "sounds" / "space.ogg")
 
 pygame.font.init()
 
-FONTS = {
-    'stars': pygame.font.Font(BASE_DIR / "assets"  / "fonts" / "stars.ttf", 18)
-}
+FONTS = {"stars": pygame.font.Font(BASE_DIR / "assets" / "fonts" / "stars.ttf", 18)}
