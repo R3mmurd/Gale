@@ -289,7 +289,7 @@ class InputHandler:
 
     @classmethod
     def notify(cls, action_id: str, action_data: InputData) -> None:
-        for l in cls.listeners:
+        for l in cls.listeners.copy():
             l.on_input(action_id, action_data)
 
     @classmethod
