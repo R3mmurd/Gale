@@ -28,11 +28,14 @@ class KeyboardData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
-        self.action_key = event.key
         self.pressed: bool = event.type == pygame.KEYDOWN
         self.released: bool = event.type == pygame.KEYUP
         self.modifier: int = event.modifier
         self.unicode: str = event.unicode
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> int:
+        return event.key
 
     @staticmethod
     def get_action_name():
@@ -45,11 +48,14 @@ class MouseClickData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
-        self.action_key = event.button
         self.pressed: bool = event.type == pygame.KEYDOWN
         self.released: bool = event.type == pygame.KEYUP
         self.button: int = event.button
         self.position: Tuple[int, int] = event.pos
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> int:
+        return event.button
 
     @staticmethod
     def get_action_name():
@@ -62,8 +68,11 @@ class MouseWheelData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
-        self.action_key = (event.x, event.y)
         self.flipped: bool = event.flipped
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+        return event.x, event.y
 
     @staticmethod
     def get_action_name():
@@ -76,9 +85,12 @@ class MouseMotionData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
-        self.action_key = event.rel
         self.position: Tuple[int, int] = event.pos
         self.buttons: Tuple[int, int, int] = event.buttons
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+        return event.rel
 
     @staticmethod
     def get_action_name():
@@ -339,7 +351,7 @@ class InputHandler:
 
         if data_class is not None:
             action: Optional[str] = cls.input_binding[data_class.get_action_name()].get(
-                data.action_key
+                data.get_action_key(event)
             )
             if action is not None:
                 data = data_class(event)
