@@ -30,7 +30,7 @@ class KeyboardData:
     def __init__(self, event: pygame.event.Event) -> None:
         self.pressed: bool = event.type == pygame.KEYDOWN
         self.released: bool = event.type == pygame.KEYUP
-        self.modifier: int = event.modifier
+        self.modifier: int = event.mod
         self.unicode: str = event.unicode
 
     @staticmethod
