@@ -351,7 +351,7 @@ class InputHandler:
 
         if data_class is not None:
             action: Optional[str] = cls.input_binding[data_class.get_action_name()].get(
-                data.get_action_key(event)
+                data_class.get_action_key(event)
             )
             if action is not None:
                 data = data_class(event)
