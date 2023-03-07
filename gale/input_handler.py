@@ -48,8 +48,8 @@ class MouseClickData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
-        self.pressed: bool = event.type == pygame.KEYDOWN
-        self.released: bool = event.type == pygame.KEYUP
+        self.pressed: bool = event.type == pygame.MOUSEBUTTONDOWN
+        self.released: bool = event.type == pygame.MOUSEBUTTONUP
         self.button: int = event.button
         self.position: Tuple[int, int] = event.pos
 
