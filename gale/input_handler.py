@@ -320,7 +320,7 @@ class InputHandler:
 
     @classmethod
     def unregister_listener(cls, listener: InputListener) -> None:
-        cls.listeners.remove(listener)
+        cls.listeners = [l for l in cls.listeners if l != listener]
 
     @classmethod
     def notify(cls, action_id: str, action_data: InputData) -> None:
