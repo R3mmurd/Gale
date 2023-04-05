@@ -8,11 +8,13 @@ Author: Alejandro Mujica
 
 import sys
 
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, TypeVar, Generic
+
+T = TypeVar("T")
 
 
-class Factory:
-    def __init__(self, prototype: Type) -> None:
+class Factory(Generic[T]):
+    def __init__(self, prototype: T) -> None:
         """
         :param prototype: The data type that will be created by the factory.
         """
@@ -22,7 +24,7 @@ class Factory:
 
     def create(
         self, x: float, y: float, properties: Optional[Dict[str, any]] = None
-    ) -> None:
+    ) -> T:
         """
         Create a new object from the prototype.
 
