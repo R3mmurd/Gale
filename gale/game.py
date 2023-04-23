@@ -14,12 +14,12 @@ from typing import Optional, Any, Tuple, Dict
 import pygame
 
 from .timer import Timer
-from .input_handler import InputHandler, INPUT_EVENTS
+from .input_handler import InputHandler, InputListener, InputData, INPUT_EVENTS
 
 pygame.init()
 
 
-class Game:
+class Game(InputListener):
     """
     Base class to implemente a game by using pygame.
 
@@ -30,28 +30,28 @@ class Game:
     Usage example:
 
         class MyGame(Game):
-            def init(self):
+            def init(self) -> None:
                 # Set your own initial configuration of the game.
                 self.player = Player()
                 self.world = World()
+            
+            def on_input(self, input_id: str, input_data: InputData) -> None:
+                # Make your action when an input is detected.
+                if input_id == "quit" and input_data.pressed:
+                    self.quit()
 
-            def update(self, dt):
+            def update(self, dt: float) -> None:
                 # Update of all your game elements here.
                 # dt is the elapsed time in secconds.
                 self.world.update(dt)
                 self.player.update(dt)
                 self.player.interact_with(self.world)
 
-            def render(self, render_surface):
+            def render(self, render_surface: pygame.Surface) -> None:
                 # Render all of your game elements on the virtual
                 # screen render_surface.
                 self.world.render(render_surface)
                 self.player.render(render_surface)
-
-            def keydown(self, key):
-                # Make your action when key has been pressed.
-                if key == pygame.K_ESCAPE:
-                    self.quit()
 
         game = MyGame(title='Title of my game')
         game.exec()
@@ -97,9 +97,17 @@ class Game:
 
         self.running: bool = False
 
+        InputHandler.register_listener(self)
+
         self.init()
 
     def init(self) -> None:
+        """
+        Empty. This should be implemented by the extension class.
+        """
+        pass
+
+    def on_input(self, input_id: str, input_data: InputData) -> None:
         """
         Empty. This should be implemented by the extension class.
         """
