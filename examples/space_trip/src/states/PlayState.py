@@ -1,7 +1,7 @@
 import pygame
 
-from gale.input_handler import InputData, InputHandler, InputListener
-from gale.state_machine import BaseState
+from gale.input_handler import InputData
+from gale.state import BaseState
 from gale.text import render_text
 
 import settings
@@ -9,19 +9,14 @@ from src.FlyingSaucer import FlyingSaucer
 from src.Space import Space
 
 
-class PlayState(BaseState, InputListener):
+class PlayState(BaseState):
     def enter(self) -> None:
-        InputHandler.register_listener(self)
-
         self.space = Space()
         self.flying_saucer = FlyingSaucer(
             settings.VIRTUAL_WIDTH // 2, settings.VIRTUAL_HEIGHT // 2
         )
         self.score = 0
         pygame.mixer.music.play(loops=-1)
-
-    def exit(self) -> None:
-        InputHandler.unregister_listener(self)
 
     def update(self, dt: float) -> None:
         self.space.update(dt)

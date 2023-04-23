@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from gale.state_machine import StateMachine, BaseState
+from gale.state import StateMachine, BaseState
 
 
 class StateMachineTestCase(unittest.TestCase):
