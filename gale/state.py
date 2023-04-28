@@ -25,6 +25,8 @@ from typing import TypeVar, Tuple, Dict, Any
 
 import pygame
 
+from .input_handler import InputData
+
 
 class BaseState:
     """
@@ -48,6 +50,9 @@ class BaseState:
         """
         Method to be executed when the state machine exits from the state.
         """
+        pass
+
+    def on_input(self, input_id: str, input_data: InputData) -> None:
         pass
 
     def update(self, dt: float) -> None:
@@ -92,6 +97,15 @@ class StateMachine:
         self.current = self.states[state_name](self)
         self.current.enter(*args, **kwargs)
 
+    def on_input(self, input_id: str, input_data: InputData) -> None:
+        """
+        Call the method on_input of the current state of the machine.
+
+        :param input_id: The string that describes the input.
+        :param input_data: Data associated to the input type.
+        """
+        self.current.on_input(input_id, input_data)
+
     def update(self, dt: float) -> None:
         """
         Call to update of the current state of the machine.
@@ -119,6 +133,18 @@ class StateStack:
         Creates an empty stack.
         """
         self.states = []
+    
+    def on_input(self, input_id: str, input_data: InputData) -> None:
+        """
+        Call the method on_input of the top state of the stack.
+
+        :param input_id: The string that describes the input.
+        :param input_data: Data associated to the input type.
+        """
+        if len(self.states) == 0:
+            raise RuntimeError("State stacks is empty")
+
+        self.states[-1].on_input(input_id, input_data)
 
     def update(self, dt: float) -> None:
         """
@@ -146,7 +172,7 @@ class StateStack:
         Clear the stack.
         """
         self.states = []
-
+    
     def push(
         self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]
     ) -> None:
