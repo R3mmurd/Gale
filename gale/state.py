@@ -21,6 +21,7 @@ Usage:
         })
         state_machine.change('start')
 """
+
 from typing import TypeVar, Tuple, Dict, Any
 
 import pygame
@@ -133,7 +134,7 @@ class StateStack:
         Creates an empty stack.
         """
         self.states = []
-    
+
     def on_input(self, input_id: str, input_data: InputData) -> None:
         """
         Call the method on_input of the top state of the stack.
@@ -172,7 +173,7 @@ class StateStack:
         Clear the stack.
         """
         self.states = []
-    
+
     def push(
         self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]
     ) -> None:

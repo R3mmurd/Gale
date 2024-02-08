@@ -3,6 +3,7 @@ This file contains the implementation of a particle systems.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
+
 from typing import Callable, List, Optional
 
 import numpy as np
