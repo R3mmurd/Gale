@@ -140,7 +140,9 @@ def create_project(name: str) -> None:
 
     touch(
         os.path.join(app_path, "main.py"),
-        GAME_MAIN_TEMPLATE.format(game_class=game_class, game_title=game_title),
+        GAME_MAIN_TEMPLATE.format(
+            game_class=game_class, game_title=game_title, game_file=game_file
+        ),
     )
     touch(os.path.join(app_path, "settings.py"), SETTINGS_TEMPLATE)
 
@@ -150,7 +152,7 @@ def create_project(name: str) -> None:
 
     touch(
         os.path.join(app_path, "src", f"{game_file}.py"),
-        GAME_CLASS_TEMPLATE.format(game_class=game_class, game_file=game_file),
+        GAME_CLASS_TEMPLATE.format(game_class=game_class),
     )
 
     os.mkdir(os.path.join(app_path, "assets"))
