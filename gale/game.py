@@ -47,11 +47,11 @@ class Game(InputListener):
                 self.player.update(dt)
                 self.player.interact_with(self.world)
 
-            def render(self, render_surface: pygame.Surface) -> None:
+            def render(self, surface: pygame.Surface) -> None:
                 # Render all of your game elements on the virtual
-                # screen render_surface.
-                self.world.render(render_surface)
-                self.player.render(render_surface)
+                # screen surface.
+                self.world.render(surface)
+                self.player.render(surface)
 
         game = MyGame(title='Title of my game')
         game.exec()
@@ -121,7 +121,7 @@ class Game(InputListener):
         """
         pass
 
-    def render(self, render_surface: pygame.Surface) -> None:
+    def render(self, surface: pygame.Surface) -> None:
         """
         Empty. This should be implemented by the extension class.
 
