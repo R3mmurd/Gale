@@ -22,8 +22,8 @@ def to_spaced_name(identifier: str) -> str:
 
 
 def to_snake_case(identifier: str) -> str:
-    identifier = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', identifier)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', identifier).lower()
+    identifier = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", identifier)
+    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", identifier).lower()
 
 
 @click.group

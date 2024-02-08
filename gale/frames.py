@@ -4,6 +4,7 @@ This file contains a function to generate frames from a spritesheets
 
 Author: Alejandro Mujica
 """
+
 from typing import List
 
 import pygame
