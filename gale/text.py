@@ -3,6 +3,7 @@ This file contains the implementation of the class Text.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
+
 from typing import Optional
 
 import pygame

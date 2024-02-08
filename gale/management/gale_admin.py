@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 import click
@@ -20,6 +21,11 @@ def to_spaced_name(identifier: str) -> str:
     return " ".join([w.capitalize() for w in words])
 
 
+def to_snake_case(identifier: str) -> str:
+    identifier = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", identifier)
+    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", identifier).lower()
+
+
 @click.group
 def cli():
     pass
@@ -32,7 +38,7 @@ import pygame
 
 from gale.game import Game
 from gale.input_handler import InputData, InputHandler, InputListener
-from gale.state_machine import StateMachine
+from gale.state import StateMachine
 
 
 class {game_class}(Game, InputListener):
@@ -142,7 +148,7 @@ def create_project(name: str) -> None:
     os.mkdir(os.path.join(app_path, "src"))
 
     touch(
-        os.path.join(app_path, "src", f"{game_class}.py"),
+        os.path.join(app_path, "src", f"{to_snake_case(game_class)}.py"),
         GAME_CLASS_TEMPLATE.format(game_class=game_class),
     )
 
