@@ -7,6 +7,7 @@ start a game.
 
 Author: Alejandro Mujica
 """
+
 import sys
 
 from typing import Optional, Any, Tuple, Dict
@@ -34,7 +35,7 @@ class Game(InputListener):
                 # Set your own initial configuration of the game.
                 self.player = Player()
                 self.world = World()
-            
+
             def on_input(self, input_id: str, input_data: InputData) -> None:
                 # Make your action when an input is detected.
                 if input_id == "quit" and input_data.pressed:
