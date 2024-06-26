@@ -4,6 +4,7 @@ input handler.
 
 Author: Alejandro Mujica
 """
+
 from typing import Tuple, Union, TypeVar, NoReturn, Dict, List, Optional, Type
 
 import pygame
