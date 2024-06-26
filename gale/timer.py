@@ -3,6 +3,7 @@ This file contains utility classes that perform as timers.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
+
 from typing import Callable, Optional, Any, Sequence, Tuple, Dict, Union
 
 
