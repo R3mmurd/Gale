@@ -149,9 +149,14 @@ class Timer:
         cls,
         time: float,
         objs: Sequence[Tuple[Any, Dict[str, Any]]],
+        ease_function_name: str = "linear",
         on_finish: Optional[Callable[[], None]] = None,
     ) -> Tween:
-        cls.items.append(Tween(time, objs, on_finish=on_finish))
+        cls.items.append(
+            Tween(
+                time, objs, ease_function_name=ease_function_name, on_finish=on_finish
+            )
+        )
         return cls.items[-1]
 
     @classmethod
