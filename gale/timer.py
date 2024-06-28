@@ -6,6 +6,8 @@ Author: Alejandro Mujica (aledrums@gmail.com)
 
 from typing import Callable, Optional, Any, Sequence, Tuple, Dict, Union
 
+from .ease_functions import EASE_FUNCTIONS
+
 
 class TimerItemBase:
     def __init__(
@@ -17,6 +19,9 @@ class TimerItemBase:
             (lambda: None) if on_finish is None else on_finish
         )
         self.to_remove: bool = False
+
+    def finish(self, on_finish: Callable[[], None]) -> None:
+        self.on_finish = on_finish
 
     def remove(self) -> None:
         self.to_remove = True
@@ -33,9 +38,6 @@ class Every(TimerItemBase):
         super().__init__(time, on_finish=on_finish)
         self.function: Callable[[], None] = function
         self.limit: Optional[int] = limit
-
-    def finish(self, on_finish: Callable[[], None]) -> None:
-        self.on_finish = on_finish
 
     def update(self, dt: float) -> None:
         self.timer += dt
@@ -67,9 +69,18 @@ class Tween(TimerItemBase):
         self,
         time: float,
         params: Sequence[Tuple[Any, Dict[str, Any]]],
+        ease_function_name: str = "linear",
         on_finish: Optional[Callable[[], None]] = lambda: None,
     ) -> None:
         super().__init__(time, on_finish=on_finish)
+
+        self.ease_function = EASE_FUNCTIONS.get(ease_function_name)
+
+        if self.ease_function is None:
+            raise RuntimeError(
+                f"{ease_function_name} is not a valid ease function for tween"
+            )
+
         self.plan: Sequence[Tuple[Any, Dict[str, Any]]] = []
 
         for obj, attrs in params:
@@ -88,9 +99,6 @@ class Tween(TimerItemBase):
                     )
                 )
 
-    def finish(self, on_finish: Callable[[], None]) -> None:
-        self.on_finish = on_finish
-
     def update(self, dt: float) -> None:
         self.timer += dt
 
@@ -105,7 +113,8 @@ class Tween(TimerItemBase):
             setattr(
                 obj,
                 data["key"],
-                data["change"] * self.timer / self.time + data["initial"],
+                data["initial"]
+                + data["change"] * self.ease_function(self.timer / self.time),
             )
 
 
@@ -140,9 +149,14 @@ class Timer:
         cls,
         time: float,
         objs: Sequence[Tuple[Any, Dict[str, Any]]],
+        ease_function_name: str = "linear",
         on_finish: Optional[Callable[[], None]] = None,
     ) -> Tween:
-        cls.items.append(Tween(time, objs, on_finish=on_finish))
+        cls.items.append(
+            Tween(
+                time, objs, ease_function_name=ease_function_name, on_finish=on_finish
+            )
+        )
         return cls.items[-1]
 
     @classmethod
