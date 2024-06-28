@@ -1,25 +1,9 @@
 """
-This file contains the implementation of the class StateMachine.
+This file contains the implementation of the classes BaseState, StateMachine,
+and StateStack. These classes are used to create a state machine that can
+change between states.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
-Date: 07/11/2020
-
-Usage:
-    States are instantiated when they are set to the attribute 'current'.
-    They are passed to the constructor as a dictionary argument containing
-    pairs either  (state_name, StateClass) or (state_name, function_to_build_state).
-
-    It is expected that added states contain the methods: enter, exit,
-    update, and render. It is recommended creating states by inheriting
-    from BaseState in base_state module.
-
-    Example:
-
-        state_machine = StateMachine({
-            'start': StartState,
-            'play': lambda sm: return PlayState(sm)
-        })
-        state_machine.change('start')
 """
 
 from typing import TypeVar, Tuple, Dict, Any
@@ -66,6 +50,23 @@ class BaseState:
 class StateMachine:
     """
     The state machine.
+
+    Usage:
+    States are instantiated when they are set to the attribute 'current'.
+    They are passed to the constructor as a dictionary argument containing
+    pairs either  (state_name, StateClass) or (state_name, function_to_build_state).
+
+    It is expected that added states contain the methods: enter, exit,
+    update, and render. It is recommended creating states by inheriting
+    from BaseState in base_state module.
+
+    Example:
+
+        state_machine = StateMachine({
+            'start': StartState,
+            'play': lambda sm: return PlayState(sm)
+        })
+        state_machine.change('start')
     """
 
     def __init__(self, states: Dict[str, BaseState] = {}) -> None:
@@ -127,6 +128,14 @@ class StateMachine:
 class StateStack:
     """
     Class to stack states. It renders all of then but it only updates the top state.
+
+    Usage:
+    The stack is created empty. States are pushed to the stack and popped from it.
+
+    state_stack = StateStack()
+    state_stack.push(state1)
+    state_stack.push(state2)
+    state_stack.pop()
     """
 
     def __init__(self) -> None:

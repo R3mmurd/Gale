@@ -28,7 +28,9 @@ class Factory(Generic[T]):
         """
         Create a new object from the prototype.
 
-        :param dt: Time elapsed of the game loop.
+        :param x: The x component for the position of the object.
+        :param y: The y component for the position of the object.
+        :param properties: A dictionary with the properties that will be set to the new object.
         :returns: A new instance of the prototype.
         :raises RuntimeError: If the stack is empty
         """
