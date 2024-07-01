@@ -120,9 +120,13 @@ class Tween(TimerItemBase):
 
 class Timer:
     items: Union[Every, After, Tween] = []
+    paused: bool = False
 
     @classmethod
     def update(cls, dt: float) -> None:
+        if cls.paused:
+            return
+
         for item in cls.items:
             item.update(dt)
 
@@ -162,3 +166,11 @@ class Timer:
     @classmethod
     def clear(cls) -> None:
         cls.items = []
+
+    @classmethod
+    def pause(cls) -> None:
+        cls.paused = True
+
+    @classmethod
+    def resume(cls) -> None:
+        cls.paused = False
