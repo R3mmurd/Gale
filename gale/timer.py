@@ -166,6 +166,7 @@ class Timer:
     @classmethod
     def clear(cls) -> None:
         cls.items = []
+        cls.paused = False
 
     @classmethod
     def pause(cls) -> None:
