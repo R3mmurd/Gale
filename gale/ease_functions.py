@@ -221,13 +221,13 @@ def ease_in_out_back(t: float) -> float:
     Ease in out function using the back function.
     This function starts slow, then accelerates, and finally decelerates.
     """
-    C1 = 1.70158
-    C2 = C1 * 1.525
+    c1 = 1.70158
+    c2 = c1 * 1.525
 
     return (
-        (4 * t * t * ((C2 + 1) * 2 * t - C2)) / 2
+        (4 * t * t * ((c2 + 1) * 2 * t - c2)) / 2
         if t < 0.5
-        else (pow(2 * t - 2, 2) * ((C2 + 1) * (t * 2 - 2) + C2) + 2) / 2
+        else (pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2
     )
 
 

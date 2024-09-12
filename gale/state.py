@@ -69,7 +69,7 @@ class StateMachine:
         state_machine.change('start')
     """
 
-    def __init__(self, states: Dict[str, BaseState] = {}) -> None:
+    def __init__(self, states: Dict[str, Type[BaseState]] = {}) -> None:
         """
         Set the state machine on its initial value.
 
@@ -85,7 +85,7 @@ class StateMachine:
         self.current = BaseState(self)
 
     def change(
-        self, state_name: str, *args: Tuple[Any], **kwargs: Dict[str, Any]
+        self, state_name: str, *args: Any, **kwargs: Any
     ) -> None:
         """
         Change the state of the machine.

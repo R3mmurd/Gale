@@ -18,7 +18,7 @@ def generate_frames(
     based on the spritesheet dimensions, the width of each sprite,
     and the height of each sprite.
 
-    :param spritesheed: surface with the texture.
+    :param spritesheet: surface with the texture.
     :param sprite_width: width of the sprite.
     :param sprite_height: height of the sprite.
     """

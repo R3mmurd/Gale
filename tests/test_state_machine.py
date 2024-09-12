@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+import pygame
 from gale.state import StateMachine, BaseState
 
 
@@ -35,5 +36,5 @@ class StateMachineTestCase(unittest.TestCase):
 
     def test__render(self) -> None:
         with patch.object(BaseState, "render", return_value=None) as render_method:
-            self.state_machine.render("a surface")
+            self.state_machine.render(pygame.Surface((0, 0)))
         render_method.assert_called_once_with("a surface")

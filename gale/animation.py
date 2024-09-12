@@ -18,7 +18,7 @@ class Animation:
         frames: Sequence[Any],
         time_interval: float = 0,
         loops: Optional[int] = None,
-        on_finish: Optional[Callable[[], None]] = None,
+        on_finish: Optional[Callable[[Any], None]] = None,
     ) -> None:
         """
         Initialize a new Animation.
@@ -45,14 +45,16 @@ class Animation:
         """
         self.times_played = 0
         self.timer = 0
-        self.current_frame = 0
+        self.current_frame_index = 0
 
     def update(self, dt: float) -> None:
         """
         This function updates the animation timer to check whether the frame
-        should be changed or not. If the animation has only one frame or
+        should be changed or not. If the animation has only one frame, or
         it has executed the number of times defined by loops, then
         this operation does not execute.
+
+        :param dt: Time elapsed (in seconds) since the last time this function has been executed.
         """
         if self.size <= 1 or (
             self.loops is not None and self.times_played > self.loops

@@ -29,6 +29,11 @@ class KeyboardData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
+        """
+        Initialize the KeyboardData object.
+
+        :param event: The pygame event.
+        """
         self.pressed: bool = event.type == pygame.KEYDOWN
         self.released: bool = event.type == pygame.KEYUP
         self.modifier: int = event.mod
@@ -49,6 +54,11 @@ class MouseClickData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
+        """
+        Initialize the MouseClickData object.
+
+        :param event: The pygame event.
+        """
         self.pressed: bool = event.type == pygame.MOUSEBUTTONDOWN
         self.released: bool = event.type == pygame.MOUSEBUTTONUP
         self.button: int = event.button
@@ -69,6 +79,11 @@ class MouseWheelData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
+        """
+        Initialize the MouseWheelData object.
+
+        :param event: The pygame event.
+        """
         self.flipped: bool = event.flipped
 
     @staticmethod
@@ -86,6 +101,11 @@ class MouseMotionData:
     """
 
     def __init__(self, event: pygame.event.Event) -> None:
+        """
+        Initialize the MouseMotionData object.
+
+        :param event: The pygame event.
+        """
         self.position: Tuple[int, int] = event.pos
         self.buttons: Tuple[int, int, int] = event.buttons
 
@@ -111,6 +131,12 @@ class InputListener:
     """
 
     def on_input(self, input_id: str, input_data: InputData) -> NoReturn:
+        """
+        This method should be implemented by the class that
+
+        :param input_id: The id of the input.
+        :param input_data: The data associated to the input.
+        """
         raise NotImplementedError()
 
 
@@ -313,6 +339,11 @@ class InputHandler:
 
     @classmethod
     def register_listener(cls, listener: InputListener) -> None:
+        """
+        Register a listener to the input handler.
+
+        :param listener: The listener to register.
+        """
         if not hasattr(listener, "on_input"):
             raise InvalidListenerException(
                 "Listener should implement the method on_input(input_id, input_data)"
@@ -321,34 +352,69 @@ class InputHandler:
 
     @classmethod
     def unregister_listener(cls, listener: InputListener) -> None:
+        """
+        Unregister a listener from the input handler.
+
+        :param listener: The listener to unregister.
+        """
         cls.listeners = [l for l in cls.listeners if l != listener]
 
     @classmethod
     def notify(cls, action_id: str, action_data: InputData) -> None:
+        """
+        Notify all the listeners about an input.
+
+        :param action_id: The id of the input.
+        :param action_data: The data associated to the input.
+        """
         for l in cls.listeners.copy():
             l.on_input(action_id, action_data)
 
     @classmethod
     def set_keyboard_action(cls, key: int, action_id: str) -> None:
+        """
+        Set an action to a keyboard key.
+
+        :param key: The key to set the action.
+        :param action_id: The id of the action.
+        """
         cls.input_binding[KeyboardData.get_action_name()][key] = action_id
 
     @classmethod
     def set_mouse_click_action(cls, button: int, action_id: str) -> None:
+        """
+        Set an action to a mouse button.
+
+        :param button: The button to set the action.
+        :param action_id: The id of the action.
+        """
         cls.input_binding[MouseClickData.get_action_name()][button] = action_id
 
     @classmethod
     def set_mouse_wheel_action(cls, direction: Tuple[int, int], action_id: str) -> None:
+        """
+        Set an action to a mouse wheel direction.
+
+        :param direction: The direction to set the action.
+        :param action_id: The id of the action.
+        """
         cls.input_binding[MouseWheelData.get_action_name()][direction] = action_id
 
     @classmethod
     def set_mouse_motion_action(
         cls, direction: Tuple[int, int], action_id: str
     ) -> None:
+        """
+        Set an action to a mouse motion direction.
+
+        :param direction: The direction to set the action.
+        :param action_id: The id of the action.
+        """
         cls.input_binding[MouseMotionData.get_action_name()][direction] = action_id
 
     @classmethod
     def handle_input(cls, event: pygame.event.Event) -> None:
-        data_class: Optional[Type] = cls.INPUT_DATA_TABLE.get(event.type)
+        data_class: Optional[Type[InputData]] = cls.INPUT_DATA_TABLE.get(event.type)
 
         if data_class is not None:
             action: Optional[str] = cls.input_binding[data_class.get_action_name()].get(

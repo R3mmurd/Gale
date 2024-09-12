@@ -22,9 +22,9 @@ pygame.init()
 
 class Game(InputListener):
     """
-    Base class to implemente a game by using pygame.
+    Base class to implement a game by using pygame.
 
-    This class handles the window to show the game an a virtual
+    This class handles the window to show the game a virtual
     screen with the resolution that you want to emulate. This also
     handles timer and the game loop.
 
@@ -127,13 +127,13 @@ class Game(InputListener):
         Empty. This should be implemented by the extension class.
 
 
-        :param render_surface: The surface where you should render all of the game elements on. Its dimensions are virtual_width x virtual_height.
+        :param surface: The surface where you should render all the game elements on. Its dimensions are virtual_width x virtual_height.
         """
         pass
 
     def __update(self, dt: float) -> None:
         """
-        Update the timer and call the the method update
+        Update the timer and call the method update
         that you should implement.
         """
         Timer.update(dt)
