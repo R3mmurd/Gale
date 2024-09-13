@@ -4,7 +4,7 @@ This file contains the implementation of a particle systems.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import Callable, List, Optional
+from typing import Optional
 
 import numpy as np
 
@@ -47,12 +47,22 @@ class Particle:
         self.color: pygame.Color = color
 
     def update(self, dt: float) -> None:
+        """
+        Update the particle position.
+
+        :param dt: Time elapsed in seconds.
+        """
         self.vx += self.ax * dt
         self.vy += self.ay * dt
         self.x += self.vx
         self.y += self.vy
 
     def render(self, surface: pygame.Surface) -> None:
+        """
+        Render the particle.
+
+        :param surface: The surface where the particle will be rendered.
+        """
         s = pygame.Surface((4, 4))
         s.set_alpha(self.color[3])
         pygame.draw.circle(s, self.color, (2, 2), 2)
@@ -61,7 +71,7 @@ class Particle:
 
 class ParticleSystem:
     def __init__(
-        self, x: float, y: float, n: int, on_finish: Optional[Callable[[], None]] = None
+        self, x: float, y: float, n: int, on_finish: Optional[callable] = None
     ) -> None:
         """
         Builds a particle system.
@@ -81,44 +91,77 @@ class ParticleSystem:
         self.ax2: float = 0
         self.ay1: float = 0
         self.ay2: float = 0
-        self.x_desv: float = 1
-        self.y_desv: float = 1
+        self.x_dev: float = 1
+        self.y_dev: float = 1
 
-        self.colors: List[pygame.Color] = []
-        self.particles: List[Particle] = []
+        self.colors:list[pygame.Color] = []
+        self.particles: list[Particle] = []
 
         self.on_finish = on_finish or (lambda: None)
 
     def set_life_time(self, minimum: float, maximum: float) -> None:
+        """
+        Set the lifetime for the particles.
+
+        :param minimum: Minimum lifetime in seconds.
+        :param maximum: Maximum lifetime in seconds.
+        """
         self.min_life_time = minimum
         self.max_life_time = maximum
 
     def set_linear_acceleration(
         self, x1: float, y1: float, x2: float, y2: float
     ) -> None:
+        """
+        Set the linear acceleration for the particles.
+
+        :param x1: Minimum x acceleration.
+        :param y1: Minimum y acceleration.
+        :param x2: Maximum x acceleration.
+        :param y2: Maximum y acceleration.
+        """
         self.ax1 = x1
         self.ay1 = y1
         self.ax2 = x2
         self.ay2 = y2
 
-    def set_colors(self, colors: List[pygame.Color]) -> None:
+    def set_colors(self, colors: list[pygame.Color]) -> None:
+        """
+        Set the possible colors for the particles.
+
+        :param colors: List of colors.
+        """
         self.colors = colors
 
     def set_area_spread(self, rx: float, ry: float) -> None:
-        self.x_desv = rx
-        self.y_desv = ry
+        """
+        Set the spread for the particles.
+
+        :param rx: Spread in x.
+        :param ry: Spread in y.
+        """
+        self.x_dev = rx
+        self.y_dev = ry
 
     def generate(self) -> None:
+        """
+        Generate the particles.
+        """
         for _ in range(self.size):
             ax: float = np.random.uniform(self.ax1, self.ax2)
             ay: float = np.random.uniform(self.ay1, self.ay2)
-            px: float = np.random.normal(self.x_mean, self.x_desv)
-            py: float = np.random.normal(self.y_mean, self.y_desv)
+            px: float = np.random.normal(self.x_mean, self.x_dev)
+            py: float = np.random.normal(self.y_mean, self.y_dev)
             color: pygame.Color = self.colors[np.random.choice(len(self.colors))]
             life_time: float = np.random.uniform(self.min_life_time, self.max_life_time)
             self.particles.append(Particle(px, py, ax, ay, life_time, color))
 
     def update(self, dt: float) -> None:
+        """
+        Update the particles.
+
+        :param dt: Time elapsed in seconds.
+        """
         if len(self.particles) == 0:
             return
 
@@ -134,6 +177,11 @@ class ParticleSystem:
                 particle.update(dt)
 
     def render(self, surface: pygame.Surface) -> None:
+        """
+        Render the particles.
+
+        :param surface: The surface where the particles will be rendered.
+        """
         for particle in self.particles:
             if self.timer < particle.life_time:
                 particle.render(surface)

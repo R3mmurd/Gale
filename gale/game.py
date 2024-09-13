@@ -10,7 +10,7 @@ Author: Alejandro Mujica
 
 import sys
 
-from typing import Optional, Any, Tuple, Dict
+from typing import Optional
 
 import pygame
 
@@ -66,8 +66,8 @@ class Game(InputListener):
         virtual_width: Optional[int] = None,
         virtual_height: Optional[int] = None,
         fps: int = 60,
-        *args: Tuple[Any],
-        **kwargs: Dict[str, Any]
+        *args: any,
+        **kwargs: any
     ) -> None:
         """
         Set the basic elements of the game in their initial values.

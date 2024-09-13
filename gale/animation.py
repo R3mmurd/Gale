@@ -4,7 +4,7 @@ This file contains the implementation of the class Animation.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import Sequence, Optional, Any, Callable
+from typing import Sequence, Optional
 
 
 class Animation:
@@ -15,10 +15,10 @@ class Animation:
 
     def __init__(
         self,
-        frames: Sequence[Any],
+        frames: Sequence[any],
         time_interval: float = 0,
         loops: Optional[int] = None,
-        on_finish: Optional[Callable[[Any], None]] = None,
+        on_finish: Optional[callable] = None,
     ) -> None:
         """
         Initialize a new Animation.
@@ -28,14 +28,14 @@ class Animation:
         :param loops: Number of times that this animation shall execute. The default value is None to execute infinitely.
         :param on_finish: Callback to do something after finish loops. The default value is an empty lambda.
         """
-        self.frames: Sequence[Any] = frames
+        self.frames: Sequence[any] = frames
         self.interval: float = time_interval
         self.loops: Optional[int] = loops
         self.size: int = len(self.frames)
         self.timer: float = 0
         self.times_played: int = 0
         self.current_frame_index: int = 0
-        self.on_finish: Callable[[], None] = (
+        self.on_finish: callable = (
             (lambda: None) if on_finish is None else on_finish
         )
 
@@ -77,7 +77,7 @@ class Animation:
                     # Animation fulfilled invoking callback, if exist
                     self.on_finish()
 
-    def get_current_frame(self) -> Any:
+    def get_current_frame(self) -> any:
         """
         :returns: The current frame of the animation.
         """

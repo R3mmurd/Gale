@@ -6,7 +6,7 @@ change between states.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import TypeVar, Tuple, Dict, Any
+from typing import TypeVar
 
 import pygame
 
@@ -25,7 +25,7 @@ class BaseState:
     def __init__(self, state_machine: TypeVar("StateMachine")) -> None:
         self.state_machine: TypeVar("StateMachine") = state_machine
 
-    def enter(self, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
+    def enter(self, *args: any, **kwargs: any) -> None:
         """
         Method to be executed when the state machine enters in the state.
         """
@@ -85,7 +85,7 @@ class StateMachine:
         self.current = BaseState(self)
 
     def change(
-        self, state_name: str, *args: Any, **kwargs: Any
+        self, state_name: str, *args: any, **kwargs: any
     ) -> None:
         """
         Change the state of the machine.
@@ -184,7 +184,7 @@ class StateStack:
         self.states = []
 
     def push(
-        self, state: BaseState, *args: Tuple[Any], **kwargs: Dict[str, Any]
+        self, state: BaseState, *args: any, **kwargs: any
     ) -> None:
         """
         Add a new state on the top of the stack.

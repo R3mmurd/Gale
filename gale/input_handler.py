@@ -5,11 +5,11 @@ input handler.
 Author: Alejandro Mujica
 """
 
-from typing import Tuple, Union, TypeVar, NoReturn, Dict, List, Optional, Type
+from typing import Union, TypeVar, NoReturn, Optional, Type
 
 import pygame
 
-INPUT_EVENTS: Tuple[int, int, int, int, int, int] = (
+INPUT_EVENTS: tuple[int, int, int, int, int, int] = (
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.MOUSEBUTTONDOWN,
@@ -87,7 +87,7 @@ class MouseWheelData:
         self.flipped: bool = event.flipped
 
     @staticmethod
-    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+    def get_action_key(event: pygame.event.Event) -> tuple[int, int]:
         return event.x, event.y
 
     @staticmethod
@@ -106,11 +106,11 @@ class MouseMotionData:
 
         :param event: The pygame event.
         """
-        self.position: Tuple[int, int] = event.pos
-        self.buttons: Tuple[int, int, int] = event.buttons
+        self.position: tuple[int, int] = event.pos
+        self.buttons: tuple[int, int, int] = event.buttons
 
     @staticmethod
-    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+    def get_action_key(event: pygame.event.Event) -> tuple[int, int]:
         return event.rel
 
     @staticmethod
@@ -296,14 +296,14 @@ KEY_z: int = pygame.K_z
 MOUSE_BUTTON_1: int = 1
 MOUSE_BUTTON_2: int = 2
 MOUSE_BUTTON_3: int = 3
-MOUSE_MOTION_UP: Tuple[int, int] = (0, -1)
-MOUSE_MOTION_RIGHT: Tuple[int, int] = (1, 0)
-MOUSE_MOTION_DOWN: Tuple[int, int] = (0, 1)
-MOUSE_MOTION_LEFT: Tuple[int, int] = (-1, 0)
-MOUSE_WHEEL_UP: Tuple[int, int] = (0, -1)
-MOUSE_WHEEL_RIGHT: Tuple[int, int] = (1, 0)
-MOUSE_WHEEL_DOWN: Tuple[int, int] = (0, 1)
-MOUSE_WHEEL_LEFT: Tuple[int, int] = (-1, 0)
+MOUSE_MOTION_UP: tuple[int, int] = (0, -1)
+MOUSE_MOTION_RIGHT: tuple[int, int] = (1, 0)
+MOUSE_MOTION_DOWN: tuple[int, int] = (0, 1)
+MOUSE_MOTION_LEFT: tuple[int, int] = (-1, 0)
+MOUSE_WHEEL_UP: tuple[int, int] = (0, -1)
+MOUSE_WHEEL_RIGHT: tuple[int, int] = (1, 0)
+MOUSE_WHEEL_DOWN: tuple[int, int] = (0, 1)
+MOUSE_WHEEL_LEFT: tuple[int, int] = (-1, 0)
 
 
 class InputHandler:
@@ -319,7 +319,7 @@ class InputHandler:
     - Any pair (mouse_motion, input_id) should be added to input_binding["mouse_motion"].
     """
 
-    INPUT_DATA_TABLE: Dict[int, Type] = {
+    INPUT_DATA_TABLE: dict[int, Type] = {
         pygame.KEYDOWN: KeyboardData,
         pygame.KEYUP: KeyboardData,
         pygame.MOUSEBUTTONUP: MouseClickData,
@@ -328,14 +328,14 @@ class InputHandler:
         pygame.MOUSEWHEEL: MouseWheelData,
     }
 
-    input_binding: Dict[str, Union[Dict[int, str], Dict[Tuple[int, int], str]]] = {
+    input_binding: dict[str, dict[Union[int, tuple[int, int]], str]] = {
         KeyboardData.get_action_name(): {},
         MouseClickData.get_action_name(): {},
         MouseWheelData.get_action_name(): {},
         MouseMotionData.get_action_name(): {},
     }
 
-    listeners: List[InputListener] = []
+    listeners: list[InputListener] = []
 
     @classmethod
     def register_listener(cls, listener: InputListener) -> None:
@@ -391,7 +391,7 @@ class InputHandler:
         cls.input_binding[MouseClickData.get_action_name()][button] = action_id
 
     @classmethod
-    def set_mouse_wheel_action(cls, direction: Tuple[int, int], action_id: str) -> None:
+    def set_mouse_wheel_action(cls, direction: tuple[int, int], action_id: str) -> None:
         """
         Set an action to a mouse wheel direction.
 
@@ -402,7 +402,7 @@ class InputHandler:
 
     @classmethod
     def set_mouse_motion_action(
-        cls, direction: Tuple[int, int], action_id: str
+        cls, direction: tuple[int, int], action_id: str
     ) -> None:
         """
         Set an action to a mouse motion direction.

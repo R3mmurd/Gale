@@ -32,7 +32,7 @@ class Event:
             cls.handlers[event_id].remove(handler)
 
     @classmethod
-    def dispatch(cls, event_id: Union[str, int], *args, **kwargs) -> None:
+    def dispatch(cls, event_id: Union[str, int], *args: any, **kwargs: any) -> None:
         """
         Dispatch an event.
         :param event_id: The event id.

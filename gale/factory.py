@@ -8,7 +8,7 @@ Author: Alejandro Mujica
 
 import sys
 
-from typing import Any, Dict, Optional, Type, TypeVar, Generic
+from typing import Optional, TypeVar, Generic
 
 T = TypeVar("T")
 
@@ -23,7 +23,7 @@ class Factory(Generic[T]):
         self._prototype = prototype
 
     def create(
-        self, x: float, y: float, properties: Optional[Dict[str, any]] = None
+        self, x: float, y: float, properties: Optional[dict[str, any]] = None
     ) -> T:
         """
         Create a new object from the prototype.

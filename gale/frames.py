@@ -5,14 +5,12 @@ This file contains a function to generate frames from a spritesheets
 Author: Alejandro Mujica
 """
 
-from typing import List
-
 import pygame
 
 
 def generate_frames(
     spritesheet: pygame.Surface, sprite_width: int, sprite_height: int
-) -> List[pygame.Rect]:
+) -> list[pygame.Rect]:
     """
     Given a spritesheet, this functions builds a list of frames
     based on the spritesheet dimensions, the width of each sprite,

@@ -6,8 +6,6 @@ Author: Alejandro Mujica (aledrums@gmail.com)
 
 import pygame
 
-from typing import Any
-
 
 class Camera:
     def __init__(self, x: int, y: int, width: int, height: int) -> None:
@@ -26,7 +24,7 @@ class Camera:
         self.collision_boundaries = None
         self.following = None
 
-    def attach_to(self, entity: Any) -> None:
+    def attach_to(self, entity: any) -> None:
         """
         Attach the camera to an entity.
 

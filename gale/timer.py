@@ -4,23 +4,23 @@ This file contains utility classes that perform as timers.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import Callable, Optional, Any, Sequence, Tuple, Dict, Union
+from typing import Optional, Sequence, Union
 
 from .ease_functions import EASE_FUNCTIONS
 
 
 class TimerItemBase:
     def __init__(
-        self, time: float, on_finish: Optional[Callable[[], None]] = None
+        self, time: float, on_finish: Optional[callable] = None
     ) -> None:
         self.timer: float = 0
         self.time: float = time
-        self.on_finish: Callable[[], None] = (
+        self.on_finish: callable = (
             (lambda: None) if on_finish is None else on_finish
         )
         self.to_remove: bool = False
 
-    def finish(self, on_finish: Callable[[], None]) -> None:
+    def finish(self, on_finish: callable) -> None:
         self.on_finish = on_finish
 
     def remove(self) -> None:
@@ -31,12 +31,12 @@ class Every(TimerItemBase):
     def __init__(
         self,
         time: float,
-        function: Callable[[], None],
+        function: callable,
         limit: Optional[int] = None,
-        on_finish: Optional[Callable[[], None]] = None,
+        on_finish: Optional[callable] = None,
     ) -> None:
         super().__init__(time, on_finish=on_finish)
-        self.function: Callable[[], None] = function
+        self.function: callable = function
         self.limit: Optional[int] = limit
 
     def update(self, dt: float) -> None:
@@ -54,7 +54,7 @@ class Every(TimerItemBase):
 
 
 class After(TimerItemBase):
-    def __init__(self, time: float, function: Callable[[], None]) -> None:
+    def __init__(self, time: float, function: callable) -> None:
         super().__init__(time, on_finish=function)
 
     def update(self, dt: float) -> None:
@@ -68,9 +68,9 @@ class Tween(TimerItemBase):
     def __init__(
         self,
         time: float,
-        params: Sequence[Tuple[Any, Dict[str, Any]]],
+        params: Sequence[tuple[any, dict[str, any]]],
         ease_function_name: str = "linear",
-        on_finish: Optional[Callable[[], None]] = lambda: None,
+        on_finish: Optional[callable] = lambda: None,
     ) -> None:
         super().__init__(time, on_finish=on_finish)
 
@@ -81,7 +81,7 @@ class Tween(TimerItemBase):
                 f"{ease_function_name} is not a valid ease function for tween"
             )
 
-        self.plan: Sequence[Tuple[Any, Dict[str, Any]]] = []
+        self.plan: list[tuple[any, dict[str, any]]] = []
 
         for obj, attrs in params:
             for key, final in attrs.items():
@@ -119,7 +119,7 @@ class Tween(TimerItemBase):
 
 
 class Timer:
-    items: Union[Every, After, Tween] = []
+    items: list[Union[Every, After, Tween]] = []
     paused: bool = False
 
     @classmethod
@@ -136,15 +136,15 @@ class Timer:
     def every(
         cls,
         time: float,
-        function: Callable[[], None],
+        function: callable,
         limit: Optional[int] = None,
-        on_finish: Optional[Callable[[], None]] = None,
+        on_finish: Optional[callable] = None,
     ) -> Every:
         cls.items.append(Every(time, function, limit=limit, on_finish=on_finish))
         return cls.items[-1]
 
     @classmethod
-    def after(cls, time: float, function: Callable[[], None]) -> After:
+    def after(cls, time: float, function: callable) -> After:
         cls.items.append(After(time, function))
         return cls.items[-1]
 
@@ -152,9 +152,9 @@ class Timer:
     def tween(
         cls,
         time: float,
-        objs: Sequence[Tuple[Any, Dict[str, Any]]],
+        objs: Sequence[tuple[any, dict[str, any]]],
         ease_function_name: str = "linear",
-        on_finish: Optional[Callable[[], None]] = None,
+        on_finish: Optional[callable] = None,
     ) -> Tween:
         cls.items.append(
             Tween(
