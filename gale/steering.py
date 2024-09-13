@@ -1,6 +1,7 @@
 """
 This module contains steering behaviors for agents.
 """
+
 import math
 import pygame
 
@@ -9,6 +10,7 @@ class Steering:
     """
     This is the base class to implement steering behaviors.
     """
+
     def calculate(self) -> pygame.Vector2:
         """
         This method should be implemented by the child classes.
@@ -20,6 +22,7 @@ class Seek(Steering):
     """
     This class implements the seek steering behavior.
     """
+
     def __init__(self, agent, target) -> None:
         """
         :param agent: The agent that will seek the target.
@@ -39,6 +42,7 @@ class Flee(Steering):
     """
     This class implements the flee steering behavior.
     """
+
     def __init__(self, agent, target) -> None:
         """
         :param agent: The agent that will flee from the target.
@@ -58,6 +62,7 @@ class Arrival(Steering):
     """
     This class implements the arrival steering behavior.
     """
+
     def __init__(self, agent, target, radius) -> None:
         """
         :param agent: The agent that will arrive at the target.
@@ -83,6 +88,7 @@ class Wander(Steering):
     """
     This class implements the wander steering behavior.
     """
+
     def __init__(self, agent, wander_distance, wander_radius, wander_jitter) -> None:
         """
         :param agent: The agent that will wander.
@@ -115,6 +121,7 @@ class Pursue(Steering):
     """
     This class implements the pursue steering behavior.
     """
+
     def __init__(self, agent, target) -> None:
         """
         :param agent: The agent that will pursue the target.
@@ -137,6 +144,7 @@ class Evade(Steering):
     """
     This class implements the evade steering behavior.
     """
+
     def __init__(self, agent, target) -> None:
         """
         :param agent: The agent that will evade the target.
@@ -159,6 +167,7 @@ class Avoid(Steering):
     """
     This class implements the avoid steering behavior.
     """
+
     def __init__(self, agent, obstacles) -> None:
         """
         :param agent: The agent that will avoid the obstacles.
@@ -185,6 +194,7 @@ class FollowPath(Steering):
     """
     This class implements the follow path steering behavior.
     """
+
     def __init__(self, agent, path) -> None:
         """
         :param agent: The agent that will follow the path.
@@ -211,6 +221,7 @@ class Separate(Steering):
     """
     This class implements the separate steering behavior.
     """
+
     def __init__(self, agent, neighbors) -> None:
         """
         :param agent: The agent that will separate from the neighbors.
@@ -234,6 +245,7 @@ class Align(Steering):
     """
     This class implements the align steering behavior.
     """
+
     def __init__(self, agent, neighbors) -> None:
         """
         :param agent: The agent that will align with the neighbors.
@@ -257,6 +269,7 @@ class Cohesion(Steering):
     """
     This class implements the cohesion steering behavior.
     """
+
     def __init__(self, agent, neighbors) -> None:
         """
         :param agent: The agent that will move towards the center of mass of the neighbors.
@@ -280,6 +293,7 @@ class Flock(Steering):
     """
     This class implements the flock steering behavior.
     """
+
     def __init__(self, agent, neighbors) -> None:
         """
         :param agent: The agent that will flock with the neighbors.

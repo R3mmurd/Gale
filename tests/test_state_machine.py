@@ -34,7 +34,8 @@ class StateMachineTestCase(unittest.TestCase):
             self.state_machine.update(0.1)
         update_method.assert_called_once_with(0.1)
 
-    def test__render(self) -> None:
+    def test_render(self) -> None:
+        a_surface = pygame.Surface((0, 0))
         with patch.object(BaseState, "render", return_value=None) as render_method:
-            self.state_machine.render(pygame.Surface((0, 0)))
-        render_method.assert_called_once_with("a surface")
+            self.state_machine.render(a_surface)
+        render_method.assert_called_once_with(a_surface)

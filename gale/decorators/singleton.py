@@ -1,6 +1,7 @@
 """
 Thios module contains the Singleton class decorator.
 """
+
 from functools import wraps
 
 

@@ -1,6 +1,7 @@
 """
 This module contains a simple event system.
 """
+
 from typing import Union
 
 
@@ -8,6 +9,7 @@ class Event:
     """
     This class represents an event.
     """
+
     handlers = {}
 
     @classmethod

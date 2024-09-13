@@ -19,16 +19,16 @@ class FactoryTestCase(unittest.TestCase):
     def test_create_game_object_successfully(self) -> None:
         game_object = self.factory.create(5, 8, {"texture_name": "texture.png"})
         self.assertIsInstance(game_object, GameObject)
-        self.assertEqual(game_object.x, 5)
-        self.assertEqual(game_object.y, 8)
-        self.assertEqual(game_object.texture_name, "texture.png")
+        self.assertEqual(5, game_object.x)
+        self.assertEqual(8, game_object.y)
+        self.assertEqual("texture.png", game_object.texture_name)
 
     def test_create_game_object_without_properties(self) -> None:
         game_object = self.factory.create(5, 8)
         self.assertIsInstance(game_object, GameObject)
-        self.assertEqual(game_object.x, 5)
-        self.assertEqual(game_object.y, 8)
-        self.assertEqual(game_object.texture_name, "default_texture.png")
+        self.assertEqual(5, game_object.x)
+        self.assertEqual(8, game_object.y)
+        self.assertEqual("default_texture.png", game_object.texture_name)
 
     def test_create_game_object_failed(self) -> None:
         with self.assertRaises(TypeError) as ex:

@@ -10,14 +10,10 @@ from .ease_functions import EASE_FUNCTIONS
 
 
 class TimerItemBase:
-    def __init__(
-        self, time: float, on_finish: Optional[callable] = None
-    ) -> None:
+    def __init__(self, time: float, on_finish: Optional[callable] = None) -> None:
         self.timer: float = 0
         self.time: float = time
-        self.on_finish: callable = (
-            (lambda: None) if on_finish is None else on_finish
-        )
+        self.on_finish: callable = (lambda: None) if on_finish is None else on_finish
         self.to_remove: bool = False
 
     def finish(self, on_finish: callable) -> None:

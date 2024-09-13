@@ -18,7 +18,7 @@ def render_text(
     color: pygame.Color,
     bg_color: Optional[pygame.Color] = None,
     center: bool = False,
-    shadowed: bool = False
+    shadowed: bool = False,
 ):
     text_obj: pygame.Surface = font.render(text, True, color, bg_color)
     text_rect: pygame.Rect = text_obj.get_rect()

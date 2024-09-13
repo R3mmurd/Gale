@@ -94,7 +94,7 @@ class ParticleSystem:
         self.x_dev: float = 1
         self.y_dev: float = 1
 
-        self.colors:list[pygame.Color] = []
+        self.colors: list[pygame.Color] = []
         self.particles: list[Particle] = []
 
         self.on_finish = on_finish or (lambda: None)

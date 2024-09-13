@@ -35,9 +35,7 @@ class Animation:
         self.timer: float = 0
         self.times_played: int = 0
         self.current_frame_index: int = 0
-        self.on_finish: callable = (
-            (lambda: None) if on_finish is None else on_finish
-        )
+        self.on_finish: callable = (lambda: None) if on_finish is None else on_finish
 
     def reset(self) -> None:
         """
