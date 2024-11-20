@@ -28,22 +28,22 @@ class Animation:
         :param loops: Number of times that this animation shall execute. The default value is None to execute infinitely.
         :param on_finish: Callback to do something after finish loops. The default value is an empty lambda.
         """
-        self.frames: Sequence[any] = frames
-        self.interval: float = time_interval
-        self.loops: Optional[int] = loops
-        self.size: int = len(self.frames)
-        self.timer: float = 0
-        self.times_played: int = 0
-        self.current_frame_index: int = 0
-        self.on_finish: callable = (lambda: None) if on_finish is None else on_finish
+        self.__frames: Sequence[any] = frames
+        self.__interval: float = time_interval
+        self.__loops: Optional[int] = loops
+        self.__size: int = len(self.__frames)
+        self.__timer: float = 0
+        self.__times_played: int = 0
+        self.__current_frame_index: int = 0
+        self.__on_finish: callable = (lambda: None) if on_finish is None else on_finish
 
     def reset(self) -> None:
         """
         Set the animation on its initial values.
         """
-        self.times_played = 0
-        self.timer = 0
-        self.current_frame_index = 0
+        self.__times_played = 0
+        self.__timer = 0
+        self.__current_frame_index = 0
 
     def update(self, dt: float) -> None:
         """
@@ -54,29 +54,33 @@ class Animation:
 
         :param dt: Time elapsed (in seconds) since the last time this function has been executed.
         """
-        if self.size <= 1 or (
-            self.loops is not None and self.times_played > self.loops
+        if self.__size <= 1 or (
+            self.__loops is not None and self.__times_played > self.__loops
         ):
             return
 
-        self.timer += dt
+        self.__timer += dt
 
-        if self.timer >= self.interval:
-            self.timer %= self.interval
-            self.current_frame_index = (self.current_frame_index + 1) % self.size
+        if self.__timer >= self.__interval:
+            self.__timer %= self.__interval
+            self.__current_frame_index = (self.__current_frame_index + 1) % self.__size
 
             # Only increments times played if there is a value for loops.
-            if self.current_frame_index == 0 and self.loops is not None:
-                self.times_played += 1
+            if self.__current_frame_index == 0 and self.__loops is not None:
+                self.__times_played += 1
 
-                if self.times_played > self.loops:
+                if self.__times_played > self.__loops:
                     # Setting the last frame if loops was completed
-                    self.current_frame_index = len(self.frames) - 1
+                    self.__current_frame_index = len(self.__frames) - 1
                     # Animation fulfilled invoking callback, if exist
-                    self.on_finish()
+                    self.__on_finish()
 
     def get_current_frame(self) -> any:
         """
         :returns: The current frame of the animation.
         """
-        return self.frames[self.current_frame_index]
+        return self.__frames[self.__current_frame_index]
+
+    @property
+    def times_played(self) -> int:
+        return self.__times_played

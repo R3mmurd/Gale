@@ -51,30 +51,48 @@ class Text:
         center: bool = False,
         shadowed: bool = False,
     ):
-        self.text_str = text_str
-        self.font: pygame.font.Font = font
-        self.text: pygame.Surface = font.render(self.text_str, True, color, bg_color)
-        self.rect: pygame.Rect = self.text.get_rect()
-        self.x: float = x
-        self.y: float = y
-        self.center: bool = center
-        self.shadowed: bool = shadowed
-        if self.shadowed:
-            self.shadow_text: pygame.Surface = font.render(
-                self.text_str, True, (0, 0, 0)
+        self.__text_str = text_str
+        self.__font: pygame.font.Font = font
+        self.__text: pygame.Surface = font.render(
+            self.__text_str, True, color, bg_color
+        )
+        self.__rect: pygame.Rect = self.__text.get_rect()
+        self.__x: float = x
+        self.__y: float = y
+        self.__center: bool = center
+        self.__shadowed: bool = shadowed
+        if self.__shadowed:
+            self.__shadow_text: pygame.Surface = font.render(
+                self.__text_str, True, (0, 0, 0)
             )
 
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, x):
+        self.__x = x
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, y):
+        self.__y = y
+
     def render(self, surface: pygame.Surface) -> None:
-        if self.center:
-            self.rect.center = (self.x, self.y)
+        if self.__center:
+            self.__rect.center = (self.__x, self.__y)
         else:
-            self.rect.x = self.x
-            self.rect.y = self.y
+            self.__rect.x = self.__x
+            self.__rect.y = self.__y
 
-        if self.shadowed:
-            shadow_rect = self.shadow_text.get_rect()
-            shadow_rect.x = self.rect.x + 1
-            shadow_rect.y = self.rect.y + 1
-            surface.blit(self.shadow_text, shadow_rect)
+        if self.__shadowed:
+            shadow_rect = self.__shadow_text.get_rect()
+            shadow_rect.x = self.__rect.x + 1
+            shadow_rect.y = self.__rect.y + 1
+            surface.blit(self.__shadow_text, shadow_rect)
 
-        surface.blit(self.text, self.rect)
+        surface.blit(self.__text, self.__rect)

@@ -201,9 +201,9 @@ def ease_in_back(t: float) -> float:
     Ease in function using the back function.
     This function starts slow and then accelerates.
     """
-    C1 = 1.70158
-    C3 = C1 + 1
-    return C3 * t * t * t - C1 * t * t
+    c1 = 1.70158
+    c3 = c1 + 1
+    return c3 * t * t * t - c1 * t * t
 
 
 def ease_out_back(t: float) -> float:
@@ -211,9 +211,9 @@ def ease_out_back(t: float) -> float:
     Ease out function using the back function.
     This function starts fast and then decelerates.
     """
-    C1 = 1.70158
-    C3 = C1 + 1
-    return 1 + C3 * pow(t - 1, 3) + C1 * pow(t - 1, 2)
+    c1 = 1.70158
+    c3 = c1 + 1
+    return 1 + c3 * pow(t - 1, 3) + c1 * pow(t - 1, 2)
 
 
 def ease_in_out_back(t: float) -> float:
@@ -239,9 +239,9 @@ def ease_in_elastic(t: float) -> float:
     if real_equal(t, 0) or real_equal(t, 1):
         return t
 
-    C4 = (2 * math.pi) / 3
+    c4 = (2 * math.pi) / 3
 
-    return -pow(2, 10 * t - 10) * math.sin((t * 10 - 10.75) * C4)
+    return -pow(2, 10 * t - 10) * math.sin((t * 10 - 10.75) * c4)
 
 
 def ease_out_elastic(t: float) -> float:
@@ -252,9 +252,9 @@ def ease_out_elastic(t: float) -> float:
     if real_equal(t, 0) or real_equal(t, 1):
         return t
 
-    C4 = (2 * math.pi) / 3
+    c4 = (2 * math.pi) / 3
 
-    return pow(2, -10 * t) * math.sin((t * 10 - 0.75) * C4) + 1
+    return pow(2, -10 * t) * math.sin((t * 10 - 0.75) * c4) + 1
 
 
 def ease_in_out_elastic(t: float) -> float:
@@ -265,12 +265,12 @@ def ease_in_out_elastic(t: float) -> float:
     if real_equal(t, 0) or real_equal(t, 1):
         return t
 
-    C5 = (2 * math.pi) / 4.5
+    c5 = (2 * math.pi) / 4.5
 
     if t < 0.5:
-        return -0.5 * pow(2, 20 * t - 10) * math.sin((20 * t - 11.125) * C5)
+        return -0.5 * pow(2, 20 * t - 10) * math.sin((20 * t - 11.125) * c5)
     else:
-        return pow(2, -20 * t + 10) * math.sin((20 * t - 11.125) * C5) * 0.5 + 1
+        return pow(2, -20 * t + 10) * math.sin((20 * t - 11.125) * c5) * 0.5 + 1
 
 
 def ease_in_bounce(t: float) -> float:

@@ -25,7 +25,7 @@ def generate_frames(
     num_cols: int = w // sprite_width
     num_rows: int = h // sprite_height
 
-    frames: List[pygame.Rect] = []
+    frames: list[pygame.Rect] = []
 
     for i in range(num_rows):
         for j in range(num_cols):

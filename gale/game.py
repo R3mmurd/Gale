@@ -10,7 +10,7 @@ Author: Alejandro Mujica
 
 import sys
 
-from typing import Optional
+from typing import Optional, Any
 
 import pygame
 
@@ -66,6 +66,7 @@ class Game(InputListener):
         virtual_width: Optional[int] = None,
         virtual_height: Optional[int] = None,
         fps: int = 60,
+        fixed_update_time_interval: float = 0.02,
         *args: any,
         **kwargs: any
     ) -> None:
@@ -78,22 +79,29 @@ class Game(InputListener):
         :param virtual_width: Width we're trying to emulate. By default is None to set the same value of window_width.
         :param virtual_height: Height we're trying to emulate. By default is None to set the same value of window_height.
         :param fps: Number of frame per seconds. *args and **kwargs Any argument list of keyword arguments that are accepted by pygame.display.set_mode.
+        :param fixed_update_time_interval: Time interval to call the fixed_update method. By default is 0.02.
+        :param args: Any argument list that is accepted by pygame.display.set_mode.
+        :param kwargs: Any keyword argument list that is accepted by pygame.display.set_mode.
         """
-        self.window_width: int = window_width
-        self.window_height: int = window_height
-        self.virtual_width: int = virtual_width or self.window_width
-        self.virtual_height: int = virtual_height or self.window_height
-        self.fps = fps
+        self.__window_width: int = window_width
+        self.__window_height: int = window_height
+        self.__virtual_width: int = virtual_width or self.__window_width
+        self.__virtual_height: int = virtual_height or self.__window_height
+        self.__fps: int = fps
+        self.__fixed_update_time_interval: float = fixed_update_time_interval
+        self.__fixed_update_timer: float = 0
 
         # Setting the screen
         self.screen: pygame.Surface = pygame.display.set_mode(
-            (self.window_width, self.window_height), *args, **kwargs
+            (self.__window_width, self.__window_height), *args, **kwargs
         )
         self.title: str = title or "Game"
         pygame.display.set_caption(self.title)
 
         # Creating the virtual screen
-        self.render_surface = pygame.Surface((self.virtual_width, self.virtual_height))
+        self.render_surface = pygame.Surface(
+            (self.__virtual_width, self.__virtual_height)
+        )
         self.clock = pygame.time.Clock()
 
         self.running: bool = False
@@ -114,6 +122,12 @@ class Game(InputListener):
         """
         pass
 
+    def fixed_update(self) -> None:
+        """
+        Empty. This should be implemented by the extension class.
+        """
+        pass
+
     def update(self, dt: float) -> None:
         """
         Empty. This should be implemented by the extension class.
@@ -125,7 +139,6 @@ class Game(InputListener):
     def render(self, surface: pygame.Surface) -> None:
         """
         Empty. This should be implemented by the extension class.
-
 
         :param surface: The surface where you should render all the game elements on. Its dimensions are virtual_width x virtual_height.
         """
@@ -164,7 +177,15 @@ class Game(InputListener):
                 elif event.type in INPUT_EVENTS:
                     InputHandler.handle_input(event)
 
-            dt = self.clock.tick(self.fps) / 1000.0
+            dt = self.clock.tick(self.__fps) / 1000.0
+
+            self.__fixed_update_timer += dt
+            if self.__fixed_update_timer >= self.__fixed_update_time_interval:
+                self.__fixed_update_timer = (
+                    self.__fixed_update_timer % self.__fixed_update_time_interval
+                )
+                self.fixed_update()
+
             self.__update(dt)
             self.__render()
 

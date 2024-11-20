@@ -32,19 +32,28 @@ class Particle:
         :param color: render color.
         """
         # Position
-        self.x: float = x
-        self.y: float = y
+        self.__x: float = x
+        self.__y: float = y
 
         # Velocity
-        self.vx: float = 0
-        self.vy: float = 0
+        self.__vx: float = 0
+        self.__vy: float = 0
 
         # Acceleration
-        self.ax: float = ax
-        self.ay: float = ay
+        self.__ax: float = ax
+        self.__ay: float = ay
 
-        self.life_time: float = life_time
-        self.color: pygame.Color = color
+        self.__lifetime: float = life_time
+        self.__color: pygame.Color = color
+
+    @property
+    def lifetime(self):
+        """
+        Get the lifetime of the particle.
+
+        @return: The lifetime of the particle.
+        """
+        return self.__lifetime
 
     def update(self, dt: float) -> None:
         """
@@ -52,10 +61,10 @@ class Particle:
 
         :param dt: Time elapsed in seconds.
         """
-        self.vx += self.ax * dt
-        self.vy += self.ay * dt
-        self.x += self.vx
-        self.y += self.vy
+        self.__vx += self.__ax * dt
+        self.__vy += self.__ay * dt
+        self.__x += self.__vx
+        self.__y += self.__vy
 
     def render(self, surface: pygame.Surface) -> None:
         """
@@ -64,9 +73,9 @@ class Particle:
         :param surface: The surface where the particle will be rendered.
         """
         s = pygame.Surface((4, 4))
-        s.set_alpha(self.color[3])
-        pygame.draw.circle(s, self.color, (2, 2), 2)
-        surface.blit(s, (int(self.x), int(self.y)))
+        s.set_alpha(self.__color[3])
+        pygame.draw.circle(s, self.__color, (2, 2), 2)
+        surface.blit(s, (int(self.__x), int(self.__y)))
 
 
 class ParticleSystem:
@@ -183,5 +192,5 @@ class ParticleSystem:
         :param surface: The surface where the particles will be rendered.
         """
         for particle in self.particles:
-            if self.timer < particle.life_time:
+            if self.timer < particle.lifetime:
                 particle.render(surface)

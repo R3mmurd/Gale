@@ -8,7 +8,8 @@ import pygame
 
 
 class Camera:
-    def __init__(self, x: int, y: int, width: int, height: int) -> None:
+
+    def __init__(self, x: float, y: float, width: float, height: float) -> None:
         """
         Initialize a new Camera.
 
@@ -17,12 +18,48 @@ class Camera:
         :param width: The width of the camera.
         :param height: The height of the camera.
         """
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.collision_boundaries = None
-        self.following = None
+        self.__x = x
+        self.__y = y
+        self.__width = width
+        self.__height = height
+        self.__collision_boundaries = None
+        self.__following = None
+
+    @property
+    def x(self) -> float:
+        """
+        Get the x component of the camera position.
+
+        :returns: The x component of the camera position.
+        """
+        return self.__x
+
+    @property
+    def y(self) -> float:
+        """
+        Get the y component of the camera position.
+
+        :returns: The y component of the camera position.
+        """
+        return self.__y
+
+    @property
+    def width(self) -> float:
+        """
+        Get the width of the camera.
+
+        :returns: The width of the camera.
+        """
+        return self.__width
+
+    @property
+    def height(self) -> float:
+        """
+        Get the height of the camera.
+
+        :returns: The height of the camera.
+        """
+        return self.__height
 
     def attach_to(self, entity: any) -> None:
         """
@@ -30,7 +67,7 @@ class Camera:
 
         :param entity: The entity to follow.
         """
-        self.following = entity
+        self.__following = entity
 
     def set_collision_boundaries(self, rect: pygame.Rect) -> None:
         """
@@ -38,7 +75,7 @@ class Camera:
 
         :param rect: The collision boundaries.
         """
-        self.collision_boundaries = rect
+        self.__collision_boundaries = rect
 
     def update(self) -> None:
         """
@@ -46,27 +83,27 @@ class Camera:
 
         This function updates the camera position based on the entity that is following.
         """
-        if self.following is not None:
-            self.x = self.following.x - self.width // 2
-            self.y = self.following.y - self.height // 2
+        if self.__following is not None:
+            self.__x = self.__following.x - self.__width / 2
+            self.__y = self.__following.y - self.__height / 2
 
-        if self.collision_boundaries is not None:
-            self.x = max(
-                self.collision_boundaries.x,
+        if self.__collision_boundaries is not None:
+            self.__x = max(
+                self.__collision_boundaries.x,
                 min(
-                    self.x,
-                    self.collision_boundaries.x
-                    + self.collision_boundaries.width
-                    - self.width,
+                    self.__x,
+                    self.__collision_boundaries.x
+                    + self.__collision_boundaries.width
+                    - self.__width,
                 ),
             )
-            self.y = max(
-                self.collision_boundaries.y,
+            self.__y = max(
+                self.__collision_boundaries.y,
                 min(
-                    self.y,
-                    self.collision_boundaries.y
-                    + self.collision_boundaries.height
-                    - self.height,
+                    self.__y,
+                    self.__collision_boundaries.y
+                    + self.__collision_boundaries.height
+                    - self.__height,
                 ),
             )
 
@@ -76,4 +113,4 @@ class Camera:
 
         :returns: A pygame.Rect object representing the camera
         """
-        return pygame.Rect(self.x, self.y, self.width, self.height)
+        return pygame.Rect(self.__x, self.__y, self.__width, self.__height)

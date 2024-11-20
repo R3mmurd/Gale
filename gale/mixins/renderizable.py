@@ -9,7 +9,9 @@ import pygame
 
 class RenderizableMixin:
     def render(self, surface: pygame.Surface) -> None:
-        image = pygame.Surface((self.frame.width, self.frame.height), pygame.SRCALPHA)
+        image = pygame.Surface(
+            (self.frame.__width, self.frame.__height), pygame.SRCALPHA
+        )
         image.fill((0, 0, 0, 0))
         image.blit(self.texture, (0, 0), self.frame)
 

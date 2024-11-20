@@ -10,15 +10,9 @@ class AnimationTestCase(unittest.TestCase):
 
     def test_initialization_infinite_loops(self) -> None:
         self.assertEqual(1, self.infinite_animation.get_current_frame())
-        self.assertEqual(0.1, self.infinite_animation.interval)
-        self.assertListEqual([1, 2, 3], self.infinite_animation.frames)
-        self.assertIsNone(self.infinite_animation.loops)
 
     def test_initialization_limited_loops(self) -> None:
         self.assertEqual(4, self.limited_animation.get_current_frame())
-        self.assertEqual(0.2, self.limited_animation.interval)
-        self.assertListEqual([4, 5, 6], self.limited_animation.frames)
-        self.assertEqual(5, self.limited_animation.loops)
 
     def test_change_frame(self) -> None:
         self.infinite_animation.update(0.1)
@@ -39,14 +33,13 @@ class AnimationTestCase(unittest.TestCase):
         self.assertEqual(0, self.infinite_animation.times_played)
         self.assertEqual(1, self.limited_animation.times_played)
 
-    def test_loop(self) -> None:
+    def test_loops(self) -> None:
         for _ in range(3):
             self.infinite_animation.update(0.1)
             self.limited_animation.update(0.2)
         self.assertEqual(1, self.infinite_animation.get_current_frame())
         self.assertEqual(4, self.limited_animation.get_current_frame())
 
-    def test_loops(self) -> None:
         # 6 times played
         for _ in range(3 * 6 + 1):
             self.infinite_animation.update(0.1)

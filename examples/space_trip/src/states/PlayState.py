@@ -44,20 +44,20 @@ class PlayState(BaseState):
         if input_id == "left":
             if input_data.pressed:
                 self.flying_saucer.accelerate(-1, 0)
-            elif input_data.released and self.flying_saucer.velocity.x < 0:
+            elif input_data.released and self.flying_saucer.velocity.__x < 0:
                 self.flying_saucer.accelerate(0, 0)
         if input_id == "right":
             if input_data.pressed:
                 self.flying_saucer.accelerate(1, 0)
-            elif input_data.released and self.flying_saucer.velocity.x > 0:
+            elif input_data.released and self.flying_saucer.velocity.__x > 0:
                 self.flying_saucer.accelerate(0, 0)
         if input_id == "up":
             if input_data.pressed:
                 self.flying_saucer.accelerate(0, -1)
-            elif input_data.released and self.flying_saucer.velocity.y < 0:
+            elif input_data.released and self.flying_saucer.velocity.__y < 0:
                 self.flying_saucer.accelerate(0, 0)
         if input_id == "down":
             if input_data.pressed:
                 self.flying_saucer.accelerate(0, 1)
-            elif input_data.released and self.flying_saucer.velocity.y > 0:
+            elif input_data.released and self.flying_saucer.velocity.__y > 0:
                 self.flying_saucer.accelerate(0, 0)

@@ -5,7 +5,9 @@ input handler.
 Author: Alejandro Mujica
 """
 
-from typing import Union, TypeVar, NoReturn, Optional, Type
+import re
+from typing import TypeVar
+from typing import NoReturn, Optional, Type, NewType
 
 import pygame
 
@@ -23,7 +25,53 @@ class InvalidListenerException(Exception):
     pass
 
 
-class KeyboardData:
+class InputData:
+    """
+    Interface for the input data classes.
+    """
+
+    @property
+    def pressed(self) -> bool:
+        raise AttributeError("InputData object has no attribute 'pressed'")
+
+    @property
+    def released(self) -> bool:
+        raise AttributeError("InputData object has no attribute 'released'")
+
+    @property
+    def modifier(self) -> int:
+        raise AttributeError("InputData object has no attribute 'modifier'")
+
+    @property
+    def unicode(self) -> str:
+        raise AttributeError("InputData object has no attribute 'unicode'")
+
+    @property
+    def position(self) -> tuple[int, int]:
+        raise AttributeError("InputData object has no attribute 'position'")
+
+    @property
+    def button(self) -> int:
+        raise AttributeError("InputData object has no attribute 'button'")
+
+    @property
+    def flipped(self) -> bool:
+        raise AttributeError("InputData object has no attribute 'flipped'")
+
+    @property
+    def buttons(self) -> tuple[int, int, int]:
+        raise AttributeError("InputData object has no attribute 'buttons'")
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> int:
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_action_name():
+        raise NotImplementedError()
+
+
+class KeyboardData(InputData):
     """
     Group the data associated to a keyboad input event.
     """
@@ -34,10 +82,26 @@ class KeyboardData:
 
         :param event: The pygame event.
         """
-        self.pressed: bool = event.type == pygame.KEYDOWN
-        self.released: bool = event.type == pygame.KEYUP
-        self.modifier: int = event.mod
-        self.unicode: str = event.unicode
+        self.__pressed: bool = event.type == pygame.KEYDOWN
+        self.__released: bool = event.type == pygame.KEYUP
+        self.__modifier: int = event.mod
+        self.__unicode: str = event.unicode
+
+    @property
+    def pressed(self) -> bool:
+        return self.__pressed
+
+    @property
+    def released(self) -> bool:
+        return self.__released
+
+    @property
+    def modifier(self) -> int:
+        return self.__modifier
+
+    @property
+    def unicode(self) -> str:
+        return self.__unicode
 
     @staticmethod
     def get_action_key(event: pygame.event.Event) -> int:
@@ -48,7 +112,7 @@ class KeyboardData:
         return "keyboard"
 
 
-class MouseClickData:
+class MouseClickData(InputData):
     """
     Group the data associated to a mouse click event.
     """
@@ -59,10 +123,26 @@ class MouseClickData:
 
         :param event: The pygame event.
         """
-        self.pressed: bool = event.type == pygame.MOUSEBUTTONDOWN
-        self.released: bool = event.type == pygame.MOUSEBUTTONUP
-        self.button: int = event.button
-        self.position: Tuple[int, int] = event.pos
+        self.__pressed: bool = event.type == pygame.MOUSEBUTTONDOWN
+        self.__released: bool = event.type == pygame.MOUSEBUTTONUP
+        self.__button: int = event.button
+        self.__position: tuple[int, int] = event.pos
+
+    @property
+    def pressed(self) -> bool:
+        return self.__pressed
+
+    @property
+    def released(self) -> bool:
+        return self.__released
+
+    @property
+    def position(self) -> tuple[int, int]:
+        return self.__position
+
+    @property
+    def button(self) -> int:
+        return self.__button
 
     @staticmethod
     def get_action_key(event: pygame.event.Event) -> int:
@@ -73,7 +153,7 @@ class MouseClickData:
         return "mouse_click"
 
 
-class MouseWheelData:
+class MouseWheelData(InputData):
     """
     Group the data associated to a mouse wheel event.
     """
@@ -84,7 +164,11 @@ class MouseWheelData:
 
         :param event: The pygame event.
         """
-        self.flipped: bool = event.flipped
+        self.__flipped: bool = event.flipped
+
+    @property
+    def flipped(self) -> bool:
+        return self.__flipped
 
     @staticmethod
     def get_action_key(event: pygame.event.Event) -> tuple[int, int]:
@@ -95,7 +179,7 @@ class MouseWheelData:
         return "mouse_wheel"
 
 
-class MouseMotionData:
+class MouseMotionData(InputData):
     """
     Group the data associated to a mouse motion event.
     """
@@ -106,8 +190,16 @@ class MouseMotionData:
 
         :param event: The pygame event.
         """
-        self.position: tuple[int, int] = event.pos
-        self.buttons: tuple[int, int, int] = event.buttons
+        self.__position: tuple[int, int] = event.pos
+        self.__buttons: tuple[int, int, int] = event.buttons
+
+    @property
+    def position(self) -> tuple[int, int]:
+        return self.__position
+
+    @property
+    def buttons(self) -> tuple[int, int, int]:
+        return self.__buttons
 
     @staticmethod
     def get_action_key(event: pygame.event.Event) -> tuple[int, int]:
@@ -116,12 +208,6 @@ class MouseMotionData:
     @staticmethod
     def get_action_name():
         return "mouse_motion"
-
-
-InputData = TypeVar(
-    "InputData",
-    bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData],
-)
 
 
 class InputListener:
@@ -328,7 +414,7 @@ class InputHandler:
         pygame.MOUSEWHEEL: MouseWheelData,
     }
 
-    input_binding: dict[str, dict[Union[int, tuple[int, int]], str]] = {
+    input_binding: dict[str, dict[int | tuple[int, int], str]] = {
         KeyboardData.get_action_name(): {},
         MouseClickData.get_action_name(): {},
         MouseWheelData.get_action_name(): {},

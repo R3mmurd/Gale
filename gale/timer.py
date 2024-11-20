@@ -4,7 +4,7 @@ This file contains utility classes that perform as timers.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
 
 from .ease_functions import EASE_FUNCTIONS
 
@@ -115,7 +115,7 @@ class Tween(TimerItemBase):
 
 
 class Timer:
-    items: list[Union[Every, After, Tween]] = []
+    items: list[Every | After | Tween] = []
     paused: bool = False
 
     @classmethod

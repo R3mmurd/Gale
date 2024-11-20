@@ -22,12 +22,12 @@ class BaseState:
     this class to implement any new state class.
     """
 
-    def __init__(self, state_machine: TypeVar("StateMachine")) -> None:
-        self.state_machine: TypeVar("StateMachine") = state_machine
+    def __init__(self, state_handler: any) -> None:
+        self.state_handler: any = state_handler
 
     def enter(self, *args: any, **kwargs: any) -> None:
         """
-        Method to be executed when the state machine enters in the state.
+        Method to be executed when the state machine enters in this state.
         """
         pass
 
@@ -38,6 +38,9 @@ class BaseState:
         pass
 
     def on_input(self, input_id: str, input_data: InputData) -> None:
+        pass
+
+    def fixed_update(self) -> None:
         pass
 
     def update(self, dt: float) -> None:
@@ -79,10 +82,10 @@ class StateMachine:
         or a function that instantiates the state. That value should
         receive the instance of the state machine when it is called.
         """
-        self.states: dict[str, BaseState] = states
+        self.__states: dict[str, BaseState] = states
 
         # The initial state is the empty state
-        self.current = BaseState(self)
+        self.__current = BaseState(self)
 
     def change(self, state_name: str, *args: any, **kwargs: any) -> None:
         """
@@ -93,9 +96,9 @@ class StateMachine:
 
         :raises KeyError: If the arg state_name is not as a key in the states dictionary.
         """
-        self.current.exit()
-        self.current = self.states[state_name](self)
-        self.current.enter(*args, **kwargs)
+        self.__current.exit()
+        self.__current = self.__states[state_name](self)
+        self.__current.enter(*args, **kwargs)
 
     def on_input(self, input_id: str, input_data: InputData) -> None:
         """
@@ -104,7 +107,13 @@ class StateMachine:
         :param input_id: The string that describes the input.
         :param input_data: Data associated to the input type.
         """
-        self.current.on_input(input_id, input_data)
+        self.__current.on_input(input_id, input_data)
+
+    def fixed_update(self) -> None:
+        """
+        Call to fixed_update of the current state of the machine
+        """
+        self.__current.fixed_update()
 
     def update(self, dt: float) -> None:
         """
@@ -112,7 +121,7 @@ class StateMachine:
 
         :param dt: Time elapsed of the game loop.
         """
-        self.current.update(dt)
+        self.__current.update(dt)
 
     def render(self, surface: pygame.Surface) -> None:
         """
@@ -120,7 +129,7 @@ class StateMachine:
 
         :param surface: The surface where the state should be rendered on.
         """
-        self.current.render(surface)
+        self.__current.render(surface)
 
 
 class StateStack:
@@ -140,7 +149,7 @@ class StateStack:
         """
         Creates an empty stack.
         """
-        self.states = []
+        self.__states = []
 
     def on_input(self, input_id: str, input_data: InputData) -> None:
         """
@@ -149,10 +158,21 @@ class StateStack:
         :param input_id: The string that describes the input.
         :param input_data: Data associated to the input type.
         """
-        if len(self.states) == 0:
+        if len(self.__states) == 0:
             raise RuntimeError("State stacks is empty")
 
-        self.states[-1].on_input(input_id, input_data)
+        self.__states[-1].on_input(input_id, input_data)
+
+    def fixed_update(self):
+        """
+        Call to fixed_update of the top state of the stack.
+
+        :raises RuntimeError: If the stack is empty.
+        """
+        if len(self.__states) == 0:
+            raise RuntimeError("State stacks is empty")
+
+        self.__states[-1].fixed_update()
 
     def update(self, dt: float) -> None:
         """
@@ -161,10 +181,10 @@ class StateStack:
         :param dt: Time elapsed of the game loop.
         :raises RuntimeError: If the stack is empty.
         """
-        if len(self.states) == 0:
+        if len(self.__states) == 0:
             raise RuntimeError("State stacks is empty")
 
-        self.states[-1].update(dt)
+        self.__states[-1].update(dt)
 
     def render(self, surface: pygame.Surface) -> None:
         """
@@ -172,14 +192,14 @@ class StateStack:
 
         :param surface: The surface where the state should be rendered on.
         """
-        for state in self.states:
+        for state in self.__states:
             state.render(surface)
 
     def clear(self) -> None:
         """
         Clear the stack.
         """
-        self.states = []
+        self.__states = []
 
     def push(self, state: BaseState, *args: any, **kwargs: any) -> None:
         """
@@ -188,7 +208,7 @@ class StateStack:
         :param state: The state to be added based on BaseState.
         :*args and **kwargs: Any argument list of keyword arguments that are accepted by the enter method of the new state.
         """
-        self.states.append(state)
+        self.__states.append(state)
         state.enter(*args, **kwargs)
 
     def pop(self) -> None:
@@ -197,8 +217,8 @@ class StateStack:
 
         :raises RuntimeError: If the stack is empty.
         """
-        if len(self.states) == 0:
+        if len(self.__states) == 0:
             raise RuntimeError("State stacks is empty")
 
-        self.states[-1].exit()
-        self.states.pop()
+        self.__states[-1].exit()
+        self.__states.pop()

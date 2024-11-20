@@ -42,7 +42,7 @@ class AbstractFactoryTestCase(unittest.TestCase):
 
     def test_create_game_object_factory_successfully(self) -> None:
         game_object_factory = self.abstract_factory.get_factory("GameObject")
-        self.assertIs(game_object_factory._prototype, GameObject)
+        self.assertIs(game_object_factory.prototype, GameObject)
 
     def test_create_game_object_factory_failed(self) -> None:
         with self.assertRaises(ValueError) as ex:

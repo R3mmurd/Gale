@@ -20,7 +20,16 @@ class Factory(Generic[T]):
         """
         if type(prototype) is not type:
             raise ValueError("Argument prototype it not a data type")
-        self._prototype = prototype
+        self.__prototype = prototype
+
+    @property
+    def prototype(self) -> T:
+        """
+        Get the prototype of the factory.
+
+        :returns: The prototype of the factory.
+        """
+        return self.__prototype
 
     def create(
         self, x: float, y: float, properties: Optional[dict[str, any]] = None
@@ -41,7 +50,7 @@ class Factory(Generic[T]):
             raise TypeError("Argument properties is not a dict")
 
         properties.update(dict(x=x, y=y))
-        return self._prototype(**properties)
+        return self.__prototype(**properties)
 
 
 class AbstractFactory:
@@ -53,7 +62,16 @@ class AbstractFactory:
         if module_name not in sys.modules:
             raise ValueError(f"{module_name} is not a module.")
 
-        self.module_name = module_name
+        self.__module_name = module_name
+
+    @property
+    def module_name(self) -> str:
+        """
+        Get the name of the module that contains the data types.
+
+        :returns: The name of the module.
+        """
+        return self.__module_name
 
     def get_factory(self, prototype_name: str) -> Factory:
         """
@@ -63,7 +81,7 @@ class AbstractFactory:
         :returns: The new factory.
         :raises ValueError: if there is no existing class with the given name.
         """
-        prototype = getattr(sys.modules[self.module_name], prototype_name, None)
+        prototype = getattr(sys.modules[self.__module_name], prototype_name, None)
 
         if prototype is None:
             raise ValueError(f"There is no class called {prototype_name}")
