@@ -33,15 +33,18 @@ VIRTUAL_HEIGHT = 360
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
-PLAYER_SPEED = 140
+PLAYER_SPEED = 160
 PLAYER_RADIUS = 8
 CATCH_RADIUS = 14
 
-GUARD_PATROL_SPEED = 90
-GUARD_CHASE_SPEED = 130
+# Guards patrol slower than they chase (Guard switches its Kinematic's
+# max_speed between the two), and chase noticeably slower than the
+# player moves, so a spotted player has a real chance to break away.
+GUARD_PATROL_SPEED = 70
+GUARD_CHASE_SPEED = 110
 GUARD_RADIUS = 10
-GUARD_SIGHT_RADIUS = 120
-GUARD_LOSE_INTEREST_TIME = 3.0
+GUARD_SIGHT_RADIUS = 85
+GUARD_LOSE_INTEREST_TIME = 2.2
 
 CIVILIAN_SPEED = 70
 CIVILIAN_FLEE_SPEED = 120

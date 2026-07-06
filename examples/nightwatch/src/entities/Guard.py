@@ -52,7 +52,7 @@ class Guard(Agent):
         super().__init__(
             x=x,
             y=y,
-            max_speed=settings.GUARD_CHASE_SPEED,
+            max_speed=settings.GUARD_PATROL_SPEED,
             max_acceleration=settings.GUARD_CHASE_SPEED * 6,
             blackboard=blackboard,
         )
@@ -103,6 +103,7 @@ class Guard(Agent):
         self._investigate_timer = settings.GUARD_LOSE_INTEREST_TIME
         self.blackboard.set("alert_position", alert_position)
         self.blackboard.set("is_alerted", True)
+        self.kinematic.max_speed = settings.GUARD_CHASE_SPEED
         self.set_steering_behavior(self.chase_pursue)
         return Status.SUCCESS
 
@@ -126,11 +127,13 @@ class Guard(Agent):
         if self._investigate_timer <= 0:
             return Status.FAILURE
 
+        self.kinematic.max_speed = settings.GUARD_CHASE_SPEED
         self.investigate_follower.update(self.position)
         self.set_steering_behavior(self.investigate_seek)
         return Status.SUCCESS
 
     def _patrol_step(self, agent: Agent, dt: float) -> Status:
+        self.kinematic.max_speed = settings.GUARD_PATROL_SPEED
         self.patrol_follower.update(self.position)
 
         if self.patrol_follower.finished:
