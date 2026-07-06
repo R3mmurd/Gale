@@ -18,6 +18,42 @@ INPUT_EVENTS: Tuple[int, int, int, int, int, int] = (
     pygame.MOUSEMOTION,
 )
 
+# Modifier keys that can be combined with a regular key to build a key
+# combo, for instance, MOD_CTRL | MOD_SHIFT to represent Ctrl + Shift.
+MOD_NONE: int = pygame.KMOD_NONE
+MOD_SHIFT: int = pygame.KMOD_SHIFT
+MOD_CTRL: int = pygame.KMOD_CTRL
+MOD_ALT: int = pygame.KMOD_ALT
+MOD_META: int = pygame.KMOD_META
+
+# Modifiers that gale takes into account to resolve key combos. Lock keys
+# such as Caps Lock or Num Lock are intentionally ignored.
+_COMBINABLE_MODIFIERS: Tuple[int, int, int, int] = (
+    MOD_SHIFT,
+    MOD_CTRL,
+    MOD_ALT,
+    MOD_META,
+)
+
+
+def _normalize_modifiers(raw_modifiers: int) -> int:
+    """
+    Each MOD_* constant (e.g. MOD_CTRL) is actually the combination of
+    its left and right variants (e.g. KMOD_LCTRL | KMOD_RCTRL), but a
+    real key press only ever reports whichever single side was held,
+    never that combined value. This maps a raw pygame modifier state
+    to the combination of MOD_* constants a binding could have been
+    registered with, so holding either (or both) side of a modifier
+    matches a binding requiring it.
+    """
+    normalized = 0
+
+    for family in _COMBINABLE_MODIFIERS:
+        if raw_modifiers & family:
+            normalized |= family
+
+    return normalized
+
 
 class InvalidListenerException(Exception):
     pass
@@ -35,8 +71,8 @@ class KeyboardData:
         self.unicode: str = event.unicode
 
     @staticmethod
-    def get_action_key(event: pygame.event.Event) -> int:
-        return event.key
+    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+        return (_normalize_modifiers(event.mod), event.key)
 
     @staticmethod
     def get_action_name():
@@ -287,10 +323,25 @@ class InputHandler:
     It has an input_binding dictionary where you need to add the desired input
     associate to an input id by keeping the following rules:
 
-    - Any pair (key, input_id) should be added to input_binding["keyboard"].
+    - Any pair ((modifiers, key), input_id) should be added to input_binding["keyboard"].
     - Any pair (mouse_button, input_id) should be added to input_binding["mouse_click"].
     - Any pair (mouse_wheel, input_id) should be added to input_binding["mouse_wheel"].
     - Any pair (mouse_motion, input_id) should be added to input_binding["mouse_motion"].
+
+    Keyboard bindings support combos with the modifier keys Shift, Ctrl, Alt,
+    and Meta (also known as Super/Windows/Command key). Use set_keyboard_action
+    passing a combination of MOD_SHIFT, MOD_CTRL, MOD_ALT, and/or MOD_META
+    (joined with the bitwise or operator) through the modifiers argument, for
+    instance:
+
+        InputHandler.set_keyboard_action(KEY_s, "save", modifiers=MOD_CTRL)
+        InputHandler.set_keyboard_action(
+            KEY_s, "save_as", modifiers=MOD_CTRL | MOD_SHIFT
+        )
+
+    A binding registered without modifiers (the default) is triggered
+    regardless of which modifiers are held, as long as there is no more
+    specific binding matching the exact combo that is currently pressed.
     """
 
     INPUT_DATA_TABLE: Dict[int, Type] = {
@@ -302,7 +353,7 @@ class InputHandler:
         pygame.MOUSEWHEEL: MouseWheelData,
     }
 
-    input_binding: Dict[str, Union[Dict[int, str], Dict[Tuple[int, int], str]]] = {
+    input_binding: Dict[str, Union[Dict[Tuple[int, int], str], Dict[int, str]]] = {
         KeyboardData.get_action_name(): {},
         MouseClickData.get_action_name(): {},
         MouseWheelData.get_action_name(): {},
@@ -329,8 +380,19 @@ class InputHandler:
             l.on_input(action_id, action_data)
 
     @classmethod
-    def set_keyboard_action(cls, key: int, action_id: str) -> None:
-        cls.input_binding[KeyboardData.get_action_name()][key] = action_id
+    def set_keyboard_action(
+        cls, key: int, action_id: str, modifiers: int = MOD_NONE
+    ) -> None:
+        """
+        Bind a keyboard key, optionally combined with modifiers, to an action.
+
+        :param key: The key code (one of the KEY_* constants).
+        :param action_id: The identifier of the action to notify.
+        :param modifiers: A combination (bitwise or) of MOD_SHIFT, MOD_CTRL, MOD_ALT, and/or MOD_META that must be held for this binding to trigger. By default, MOD_NONE, meaning that the binding triggers regardless of the modifiers held, unless a more specific combo is also bound to the same key.
+        """
+        cls.input_binding[KeyboardData.get_action_name()][
+            (_normalize_modifiers(modifiers), key)
+        ] = action_id
 
     @classmethod
     def set_mouse_click_action(cls, button: int, action_id: str) -> None:
@@ -350,10 +412,18 @@ class InputHandler:
     def handle_input(cls, event: pygame.event.Event) -> None:
         data_class: Optional[Type] = cls.INPUT_DATA_TABLE.get(event.type)
 
-        if data_class is not None:
-            action: Optional[str] = cls.input_binding[data_class.get_action_name()].get(
-                data_class.get_action_key(event)
-            )
-            if action is not None:
-                data = data_class(event)
-                cls.notify(action, data)
+        if data_class is None:
+            return
+
+        bindings = cls.input_binding[data_class.get_action_name()]
+        action_key = data_class.get_action_key(event)
+        action: Optional[str] = bindings.get(action_key)
+
+        if action is None and data_class is KeyboardData and action_key[0] != MOD_NONE:
+            # No binding matched the exact combo of modifiers held, fall
+            # back to a plain binding for the key without modifiers.
+            action = bindings.get((MOD_NONE, action_key[1]))
+
+        if action is not None:
+            data = data_class(event)
+            cls.notify(action, data)

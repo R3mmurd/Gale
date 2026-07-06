@@ -23,7 +23,7 @@ class Factory(Generic[T]):
         self._prototype = prototype
 
     def create(
-        self, x: float, y: float, properties: Optional[Dict[str, any]] = None
+        self, x: float, y: float, properties: Optional[Dict[str, Any]] = None
     ) -> T:
         """
         Create a new object from the prototype.
@@ -40,7 +40,7 @@ class Factory(Generic[T]):
         if type(properties) is not dict:
             raise TypeError("Argument properties is not a dict")
 
-        properties.update(dict(x=x, y=y))
+        properties = {**properties, "x": x, "y": y}
         return self._prototype(**properties)
 
 
