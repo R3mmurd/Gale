@@ -130,3 +130,45 @@ class StateGraphTestCase(unittest.TestCase):
         self.assertTrue(graph.has_edge(0, 3))
         self.assertTrue(graph.has_edge(1, 2))
         self.assertTrue(graph.directed)
+
+    def test_expand_without_actions_defaults_to_none(self) -> None:
+        transitions = {0: [(1, 1)], 1: []}
+        graph = StateGraph.expand(0, lambda state: transitions[state])
+        self.assertIsNone(graph.get_action(0, 1))
+
+    def test_expand_attaches_actions(self) -> None:
+        transitions = {0: [(1, 1, "go")], 1: []}
+        graph = StateGraph.expand(0, lambda state: transitions[state])
+        self.assertEqual(graph.get_action(0, 1), "go")
+
+    def test_actions_for_path(self) -> None:
+        graph = StateGraph()
+        graph.add_edge(0, 1, action="a")
+        graph.add_edge(1, 2, action="b")
+        self.assertEqual(graph.actions_for_path([0, 1, 2]), ["a", "b"])
+
+    def test_get_action_raises_for_missing_edge(self) -> None:
+        graph = StateGraph()
+        graph.add_node(0)
+        with self.assertRaises(KeyError):
+            graph.get_action(0, 1)
+
+    def test_remove_edge_drops_its_action(self) -> None:
+        graph = StateGraph()
+        graph.add_edge(0, 1, action="a")
+        graph.remove_edge(0, 1)
+        with self.assertRaises(KeyError):
+            graph.get_action(0, 1)
+
+    def test_remove_node_drops_actions_of_connected_edges(self) -> None:
+        graph = StateGraph()
+        graph.add_edge(0, 1, action="a")
+        graph.add_edge(1, 2, action="b")
+        graph.remove_node(1)
+
+        # Re-adding an edge that reuses the same (source, target) pair as
+        # one that existed before node 1 was removed must not resurrect
+        # its old, stale action.
+        graph.add_node(1)
+        graph.add_edge(1, 2)
+        self.assertIsNone(graph.get_action(1, 2))

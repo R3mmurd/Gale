@@ -129,6 +129,11 @@ top of it:
   state space is normally too large to write out by hand,
   ``StateGraph.expand`` builds it automatically from a starting state
   and a function that yields the valid transitions out of any state.
+  Each transition can optionally carry an action label (for instance, a
+  description of the move that produced it), recoverable afterwards
+  with ``get_action``/``actions_for_path`` — the states along a path
+  don't always make it obvious what to actually do to go from one to
+  the next.
 
 .. code-block:: python
 
@@ -199,7 +204,8 @@ searching a ``StateGraph`` built from the puzzle's legal moves:
 
    def hanoi_successors(state):
        # state is a tuple of 3 tuples (one per peg) listing disk sizes
-       # from bottom to top.
+       # from bottom to top. Each transition is labeled with the
+       # (source_peg, target_peg) move that produces it.
        for source in range(3):
            if not state[source]:
                continue
@@ -216,7 +222,7 @@ searching a ``StateGraph`` built from the puzzle's legal moves:
                next_state = list(state)
                next_state[source] = state[source][:-1]
                next_state[target] = state[target] + (disk,)
-               yield tuple(next_state), 1
+               yield tuple(next_state), 1, (source, target)
 
 
    n = 3
@@ -226,3 +232,7 @@ searching a ``StateGraph`` built from the puzzle's legal moves:
    graph = StateGraph.expand(start, hanoi_successors)
    solution = breadth_first_search(start, goal, graph)
    print(len(solution) - 1)  # 7 moves: optimal for 3 disks (2**n - 1)
+
+   # The states alone don't spell out what to actually do; recover the
+   # (source_peg, target_peg) move behind each step of the solution:
+   moves = graph.actions_for_path(solution)
