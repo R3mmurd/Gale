@@ -12,6 +12,16 @@ a showcase, not a polished game.
 
 ## Running it
 
+From the repository root, install gale itself in editable mode so it's
+importable from anywhere (only needed once):
+
+```bash
+pip install -e .
+```
+
+Then run the example from its own directory, since it looks for
+`settings.py` and `src/` next to `main.py`:
+
 ```bash
 cd examples/nightwatch
 python main.py
