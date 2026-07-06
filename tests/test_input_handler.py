@@ -51,3 +51,26 @@ class InputHandlerKeyComboTestCase(unittest.TestCase):
         InputHandler.set_keyboard_action(KEY_s, "save", modifiers=MOD_CTRL)
         InputHandler.handle_input(keydown(KEY_s, MOD_NONE))
         self.assertEqual(self.received, [])
+
+    def test_combo_triggers_holding_only_one_side_of_the_modifier(self) -> None:
+        # MOD_CTRL (like every MOD_* constant) is the combination of its
+        # left and right variants (KMOD_LCTRL | KMOD_RCTRL), but pygame
+        # only ever reports whichever single side is physically held,
+        # never that combined value. A binding registered with MOD_CTRL
+        # must still fire from a real, single-sided Ctrl press.
+        InputHandler.set_keyboard_action(KEY_s, "save", modifiers=MOD_CTRL)
+        InputHandler.handle_input(keydown(KEY_s, pygame.KMOD_LCTRL))
+        InputHandler.handle_input(keydown(KEY_s, pygame.KMOD_RCTRL))
+        self.assertEqual(self.received, ["save", "save"])
+
+    def test_combo_ignores_lock_keys(self) -> None:
+        InputHandler.set_keyboard_action(KEY_s, "save", modifiers=MOD_CTRL)
+        InputHandler.handle_input(
+            keydown(KEY_s, pygame.KMOD_LCTRL | pygame.KMOD_CAPS | pygame.KMOD_NUM)
+        )
+        self.assertEqual(self.received, ["save"])
+
+    def test_combo_does_not_trigger_with_a_different_modifier(self) -> None:
+        InputHandler.set_keyboard_action(KEY_s, "save", modifiers=MOD_CTRL)
+        InputHandler.handle_input(keydown(KEY_s, pygame.KMOD_LALT))
+        self.assertEqual(self.received, [])
