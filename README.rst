@@ -15,7 +15,7 @@ Modules
 - ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, and the ``Agent`` class that ties them together. (`example <docs/examples/gale_ai.rst>`__)
 - ``gale.animation``: Contains the class ``Animation``. (`example <docs/examples/animation.rst>`__)
 - ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``. (`example <docs/examples/factory.rst>`__)
-- ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet.
+- ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <docs/examples/frames.rst>`__)
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building.
 - ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``. (`example <docs/examples/input_handler.rst>`__)
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <docs/examples/particle_system.rst>`__)
@@ -37,6 +37,7 @@ Examples
 - `Project template (gale-admin) <docs/examples/project_template.rst>`_: scaffolds a new project's directory structure.
 - `gale.animation <docs/examples/animation.rst>`_
 - `gale.factory <docs/examples/factory.rst>`_
+- `gale.frames <docs/examples/frames.rst>`_
 - `gale.input_handler <docs/examples/input_handler.rst>`_: includes keyboard key combos.
 - `gale.particle_system <docs/examples/particle_system.rst>`_
 - `gale.state <docs/examples/state.rst>`_

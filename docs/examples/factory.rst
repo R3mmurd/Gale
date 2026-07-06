@@ -29,3 +29,15 @@ loaded from a file).
    abstract_factory = AbstractFactory(__name__)
    enemy_factory = abstract_factory.get_factory("Enemy")
    enemy = enemy_factory.create(100, 200)
+
+``AbstractFactory`` takes the dotted name of a module, which must already
+be imported (i.e. present in ``sys.modules``) before you construct it —
+if the classes you want to build live in a different module than the one
+constructing the factory, import that module first, even if you don't use
+it directly:
+
+.. code-block:: python
+
+   import src.enemies  # registers the module so AbstractFactory can find it
+
+   abstract_factory = AbstractFactory("src.enemies")
