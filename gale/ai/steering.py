@@ -224,7 +224,7 @@ class Arrive(SteeringBehavior):
         direction = self.target.position - self.character.position
         distance = direction.length()
 
-        if distance < self.target_radius:
+        if distance == 0 or distance < self.target_radius:
             return SteeringOutput()
 
         if distance > self.slow_radius:
@@ -281,7 +281,7 @@ class Align(SteeringBehavior):
         )
         rotation_size = abs(rotation)
 
-        if rotation_size < self.target_radius:
+        if rotation_size == 0 or rotation_size < self.target_radius:
             return SteeringOutput()
 
         if rotation_size > self.slow_radius:

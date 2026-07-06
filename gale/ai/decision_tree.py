@@ -117,3 +117,15 @@ class DecisionTree:
         :returns: Whatever the reached leaf of the tree returns.
         """
         return self.root.make_decision(agent)
+
+    def tick(self, agent: Any, dt: float = 0) -> Any:
+        """
+        Alias of make_decision with a (agent, dt) signature, so a
+        DecisionTree can be plugged in anywhere a tick(agent, dt)-style
+        brain is expected, such as gale.ai.agent.Agent.
+
+        :param agent: The agent this tree belongs to.
+        :param dt: Ignored. Accepted only for interface compatibility.
+        :returns: Whatever the reached leaf of the tree returns.
+        """
+        return self.make_decision(agent)
