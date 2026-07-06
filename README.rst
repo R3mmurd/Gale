@@ -53,7 +53,7 @@ the runtime dependencies plus ``pytest`` and ``pre-commit``:
 
 .. code-block:: bash
 
-   pip install -r requirements-dev.txt
+   pip install -r requirements/dev.txt
 
 Then install the git hook so that ``black`` and the test suite run
 automatically before every commit:
