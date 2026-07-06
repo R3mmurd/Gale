@@ -43,4 +43,18 @@ from .decision_tree import (
     RandomDecisionNode,
     DecisionTree,
 )
+from .graph import (
+    CycleError,
+    Graph,
+    NavGraph,
+    DependencyGraph,
+    StateGraph,
+)
+from .search import (
+    depth_first_search,
+    breadth_first_search,
+    dijkstra,
+    a_star,
+    path_cost,
+)
 from .agent import Agent
