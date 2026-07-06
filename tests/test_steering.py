@@ -74,6 +74,14 @@ class ArriveTestCase(unittest.TestCase):
         ).get_steering()
         self.assertGreater(steering.linear.x, 0)
 
+    def test_arrive_on_top_of_target_with_zero_target_radius_does_not_crash(
+        self,
+    ) -> None:
+        character = Kinematic(0, 0)
+        target = Kinematic(0, 0)
+        steering = Arrive(character, target, target_radius=0).get_steering()
+        self.assertEqual(steering.linear.length(), 0)
+
 
 class AlignTestCase(unittest.TestCase):
     def test_align_returns_zero_within_target_radius(self) -> None:
@@ -87,6 +95,14 @@ class AlignTestCase(unittest.TestCase):
         target = Kinematic(0, 0, orientation=math.pi - 0.1)
         steering = Align(character, target).get_steering()
         self.assertGreater(steering.angular, 0)
+
+    def test_align_already_aligned_with_zero_target_radius_does_not_crash(
+        self,
+    ) -> None:
+        character = Kinematic(0, 0, orientation=1.0)
+        target = Kinematic(0, 0, orientation=1.0)
+        steering = Align(character, target, target_radius=0).get_steering()
+        self.assertEqual(steering.angular, 0)
 
 
 class VelocityMatchTestCase(unittest.TestCase):

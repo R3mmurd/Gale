@@ -92,6 +92,34 @@ class ParallelTestCase(unittest.TestCase):
         )
         self.assertEqual(node.tick(None, 0), Status.RUNNING)
 
+    def test_does_not_retick_a_child_that_already_finished(self) -> None:
+        calls = []
+
+        def fire_once(agent, dt):
+            calls.append(1)
+            return Status.SUCCESS
+
+        node = Parallel(
+            [Action(fire_once), Action(always(Status.RUNNING))], success_threshold=2
+        )
+        node.tick(None, 0)
+        node.tick(None, 0)
+        node.tick(None, 0)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(node.tick(None, 0), Status.RUNNING)
+
+    def test_relatches_children_after_it_resets(self) -> None:
+        calls = []
+
+        def fire_once(agent, dt):
+            calls.append(1)
+            return Status.SUCCESS
+
+        node = Parallel([Action(fire_once), Action(always(Status.SUCCESS))])
+        self.assertEqual(node.tick(None, 0), Status.SUCCESS)
+        self.assertEqual(node.tick(None, 0), Status.SUCCESS)
+        self.assertEqual(len(calls), 2)
+
 
 class DecoratorTestCase(unittest.TestCase):
     def test_inverter(self) -> None:

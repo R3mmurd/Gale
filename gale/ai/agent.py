@@ -11,8 +11,6 @@ from typing import Any, Optional
 
 import pygame
 
-from .behavior_tree import BehaviorTree
-from .decision_tree import DecisionTree
 from .steering import Kinematic, SteeringBehavior, SteeringOutput
 
 
@@ -69,7 +67,7 @@ class Agent:
         :param max_angular_acceleration: Maximum angular acceleration the agent can receive.
         :param face_movement_direction: Whether the agent should automatically rotate to face its current velocity when its steering behavior does not produce an explicit angular acceleration. The default value is True.
         :param steering_behavior: The steering behavior driving the agent's movement. The default value is None, so the agent does not accelerate until one is set with set_steering_behavior.
-        :param brain: A BehaviorTree or a DecisionTree (or any object exposing a compatible tick/make_decision interface) used to decide the agent's behavior on every update. The default value is None.
+        :param brain: A BehaviorTree, a DecisionTree, or any other object exposing a compatible tick(agent, dt) method, used to decide the agent's behavior on every update. The default value is None.
         """
         self.kinematic: Kinematic = Kinematic(
             x,
@@ -110,7 +108,7 @@ class Agent:
         """
         Replace the brain deciding this agent's behavior.
 
-        :param brain: A BehaviorTree, a DecisionTree, or any object exposing a compatible tick(agent, dt)/make_decision(agent) method. Use None to disable decision making.
+        :param brain: A BehaviorTree, a DecisionTree, or any other object exposing a compatible tick(agent, dt) method. Use None to disable decision making.
         """
         self.brain = brain
 
@@ -120,17 +118,18 @@ class Agent:
         behavior and/or any other of its properties.
 
         :param dt: Time elapsed (in seconds) since the last update.
-        :raises TypeError: If brain is set and it is not a BehaviorTree nor a DecisionTree.
+        :raises TypeError: If brain is set and it does not expose a tick(agent, dt) method.
         """
         if self.brain is None:
             return
 
-        if isinstance(self.brain, BehaviorTree):
-            self.brain.tick(self, dt)
-        elif isinstance(self.brain, DecisionTree):
-            self.brain.make_decision(self)
-        else:
-            raise TypeError("brain must be a BehaviorTree, a DecisionTree, or None")
+        if not hasattr(self.brain, "tick"):
+            raise TypeError(
+                "brain must be a BehaviorTree, a DecisionTree, or any other "
+                "object exposing a tick(agent, dt) method"
+            )
+
+        self.brain.tick(self, dt)
 
     def update(self, dt: float) -> None:
         """

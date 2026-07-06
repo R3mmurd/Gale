@@ -6,7 +6,7 @@ Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
 from enum import Enum
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 
 class Status(Enum):
@@ -162,6 +162,9 @@ class Parallel(Composite):
     """
     Runs all of its children on every tick and succeeds or fails
     according to how many of them succeeded or failed on this tick.
+    Children that already reached SUCCESS or FAILURE are latched and no
+    longer ticked on subsequent calls, so their side effects only run
+    once, until this node itself finishes and resets.
     """
 
     def __init__(
@@ -182,13 +185,20 @@ class Parallel(Composite):
         self.failure_threshold: int = (
             1 if failure_threshold is None else failure_threshold
         )
+        self._latched: Dict[int, Status] = {}
 
     def tick(self, agent: Any, dt: float) -> Status:
         successes = 0
         failures = 0
 
-        for child in self.children:
-            status = child.tick(agent, dt)
+        for index, child in enumerate(self.children):
+            status = self._latched.get(index)
+
+            if status is None:
+                status = child.tick(agent, dt)
+
+                if status != Status.RUNNING:
+                    self._latched[index] = status
 
             if status == Status.SUCCESS:
                 successes += 1
@@ -204,6 +214,10 @@ class Parallel(Composite):
             return Status.FAILURE
 
         return Status.RUNNING
+
+    def reset(self) -> None:
+        super().reset()
+        self._latched = {}
 
 
 class Decorator(Node):

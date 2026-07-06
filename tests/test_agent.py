@@ -66,3 +66,15 @@ class AgentBrainTestCase(unittest.TestCase):
         agent.set_brain(object())
         with self.assertRaises(TypeError):
             agent.update(0.1)
+
+    def test_agent_runs_a_duck_typed_brain(self) -> None:
+        calls = []
+
+        class CustomBrain:
+            def tick(self, agent, dt):
+                calls.append((agent, dt))
+
+        agent = Agent()
+        agent.set_brain(CustomBrain())
+        agent.update(0.1)
+        self.assertEqual(calls, [(agent, 0.1)])
