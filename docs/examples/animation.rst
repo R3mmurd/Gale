@@ -29,3 +29,38 @@ fixed time interval.
    # Play attack_animation again from the beginning, for instance when the
    # player presses the attack button:
    attack_animation.reset()
+
+Switching between named animations
+-----------------------------------
+
+In practice, a character usually owns a dictionary of animations (one per
+action) and switches between them, resetting the new one so it always
+starts from its first frame. Most gameplay animations are left looping
+forever (``loops=None``, the default), letting a state machine — see
+`gale.state <state.rst>`_ — decide when to switch to a different
+animation, instead of relying on ``on_finish``:
+
+.. code-block:: python
+
+   from gale.animation import Animation
+
+
+   class Character:
+       def __init__(self) -> None:
+           self.animations = {
+               "idle": Animation(["idle_0", "idle_1"], time_interval=0.2),
+               "walk": Animation(["walk_0", "walk_1", "walk_2", "walk_3"], time_interval=0.1),
+           }
+           self.current_animation = self.animations["idle"]
+
+       def change_animation(self, animation_id: str) -> None:
+           new_animation = self.animations[animation_id]
+           if new_animation is not self.current_animation:
+               self.current_animation = new_animation
+               self.current_animation.reset()
+
+       def update(self, dt: float) -> None:
+           self.current_animation.update(dt)
+
+       def get_current_frame(self):
+           return self.current_animation.get_current_frame()

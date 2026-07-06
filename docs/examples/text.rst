@@ -22,7 +22,11 @@ of its own font, color, and position.
            surface, f"Score: {score}", font, x=10, y=10, color=pygame.Color("white"), shadowed=True
        )
 
-   # A reusable Text object, useful for static labels.
+   # A reusable Text object, useful for a label whose position needs to
+   # change over time, for instance one you animate with Timer.tween (see
+   # gale.timer): render_text is a one-shot immediate-mode call, so it
+   # can't be a tween target, but Text keeps mutable x/y attributes that
+   # Timer.tween can update every frame.
    title = Text(
        "Game Over",
        font,
@@ -35,3 +39,8 @@ of its own font, color, and position.
 
    # In your render loop:
    title.render(surface)
+
+``render_text`` covers the overwhelming majority of use cases (score
+counters, HUD labels, menu text) — reach for ``Text`` only when you
+specifically need to keep and mutate that piece of text's state across
+frames.
