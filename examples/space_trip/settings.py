@@ -13,6 +13,7 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_LEFT, "left")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_DOWN, "down")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RIGHT, "right")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_UP, "up")
+input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
 # Size we want to emulate
 VIRTUAL_WIDTH = 640
@@ -34,6 +35,17 @@ STAR_HEIGHT = 32
 
 STAR_SPEED = 150
 
+ROCK_WIDTH = 40
+ROCK_HEIGHT = 40
+
+ROCK_SPEED = 180
+# Rocks appear every so often, at a random interval in this range
+# (in seconds), instead of on a fixed schedule like stars.
+ROCK_SPAWN_DELAY_RANGE = (3, 6)
+
+# Score the player must reach to win.
+SCORE_TO_WIN = 1000
+
 BASE_DIR = pathlib.Path(__file__).parent
 
 TEXTURES = {
@@ -42,16 +54,26 @@ TEXTURES = {
     ),
     "ufo": pygame.image.load(BASE_DIR / "assets" / "graphics" / "ufo.png"),
     "star": pygame.image.load(BASE_DIR / "assets" / "graphics" / "star.png"),
+    "rock": pygame.transform.smoothscale(
+        pygame.image.load(BASE_DIR / "assets" / "graphics" / "rock.png"),
+        (ROCK_WIDTH, ROCK_HEIGHT),
+    ),
 }
 
 pygame.mixer.init()
 
 SOUNDS = {
-    "take_star": pygame.mixer.Sound(BASE_DIR / "assets" / "sounds" / "take_star.flac")
+    "take_star": pygame.mixer.Sound(BASE_DIR / "assets" / "sounds" / "take_star.flac"),
+    "death_flash": pygame.mixer.Sound(
+        BASE_DIR / "assets" / "sounds" / "death_flash.flac"
+    ),
 }
 
 pygame.mixer.music.load(BASE_DIR / "assets" / "sounds" / "space.ogg")
 
 pygame.font.init()
 
-FONTS = {"stars": pygame.font.Font(BASE_DIR / "assets" / "fonts" / "stars.ttf", 18)}
+FONTS = {
+    "stars": pygame.font.Font(BASE_DIR / "assets" / "fonts" / "stars.ttf", 18),
+    "stars_title": pygame.font.Font(BASE_DIR / "assets" / "fonts" / "stars.ttf", 48),
+}
