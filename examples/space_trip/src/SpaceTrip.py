@@ -8,13 +8,20 @@ from gale.game import Game
 from gale.input_handler import InputData
 from gale.state import StateMachine
 
-from src.states import PlayState
+from src.states import GameOverState, PlayState, StartState, VictoryState
 
 
 class SpaceTrip(Game):
     def init(self) -> None:
-        self.state_machine = StateMachine({"play": PlayState})
-        self.state_machine.change("play")
+        self.state_machine = StateMachine(
+            {
+                "start": StartState,
+                "play": PlayState,
+                "victory": VictoryState,
+                "game_over": GameOverState,
+            }
+        )
+        self.state_machine.change("start")
 
     def update(self, dt: float) -> None:
         self.state_machine.update(dt)
