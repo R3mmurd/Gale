@@ -45,6 +45,18 @@ Examples
 - `gale.timer <docs/examples/timer.rst>`_
 - `gale.ai <docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
 
+These are short, focused snippets per module. For full running games
+built with gale, see ``examples/space_trip`` and, in particular for
+``gale.ai``, `examples/nightwatch <examples/nightwatch/README.md>`_, a
+small stealth demo whose guards patrol, chase, and coordinate through a
+shared behavior tree, blackboard, and pathfinding.
+
+Each example under ``examples/`` is a standalone project (its own
+``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
+inside this repository unless it's actually installed. From the
+repository root, run ``pip install -e .`` once, then ``cd`` into the
+example's directory and run ``python main.py`` from there.
+
 
 Development
 -----------
