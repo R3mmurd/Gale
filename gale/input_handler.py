@@ -28,7 +28,31 @@ MOD_META: int = pygame.KMOD_META
 
 # Modifiers that gale takes into account to resolve key combos. Lock keys
 # such as Caps Lock or Num Lock are intentionally ignored.
-_COMBINABLE_MODIFIERS: int = MOD_SHIFT | MOD_CTRL | MOD_ALT | MOD_META
+_COMBINABLE_MODIFIERS: Tuple[int, int, int, int] = (
+    MOD_SHIFT,
+    MOD_CTRL,
+    MOD_ALT,
+    MOD_META,
+)
+
+
+def _normalize_modifiers(raw_modifiers: int) -> int:
+    """
+    Each MOD_* constant (e.g. MOD_CTRL) is actually the combination of
+    its left and right variants (e.g. KMOD_LCTRL | KMOD_RCTRL), but a
+    real key press only ever reports whichever single side was held,
+    never that combined value. This maps a raw pygame modifier state
+    to the combination of MOD_* constants a binding could have been
+    registered with, so holding either (or both) side of a modifier
+    matches a binding requiring it.
+    """
+    normalized = 0
+
+    for family in _COMBINABLE_MODIFIERS:
+        if raw_modifiers & family:
+            normalized |= family
+
+    return normalized
 
 
 class InvalidListenerException(Exception):
@@ -48,7 +72,7 @@ class KeyboardData:
 
     @staticmethod
     def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
-        return (event.mod & _COMBINABLE_MODIFIERS, event.key)
+        return (_normalize_modifiers(event.mod), event.key)
 
     @staticmethod
     def get_action_name():
@@ -367,7 +391,7 @@ class InputHandler:
         :param modifiers: A combination (bitwise or) of MOD_SHIFT, MOD_CTRL, MOD_ALT, and/or MOD_META that must be held for this binding to trigger. By default, MOD_NONE, meaning that the binding triggers regardless of the modifiers held, unless a more specific combo is also bound to the same key.
         """
         cls.input_binding[KeyboardData.get_action_name()][
-            (modifiers & _COMBINABLE_MODIFIERS, key)
+            (_normalize_modifiers(modifiers), key)
         ] = action_id
 
     @classmethod
