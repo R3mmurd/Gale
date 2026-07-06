@@ -4,7 +4,7 @@
    :target: https://github.com/R3mmurd/Gale/
 
 
-|Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge|
+|Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge| |CIBadge|
 
 
 Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
@@ -12,15 +12,16 @@ Gale_ is a collection of reusable codes to ease your life when building games wi
 
 Modules
 -------
-- ``gale.animation``: Contains the class ``Animation``.
-- ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``.
-- ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet.
+- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, a shared ``Blackboard``, generic graphs with search algorithms, and the ``Agent`` class that ties them together. (`example <docs/examples/gale_ai.rst>`__)
+- ``gale.animation``: Contains the class ``Animation``. (`example <docs/examples/animation.rst>`__)
+- ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``. (`example <docs/examples/factory.rst>`__)
+- ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <docs/examples/frames.rst>`__)
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building.
-- ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``.
-- ``gale.particle_system``: Contains classes to handle particle systems in your game.
-- ``gale.state_machine``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``.
-- ``gale.text``: Contains a util function to ease text rendering and a class ``Text``.
-- ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening.
+- ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``. (`example <docs/examples/input_handler.rst>`__)
+- ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <docs/examples/particle_system.rst>`__)
+- ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``. (`example <docs/examples/state.rst>`__)
+- ``gale.text``: Contains a util function to ease text rendering and a class ``Text``. (`example <docs/examples/text.rst>`__)
+- ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening. (`example <docs/examples/timer.rst>`__)
 
 
 Installation
@@ -31,153 +32,63 @@ Installation
    pip install https://github.com/R3mmurd/Gale/archive/main.zip
 
 
-Create a template for your project
-----------------------------------
-
-You can organize the source code of your project as you want. However, this library provides
-the a command to create a basic template for your project. If you want to use it, you only need
-to execute the following command:
-
-.. code-block:: bash
-
-   gale-admin create-project {project_name}
-
-
-For instance, if you want to create a project called "my_first_arpg_game", then you should
-execute:
-
-.. code-block:: bash
-
-   gale-admin create-project my_first_arpg_game
+Examples
+--------
+- `Project template (gale-admin) <docs/examples/project_template.rst>`_: scaffolds a new project's directory structure.
+- `gale.animation <docs/examples/animation.rst>`_
+- `gale.factory <docs/examples/factory.rst>`_
+- `gale.frames <docs/examples/frames.rst>`_
+- `gale.input_handler <docs/examples/input_handler.rst>`_: includes keyboard key combos.
+- `gale.particle_system <docs/examples/particle_system.rst>`_
+- `gale.state <docs/examples/state.rst>`_
+- `gale.text <docs/examples/text.rst>`_
+- `gale.timer <docs/examples/timer.rst>`_
+- `gale.ai <docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
 
 
-It will create a directory with the same name with the following structure:
+Development
+-----------
+To work on this library, install the development dependencies, which include
+the runtime dependencies plus ``pytest`` and ``pre-commit``:
 
 .. code-block:: bash
 
-   my_first_arpg_game
-   ├── assets
-   │   ├── fonts
-   │   ├── graphics
-   │   └── sounds
-   ├── main.py
-   ├── README.md
-   ├── settings.py
-   └── src
-      └── MyFirstArpgGame.py
+   pip install -r requirements/dev.txt
+
+Then install the git hook so that ``black`` and the test suite run
+automatically before every commit:
+
+.. code-block:: bash
+
+   pre-commit install
+
+You can also run both checks manually at any time:
+
+.. code-block:: bash
+
+   black .
+   pytest
 
 
-- ``fonts`` is an empty directory where you should store your font files.
-- ``graphics`` is an empty directory where you should store your image files.
-- ``sounds`` is an empty directory where you should store your audio files.
-- ``README.md`` contains a base README file. It contains the following contents:
+Git workflow
+------------
+``main`` and ``develop`` are protected: nobody (including admins) can push
+to them directly, so every change has to go through a pull request.
 
-::
+- New work branches off ``develop`` and is merged back into ``develop``
+  through a pull request.
+- Releases are cut by opening a pull request from ``develop`` into ``main``.
 
-   # My First Arpg Game
+Every pull request (and every push to a branch with an open pull request)
+triggers the ``CI`` workflow defined in ``.github/workflows/ci.yml``, which
+installs the dependencies (including ``pytest``, since GitHub-hosted
+runners don't ship it) and runs:
 
+- ``black --check --diff .`` to enforce the code style.
+- ``pytest`` to run the whole test suite.
 
-- ``main.py`` is the main program to run your game, it contains the following contents:
-
-.. code-block:: python 
-
-   """
-   This module was autogenerated by gale.
-   """
-   import settings
-   from src.MyFirstArpgGame import MyFirstArpgGame
-   
-   if __name__ == "__main__":
-       game = MyFirstArpgGame(
-           "My First Arpg Game",
-           settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT,
-           settings.VIRTUAL_WIDTH, settings.VIRTUAL_HEIGHT
-       )
-       game.exec()
-
-
-- ``settings.py`` contains some contants and the registering of the key escape to quit the game. Its contents is the following:
-
-.. code-block:: python 
-
-   """
-   This module was autogenerated by gale.
-   """
-   import pathlib
-   
-   import pygame
-   
-   from gale import frames
-   from gale import input_handler
-   
-   input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, "quit")
-   
-   # Size we want to emulate
-   VIRTUAL_WIDTH = 320
-   VIRTUAL_HEIGHT = 180
-   
-   # Size of our actual window
-   WINDOW_WIDTH = 1280
-   WINDOW_HEIGHT = 720
-   
-   BASE_DIR = pathlib.Path(__file__).parent
-   
-   # Register your textures from the graphics folder, for instance:
-   # TEXTURES = {
-   #     "my_texture": pygame.image.load(BASE_DIR / "graphics/my_texture.png")
-   # }
-   TEXTURES = {}
-   
-   # Register your frames, for instance:
-   # FRAMES = {
-   #     "my_frames": frames.generate_frames(TEXTURES["my_texture"], 16, 16)
-   # }
-   FRAMES = {}
-   
-   pygame.mixer.init()
-   
-   # Register your sound from the sounds ```folder, for instance:
-   # SOUNDS = {
-   #     "my_sound": pygame.mixer.Sound(BASE_DIR, "assets" / "sounds/my_sound.wav"),
-   # }
-   SOUNDS = {}
-   
-   pygame.font.init()
-   
-   # Register your fonts from the fonts folder, for instance:
-   # FONTS = {
-   #     "small": pygame.font.Font(BASE_DIR / "fonts/font.ttf", 8)
-   # }
-   FONTS = {}
-
-- ``src/MyFirstArpgGame.py`` contains the class to define your game. Its contents is the following:
-
-.. code-block:: python 
-       
-   """
-   This module was autogenerated by gale.
-   """
-   import pygame
-   
-   from gale.game import Game
-   from gale.input_handler import InputData, InputHandler, InputListener
-   from gale.state_machine import StateMachine
-   
-   
-   class MyFirstArpgGame(Game, InputListener):
-       def init(self) -> None:
-           self.state_machine = StateMachine()
-           InputHandler.register_listener(self)
-   
-       def update(self, dt: float) -> None:
-           self.state_machine.update(dt)
-   
-       def render(self, surface: pygame.Surface) -> None:
-           self.state_machine.render(surface)
-   
-       def on_input(self, input_id: str, input_data: InputData) -> None:
-           if (input_id == "quit" and input_data.pressed):
-               self.quit()
+Both checks are required status checks on ``main`` and ``develop``: a pull
+request cannot be merged until they pass.
 
 
 Contributors
@@ -216,6 +127,9 @@ See docs/licenses for licenses of dependencies.
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+
+.. |CIBadge| image:: https://github.com/R3mmurd/Gale/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/R3mmurd/Gale/actions/workflows/ci.yml
 
 .. _gale: https://github.com/R3mmurd/Gale
 .. _Python: https://www.python.org/

@@ -47,9 +47,31 @@ class AnimationTestCase(unittest.TestCase):
         self.assertEqual(self.limited_animation.get_current_frame(), 4)
 
     def test_loops(self) -> None:
-        # 6 times played
+        # The limited animation completes its 5 loops well before the 19th
+        # update and then freezes on its last frame.
         for _ in range(3 * 6 + 1):
             self.infinite_animation.update(0.1)
             self.limited_animation.update(0.2)
         self.assertEqual(self.infinite_animation.get_current_frame(), 2)
+        self.assertEqual(self.limited_animation.times_played, 5)
+        self.assertEqual(self.limited_animation.get_current_frame(), 6)
+
+    def test_on_finish_called_once_loops_completed(self) -> None:
+        calls = []
+        animation = Animation([4, 5, 6], 0.2, 2, on_finish=lambda: calls.append(1))
+        for _ in range(6):
+            animation.update(0.2)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(animation.get_current_frame(), 6)
+        # Further updates should not retrigger the callback.
+        animation.update(0.2)
+        self.assertEqual(len(calls), 1)
+
+    def test_reset(self) -> None:
+        for _ in range(6):
+            self.limited_animation.update(0.2)
+        self.limited_animation.reset()
+        self.assertEqual(self.limited_animation.times_played, 0)
+        self.assertEqual(self.limited_animation.timer, 0)
+        self.assertEqual(self.limited_animation.current_frame_index, 0)
         self.assertEqual(self.limited_animation.get_current_frame(), 4)
