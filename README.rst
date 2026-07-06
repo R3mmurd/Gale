@@ -4,7 +4,7 @@
    :target: https://github.com/R3mmurd/Gale/
 
 
-|Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge|
+|Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge| |CIBadge|
 
 
 Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
@@ -12,6 +12,7 @@ Gale_ is a collection of reusable codes to ease your life when building games wi
 
 Modules
 -------
+- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, and the ``Agent`` class that ties them together.
 - ``gale.animation``: Contains the class ``Animation``.
 - ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``.
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet.
@@ -180,6 +181,33 @@ It will create a directory with the same name with the following structure:
                self.quit()
 
 
+Development
+-----------
+To work on this library, install the development dependencies, which include
+the runtime dependencies plus ``pytest`` and ``pre-commit``:
+
+.. code-block:: bash
+
+   pip install -r requirements-dev.txt
+
+Then install the git hook so that ``black`` and the test suite run
+automatically before every commit:
+
+.. code-block:: bash
+
+   pre-commit install
+
+You can also run both checks manually at any time:
+
+.. code-block:: bash
+
+   black .
+   pytest
+
+Every push and pull request against ``main`` or ``develop`` also runs these
+same checks through GitHub Actions (see ``.github/workflows/ci.yml``).
+
+
 Contributors
 ------------
 .. image:: https://contrib.rocks/image?repo=R3mmurd/Gale
@@ -216,6 +244,9 @@ See docs/licenses for licenses of dependencies.
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+
+.. |CIBadge| image:: https://github.com/R3mmurd/Gale/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/R3mmurd/Gale/actions/workflows/ci.yml
 
 .. _gale: https://github.com/R3mmurd/Gale
 .. _Python: https://www.python.org/
