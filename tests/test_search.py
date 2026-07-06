@@ -105,7 +105,8 @@ class AStarTestCase(unittest.TestCase):
 def hanoi_successors(state):
     """
     state is a tuple of 3 tuples, one per peg, listing disk sizes from
-    bottom to top. Yields (next_state, cost=1) for every legal move.
+    bottom to top. Yields (next_state, cost=1, action=(source, target))
+    for every legal move.
     """
     for source in range(3):
         if not state[source]:
@@ -123,7 +124,7 @@ def hanoi_successors(state):
             next_state = list(state)
             next_state[source] = state[source][:-1]
             next_state[target] = state[target] + (disk,)
-            yield tuple(next_state), 1
+            yield tuple(next_state), 1, (source, target)
 
 
 class TowersOfHanoiTestCase(unittest.TestCase):
@@ -146,3 +147,19 @@ class TowersOfHanoiTestCase(unittest.TestCase):
         # Every move in the found path must be a legal transition.
         for source, target in zip(bfs_path, bfs_path[1:]):
             self.assertTrue(graph.has_edge(source, target))
+
+        # actions_for_path recovers which peg-to-peg move each transition
+        # in the path represents, not just the states themselves.
+        moves = graph.actions_for_path(bfs_path)
+        self.assertEqual(len(moves), 2**n - 1)
+
+        state = start
+
+        for source_peg, target_peg in moves:
+            disk = state[source_peg][-1]
+            state = list(state)
+            state[source_peg] = state[source_peg][:-1]
+            state[target_peg] = state[target_peg] + (disk,)
+            state = tuple(state)
+
+        self.assertEqual(state, goal)

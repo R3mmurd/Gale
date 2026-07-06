@@ -13,6 +13,7 @@ import math
 
 from collections import deque
 from typing import (
+    Any,
     Callable,
     Dict,
     Generic,
@@ -20,8 +21,10 @@ from typing import (
     Iterator,
     List,
     Optional,
+    Sequence,
     Tuple,
     TypeVar,
+    Union,
 )
 
 T = TypeVar("T")
@@ -270,23 +273,76 @@ class StateGraph(Graph[T]):
 
     Building the full state space by hand does not scale, so use expand
     to generate it automatically from a starting state and a function
-    that yields the valid transitions out of any given state.
+    that yields the valid transitions out of any given state. Each
+    transition can optionally carry an action label (for instance, a
+    description of the move that was made), which get/actions_for_path
+    let you recover afterwards from a path found by gale.ai.search —
+    plain states alone don't always make it obvious what to actually do
+    to go from one to the next.
     """
 
     def __init__(self) -> None:
         super().__init__(directed=True)
+        self._actions: Dict[Tuple[T, T], Any] = {}
+
+    def add_edge(
+        self, source: T, target: T, weight: float = 1.0, action: Any = None
+    ) -> None:
+        """
+        :param source: The origin state.
+        :param target: The destination state.
+        :param weight: The cost of the transition. The default value is 1.0.
+        :param action: An optional label identifying the transition, for instance the move that was made. The default value is None.
+        """
+        super().add_edge(source, target, weight)
+        self._actions[(source, target)] = action
+
+    def remove_edge(self, source: T, target: T) -> None:
+        super().remove_edge(source, target)
+        del self._actions[(source, target)]
+
+    def remove_node(self, node: T) -> None:
+        super().remove_node(node)
+        self._actions = {
+            (source, target): action
+            for (source, target), action in self._actions.items()
+            if source != node and target != node
+        }
+
+    def get_action(self, source: T, target: T) -> Any:
+        """
+        :param source: The origin state.
+        :param target: The destination state.
+        :returns: The action associated with the transition from source to target, or None if it was not given one.
+        :raises KeyError: If there is no such edge.
+        """
+        if not self.has_edge(source, target):
+            raise KeyError((source, target))
+
+        return self._actions.get((source, target))
+
+    def actions_for_path(self, path: Sequence[T]) -> List[Any]:
+        """
+        :param path: A sequence of states, such as one returned by any of the search functions in gale.ai.search.
+        :returns: The action associated with each consecutive pair of states in path, in order.
+        """
+        return [
+            self.get_action(source, target) for source, target in zip(path, path[1:])
+        ]
 
     @classmethod
     def expand(
         cls,
         start: T,
-        successors: Callable[[T], Iterable[Tuple[T, float]]],
+        successors: Callable[
+            [T], Iterable[Union[Tuple[T, float], Tuple[T, float, Any]]]
+        ],
     ) -> "StateGraph[T]":
         """
         Build the full graph of states reachable from start.
 
         :param start: The initial state.
-        :param successors: Callable that, given a state, returns an iterable of (next_state, cost) pairs, one for every valid transition out of it.
+        :param successors: Callable that, given a state, returns an iterable of (next_state, cost) pairs, or (next_state, cost, action) triples, one for every valid transition out of it. Omitting action leaves the transition unlabeled.
         :returns: A StateGraph with every state reachable from start and the transitions between them.
         """
         graph: "StateGraph[T]" = cls()
@@ -296,9 +352,11 @@ class StateGraph(Graph[T]):
         while pending:
             state = pending.popleft()
 
-            for next_state, cost in successors(state):
+            for next_state, cost, *action in successors(state):
                 is_new = not graph.has_node(next_state)
-                graph.add_edge(state, next_state, cost)
+                graph.add_edge(
+                    state, next_state, cost, action=action[0] if action else None
+                )
 
                 if is_new:
                     pending.append(next_state)
