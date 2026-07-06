@@ -92,7 +92,46 @@ class Composite(Node):
             child.reset()
 
 
-class Sequence(Composite):
+class _IterativeComposite(Composite):
+    """
+    Base class for composites that tick their children in order,
+    remembering which one is currently running so they resume from it
+    on the next tick instead of starting over. A child status matching
+    short_circuit_status stops the iteration early and becomes this
+    node's own status; running out of children instead yields
+    exhausted_status. Sequence and Selector are the two ways of
+    choosing those two statuses.
+    """
+
+    short_circuit_status: Status
+    exhausted_status: Status
+
+    def __init__(self, children: List[Node]) -> None:
+        super().__init__(children)
+        self._current_index: int = 0
+
+    def tick(self, agent: Any, dt: float) -> Status:
+        while self._current_index < len(self.children):
+            status = self.children[self._current_index].tick(agent, dt)
+
+            if status == Status.RUNNING:
+                return Status.RUNNING
+
+            if status == self.short_circuit_status:
+                self.reset()
+                return self.short_circuit_status
+
+            self._current_index += 1
+
+        self.reset()
+        return self.exhausted_status
+
+    def reset(self) -> None:
+        super().reset()
+        self._current_index = 0
+
+
+class Sequence(_IterativeComposite):
     """
     Runs its children in order and succeeds only if all of them succeed.
     It stops (and fails) as soon as one of them fails, and reports
@@ -100,32 +139,11 @@ class Sequence(Composite):
     on the next tick.
     """
 
-    def __init__(self, children: List[Node]) -> None:
-        super().__init__(children)
-        self._current_index: int = 0
-
-    def tick(self, agent: Any, dt: float) -> Status:
-        while self._current_index < len(self.children):
-            status = self.children[self._current_index].tick(agent, dt)
-
-            if status == Status.RUNNING:
-                return Status.RUNNING
-
-            if status == Status.FAILURE:
-                self.reset()
-                return Status.FAILURE
-
-            self._current_index += 1
-
-        self.reset()
-        return Status.SUCCESS
-
-    def reset(self) -> None:
-        super().reset()
-        self._current_index = 0
+    short_circuit_status = Status.FAILURE
+    exhausted_status = Status.SUCCESS
 
 
-class Selector(Composite):
+class Selector(_IterativeComposite):
     """
     Runs its children in order and succeeds as soon as one of them
     succeeds. It only fails if all of them fail, and reports RUNNING
@@ -133,29 +151,8 @@ class Selector(Composite):
     next tick.
     """
 
-    def __init__(self, children: List[Node]) -> None:
-        super().__init__(children)
-        self._current_index: int = 0
-
-    def tick(self, agent: Any, dt: float) -> Status:
-        while self._current_index < len(self.children):
-            status = self.children[self._current_index].tick(agent, dt)
-
-            if status == Status.RUNNING:
-                return Status.RUNNING
-
-            if status == Status.SUCCESS:
-                self.reset()
-                return Status.SUCCESS
-
-            self._current_index += 1
-
-        self.reset()
-        return Status.FAILURE
-
-    def reset(self) -> None:
-        super().reset()
-        self._current_index = 0
+    short_circuit_status = Status.SUCCESS
+    exhausted_status = Status.FAILURE
 
 
 class Parallel(Composite):

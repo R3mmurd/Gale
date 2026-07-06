@@ -135,72 +135,19 @@ def breadth_first_search(
     return None
 
 
-def dijkstra(start: T, goal: T, graph_or_neighbors_fn: GraphLike) -> Optional[List[T]]:
-    """
-    Find the cheapest path (by total edge weight) between start and
-    goal using Dijkstra's algorithm.
-
-    :param start: The node to start the search from.
-    :param goal: The node to reach.
-    :param graph_or_neighbors_fn: A Graph, or a callable node -> iterable of (neighbor, weight) pairs, describing the graph to search. Weights must not be negative.
-    :returns: The cheapest list of nodes from start to goal (both included), or None if goal is unreachable from start.
-    """
-    neighbors_fn = _resolve_neighbors_fn(graph_or_neighbors_fn)
-
-    costs: Dict[T, float] = {start: 0.0}
-    came_from: Dict[T, T] = {}
-    visited = set()
-    # The counter breaks ties between equal-cost entries so the heap
-    # never needs to compare two nodes directly against each other.
-    counter = 1
-    queue: List[Tuple[float, int, T]] = [(0.0, 0, start)]
-
-    while queue:
-        cost, _, node = heapq.heappop(queue)
-
-        if node in visited:
-            continue
-
-        visited.add(node)
-
-        if node == goal:
-            return _reconstruct_path(came_from, start, goal)
-
-        for neighbor, weight in neighbors_fn(node):
-            new_cost = cost + weight
-
-            if new_cost < costs.get(neighbor, float("inf")):
-                costs[neighbor] = new_cost
-                came_from[neighbor] = node
-                heapq.heappush(queue, (new_cost, counter, neighbor))
-                counter += 1
-
-    return None
-
-
-def a_star(
-    start: T,
-    goal: T,
-    graph_or_neighbors_fn: GraphLike,
-    heuristic: Callable[[T, T], float],
+def _uniform_cost_search(
+    start: T, goal: T, neighbors_fn: NeighborsFn, heuristic: Callable[[T, T], float]
 ) -> Optional[List[T]]:
     """
-    Find the cheapest path (by total edge weight) between start and
-    goal using the A* algorithm, which uses heuristic to focus the
-    search towards goal instead of expanding outward evenly like
-    dijkstra does.
-
-    :param start: The node to start the search from.
-    :param goal: The node to reach.
-    :param graph_or_neighbors_fn: A Graph, or a callable node -> iterable of (neighbor, weight) pairs, describing the graph to search. Weights must not be negative.
-    :param heuristic: Callable (node, goal) -> estimated cost to reach goal from node. For the found path to be guaranteed optimal, it must not overestimate the real cost, for instance euclidean distance when weights are also distances (an admissible heuristic).
-    :returns: The cheapest list of nodes from start to goal (both included), or None if goal is unreachable from start.
+    Shared implementation behind dijkstra and a_star: both explore
+    nodes ordered by cost-so-far plus heuristic(node, goal), which
+    degenerates to plain Dijkstra when heuristic always returns 0.
     """
-    neighbors_fn = _resolve_neighbors_fn(graph_or_neighbors_fn)
-
     costs: Dict[T, float] = {start: 0.0}
     came_from: Dict[T, T] = {}
     visited = set()
+    # The counter breaks ties between equal-priority entries so the
+    # heap never needs to compare two nodes directly against each other.
     counter = 1
     queue: List[Tuple[float, int, T]] = [(heuristic(start, goal), 0, start)]
 
@@ -226,3 +173,41 @@ def a_star(
                 counter += 1
 
     return None
+
+
+def dijkstra(start: T, goal: T, graph_or_neighbors_fn: GraphLike) -> Optional[List[T]]:
+    """
+    Find the cheapest path (by total edge weight) between start and
+    goal using Dijkstra's algorithm.
+
+    :param start: The node to start the search from.
+    :param goal: The node to reach.
+    :param graph_or_neighbors_fn: A Graph, or a callable node -> iterable of (neighbor, weight) pairs, describing the graph to search. Weights must not be negative.
+    :returns: The cheapest list of nodes from start to goal (both included), or None if goal is unreachable from start.
+    """
+    neighbors_fn = _resolve_neighbors_fn(graph_or_neighbors_fn)
+    return _uniform_cost_search(
+        start, goal, neighbors_fn, heuristic=lambda node, goal: 0.0
+    )
+
+
+def a_star(
+    start: T,
+    goal: T,
+    graph_or_neighbors_fn: GraphLike,
+    heuristic: Callable[[T, T], float],
+) -> Optional[List[T]]:
+    """
+    Find the cheapest path (by total edge weight) between start and
+    goal using the A* algorithm, which uses heuristic to focus the
+    search towards goal instead of expanding outward evenly like
+    dijkstra does.
+
+    :param start: The node to start the search from.
+    :param goal: The node to reach.
+    :param graph_or_neighbors_fn: A Graph, or a callable node -> iterable of (neighbor, weight) pairs, describing the graph to search. Weights must not be negative.
+    :param heuristic: Callable (node, goal) -> estimated cost to reach goal from node. For the found path to be guaranteed optimal, it must not overestimate the real cost, for instance euclidean distance when weights are also distances (an admissible heuristic).
+    :returns: The cheapest list of nodes from start to goal (both included), or None if goal is unreachable from start.
+    """
+    neighbors_fn = _resolve_neighbors_fn(graph_or_neighbors_fn)
+    return _uniform_cost_search(start, goal, neighbors_fn, heuristic)
