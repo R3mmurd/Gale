@@ -6,7 +6,7 @@ change between states.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import TypeVar, Tuple, Dict, Any
+from typing import TypeVar, Tuple, Dict, Any, Optional
 
 import pygame
 
@@ -69,7 +69,7 @@ class StateMachine:
         state_machine.change('start')
     """
 
-    def __init__(self, states: Dict[str, BaseState] = {}) -> None:
+    def __init__(self, states: Optional[Dict[str, BaseState]] = None) -> None:
         """
         Set the state machine on its initial value.
 
@@ -79,7 +79,7 @@ class StateMachine:
         or a function that instantiates the state. That value should
         receive the instance of the state machine when it is called.
         """
-        self.states: Dict[str, BaseState] = states
+        self.states: Dict[str, BaseState] = states if states is not None else {}
 
         # The initial state is the empty state
         self.current = BaseState(self)
