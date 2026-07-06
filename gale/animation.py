@@ -45,7 +45,7 @@ class Animation:
         """
         self.times_played = 0
         self.timer = 0
-        self.current_frame = 0
+        self.current_frame_index = 0
 
     def update(self, dt: float) -> None:
         """
@@ -55,7 +55,7 @@ class Animation:
         this operation does not execute.
         """
         if self.size <= 1 or (
-            self.loops is not None and self.times_played > self.loops
+            self.loops is not None and self.times_played >= self.loops
         ):
             return
 
@@ -69,7 +69,7 @@ class Animation:
             if self.current_frame_index == 0 and self.loops is not None:
                 self.times_played += 1
 
-                if self.times_played > self.loops:
+                if self.times_played >= self.loops:
                     # Setting the last frame if loops was completed
                     self.current_frame_index = len(self.frames) - 1
                     # Animation fulfilled invoking callback, if exist
