@@ -69,6 +69,7 @@ class KeyboardData:
         self.released: bool = event.type == pygame.KEYUP
         self.modifier: int = event.mod
         self.unicode: str = event.unicode
+        self.key: int = event.key
 
     @staticmethod
     def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
@@ -404,8 +405,12 @@ class InputHandler:
 
     @classmethod
     def set_mouse_motion_action(
-        cls, direction: Tuple[int, int], action_id: str
+        cls, direction: Optional[Tuple[int, int]], action_id: str
     ) -> None:
+        """
+        :param direction: One of the MOUSE_MOTION_* constants, matched only when the raw motion is exactly that unit vector. Pass None instead to register a wildcard fired for every motion event that does not match a more specific direction binding (the usual choice for continuous mouse tracking, such as hovering over a widget in gale.ui, since real motion deltas rarely equal exactly (0, -1) and friends).
+        :param action_id: The identifier of the action to notify.
+        """
         cls.input_binding[MouseMotionData.get_action_name()][direction] = action_id
 
     @classmethod
@@ -423,6 +428,11 @@ class InputHandler:
             # No binding matched the exact combo of modifiers held, fall
             # back to a plain binding for the key without modifiers.
             action = bindings.get((MOD_NONE, action_key[1]))
+        elif action is None and data_class is MouseMotionData:
+            # No binding matched this exact relative motion vector, fall
+            # back to the wildcard registered (if any) via
+            # set_mouse_motion_action(None, action_id).
+            action = bindings.get(None)
 
         if action is not None:
             data = data_class(event)
