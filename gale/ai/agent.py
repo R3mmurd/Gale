@@ -11,6 +11,7 @@ from typing import Any, Optional
 
 import pygame
 
+from .blackboard import Blackboard
 from .steering import Kinematic, SteeringBehavior, SteeringOutput
 
 
@@ -27,12 +28,18 @@ class Agent:
       steering behavior, or any other property, the agent should be
       using at any given moment.
 
-    Both pieces are optional and can be replaced at any time through
-    set_steering_behavior and set_brain. That keeps agents personalizable
-    and reusable: the same Agent (or a subclass of it) can drive a
-    chaser, a wanderer, or a guard just by plugging different steering
-    behaviors and/or brains, and it plays nicely with gale.factory.Factory
-    since its constructor accepts x and y as its first two parameters.
+    It also owns a Blackboard (see gale.ai.blackboard), a shared
+    key-value store its brain's nodes, its steering behaviors, and any
+    external system can read and write without needing direct
+    references to one another.
+
+    Both the steering behavior and the brain are optional and can be
+    replaced at any time through set_steering_behavior and set_brain.
+    That keeps agents personalizable and reusable: the same Agent (or a
+    subclass of it) can drive a chaser, a wanderer, or a guard just by
+    plugging different steering behaviors and/or brains, and it plays
+    nicely with gale.factory.Factory since its constructor accepts x
+    and y as its first two parameters.
 
     Usage example:
 
@@ -56,6 +63,7 @@ class Agent:
         face_movement_direction: bool = True,
         steering_behavior: Optional[SteeringBehavior] = None,
         brain: Optional[Any] = None,
+        blackboard: Optional[Blackboard] = None,
     ) -> None:
         """
         :param x: Initial x component of the position.
@@ -68,6 +76,7 @@ class Agent:
         :param face_movement_direction: Whether the agent should automatically rotate to face its current velocity when its steering behavior does not produce an explicit angular acceleration. The default value is True.
         :param steering_behavior: The steering behavior driving the agent's movement. The default value is None, so the agent does not accelerate until one is set with set_steering_behavior.
         :param brain: A BehaviorTree, a DecisionTree, or any other object exposing a compatible tick(agent, dt) method, used to decide the agent's behavior on every update. The default value is None.
+        :param blackboard: The blackboard this agent's brain/steering behaviors/external systems can read and write. The default value is None, so a fresh, empty Blackboard is created. Pass one explicitly to share it with other agents or systems.
         """
         self.kinematic: Kinematic = Kinematic(
             x,
@@ -81,6 +90,9 @@ class Agent:
         self.face_movement_direction: bool = face_movement_direction
         self.steering_behavior: Optional[SteeringBehavior] = steering_behavior
         self.brain: Optional[Any] = brain
+        self.blackboard: Blackboard = (
+            blackboard if blackboard is not None else Blackboard()
+        )
 
     @property
     def position(self) -> pygame.Vector2:

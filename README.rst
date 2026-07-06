@@ -12,7 +12,7 @@ Gale_ is a collection of reusable codes to ease your life when building games wi
 
 Modules
 -------
-- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, and the ``Agent`` class that ties them together. (`example <docs/examples/gale_ai.rst>`__)
+- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, a shared ``Blackboard``, generic graphs with search algorithms, and the ``Agent`` class that ties them together. (`example <docs/examples/gale_ai.rst>`__)
 - ``gale.animation``: Contains the class ``Animation``. (`example <docs/examples/animation.rst>`__)
 - ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``. (`example <docs/examples/factory.rst>`__)
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <docs/examples/frames.rst>`__)
@@ -43,7 +43,7 @@ Examples
 - `gale.state <docs/examples/state.rst>`_
 - `gale.text <docs/examples/text.rst>`_
 - `gale.timer <docs/examples/timer.rst>`_
-- `gale.ai <docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, and the ``Agent`` class.
+- `gale.ai <docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
 
 
 Development

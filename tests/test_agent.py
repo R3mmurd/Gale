@@ -1,7 +1,8 @@
 import unittest
 
 from gale.ai.agent import Agent
-from gale.ai.behavior_tree import Action, BehaviorTree, Status
+from gale.ai.behavior_tree import Action, BehaviorTree, Condition, Selector, Status
+from gale.ai.blackboard import Blackboard
 from gale.ai.decision_tree import ActionNode, DecisionTree
 from gale.ai.steering import Kinematic, Seek
 from gale.factory import Factory
@@ -78,3 +79,38 @@ class AgentBrainTestCase(unittest.TestCase):
         agent.set_brain(CustomBrain())
         agent.update(0.1)
         self.assertEqual(calls, [(agent, 0.1)])
+
+
+class AgentBlackboardTestCase(unittest.TestCase):
+    def test_agent_has_a_blackboard_by_default(self) -> None:
+        agent = Agent()
+        self.assertIsInstance(agent.blackboard, Blackboard)
+
+    def test_agent_can_be_given_a_shared_blackboard(self) -> None:
+        shared = Blackboard({"team_alerted": False})
+        guard1 = Agent(blackboard=shared)
+        guard2 = Agent(blackboard=shared)
+
+        guard1.blackboard.set("team_alerted", True)
+
+        self.assertTrue(guard2.blackboard.get("team_alerted"))
+        self.assertIs(guard1.blackboard, guard2.blackboard)
+
+    def test_behavior_tree_condition_reads_a_value_a_task_wrote(self) -> None:
+        def has_target(agent) -> bool:
+            return agent.blackboard.get("has_target", False)
+
+        def spot_player(agent, dt):
+            agent.blackboard.set("has_target", True)
+            return Status.SUCCESS
+
+        agent = Agent()
+        agent.set_brain(
+            BehaviorTree(Selector([Condition(has_target), Action(spot_player)]))
+        )
+
+        # Nothing has set "has_target" yet, so the Condition fails and
+        # falls through to spot_player, which sets it on the blackboard.
+        self.assertFalse(agent.blackboard.has("has_target"))
+        agent.update(0.1)
+        self.assertTrue(agent.blackboard.get("has_target"))

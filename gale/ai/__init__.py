@@ -57,4 +57,5 @@ from .search import (
     a_star,
     path_cost,
 )
+from .blackboard import Blackboard
 from .agent import Agent

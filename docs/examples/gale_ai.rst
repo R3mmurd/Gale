@@ -6,9 +6,9 @@ gale.ai
 ``gale.ai`` provides small, composable pieces to build autonomous
 characters (vehicles, people, animals, or any kind of creature): a
 ``Kinematic`` body, steering behaviors, a behavior tree, a decision
-tree, and generic graphs with search algorithms (for pathfinding and
-beyond). They are combined through the ``Agent`` class, but you can also
-use each piece on its own.
+tree, a shared Blackboard, and generic graphs with search algorithms
+(for pathfinding and beyond). They are combined through the ``Agent``
+class, but you can also use each piece on its own.
 
 Steering only
 -------------
@@ -97,6 +97,69 @@ behavior tree:
            )
        )
    )
+
+Blackboard
+----------
+
+Every ``Agent`` owns a ``Blackboard``: a shared key-value store, the
+same role a Blackboard plays alongside Behavior Trees in engines such
+as Unreal Engine. It lets a behavior tree's (or decision tree's) nodes,
+an agent's steering behaviors, and any external system (a perception
+system, a quest system, another agent) read and write data about the
+agent without needing direct references to one another — they only
+need to agree on a key.
+
+Continuing the chase-or-patrol example above, a perception system
+could set ``"has_target"`` whenever it spots the player, and the
+behavior tree would just check the blackboard instead of computing the
+distance to the player itself:
+
+.. code-block:: python
+
+   from gale.ai.behavior_tree import Action, BehaviorTree, Condition, Selector, Status
+
+
+   def has_target(agent) -> bool:
+       return agent.blackboard.get("has_target", False)
+
+
+   def chase(agent, dt) -> Status:
+       agent.set_steering_behavior(Pursue(agent.kinematic, player))
+       return Status.RUNNING
+
+
+   agent.set_brain(
+       BehaviorTree(Selector([Sequence([Condition(has_target), Action(chase)]), Action(patrol)]))
+   )
+
+   # Somewhere in a perception system, unrelated to the behavior tree:
+   agent.blackboard.set("has_target", True)
+
+You can also react immediately to a value changing, instead of waiting
+for the next tick to notice it, by registering an observer:
+
+.. code-block:: python
+
+   def on_target_spotted(key, old_value, new_value):
+       if new_value:
+           print("Spotted!")
+
+   agent.blackboard.observe("has_target", on_target_spotted)
+
+Pass a ``Blackboard`` explicitly to ``Agent`` (instead of letting it
+create its own) to share one across several agents, for instance so an
+entire guard squad reacts together to ``"team_alerted"``:
+
+.. code-block:: python
+
+   from gale.ai.blackboard import Blackboard
+
+   squad_blackboard = Blackboard({"team_alerted": False})
+   guard1 = Agent(x=0, y=0, blackboard=squad_blackboard)
+   guard2 = Agent(x=50, y=0, blackboard=squad_blackboard)
+
+   guard1.blackboard.set("team_alerted", True)
+   guard2.blackboard.get("team_alerted")  # True: same blackboard instance
 
 Using it with Factory
 ----------------------
