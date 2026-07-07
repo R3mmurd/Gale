@@ -18,8 +18,10 @@ Modules
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <docs/examples/frames.rst>`__)
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building.
 - ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``. (`example <docs/examples/input_handler.rst>`__)
+- ``gale.log``: Contains logging configuration for gale games — printed to the terminal and written to a plain-text file by default, extensible to Graylog or anywhere else by attaching another ``logging.Handler``. (`example <docs/examples/log.rst>`__)
 - ``gale.net``: Contains a pure-Python, pygame-free toolkit for LAN/internet multiplayer: ``Server``, ``Client``, a hand-rolled reliability layer over UDP, per-peer round-trip-time tracking, and LAN discovery. (`example <docs/examples/net.rst>`__)
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <docs/examples/particle_system.rst>`__)
+- ``gale.physics``: Contains a Box2D-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes Box2D itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <docs/examples/physics.rst>`__)
 - ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``. (`example <docs/examples/state.rst>`__)
 - ``gale.text``: Contains a util function to ease text rendering and a class ``Text``. (`example <docs/examples/text.rst>`__)
 - ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening. (`example <docs/examples/timer.rst>`__)
@@ -41,8 +43,10 @@ Examples
 - `gale.factory <docs/examples/factory.rst>`_
 - `gale.frames <docs/examples/frames.rst>`_
 - `gale.input_handler <docs/examples/input_handler.rst>`_: includes keyboard key combos.
+- `gale.log <docs/examples/log.rst>`_: console/file defaults, adding Graylog or any other destination.
 - `gale.net <docs/examples/net.rst>`_: ``Server``/``Client``, channel choice, RTT, LAN discovery.
 - `gale.particle_system <docs/examples/particle_system.rst>`_
+- `gale.physics <docs/examples/physics.rst>`_: bodies, shapes, joints, collision callbacks, and the scene graph, with Box2D never exposed directly.
 - `gale.state <docs/examples/state.rst>`_
 - `gale.text <docs/examples/text.rst>`_
 - `gale.timer <docs/examples/timer.rst>`_
@@ -53,9 +57,13 @@ These are short, focused snippets per module. For full running games
 built with gale, see ``examples/space_trip`` and, in particular for
 ``gale.ai``, `examples/nightwatch <examples/nightwatch/README.md>`_, a
 small stealth demo whose guards patrol, chase, and coordinate through a
-shared behavior tree, blackboard, and pathfinding, and, for
+shared behavior tree, blackboard, and pathfinding; for
 ``gale.net``/``gale.ui``, `examples/rally <examples/rally/README.md>`_,
-a small online Pong playable over a LAN or the internet.
+a small online Pong playable over a LAN or the internet; and, for
+``gale.physics``, `examples/leap <examples/leap/README.md>`_, a
+platformer using all three body types, and
+`examples/hillclimb <examples/hillclimb/README.md>`_, a small
+vehicle-physics demo built on motorized wheel joints.
 
 Each example under ``examples/`` is a standalone project (its own
 ``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
@@ -140,8 +148,8 @@ See docs/licenses for licenses of dependencies.
 .. |License| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.4.0.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.4.0...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.5.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.5.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
