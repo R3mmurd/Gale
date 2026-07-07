@@ -37,7 +37,9 @@ class Player:
         """
         ground = self._grounded_body()
         carry_vx = ground.velocity.x if ground is not None else 0
-        self.body.set_velocity(direction * settings.PLAYER_SPEED + carry_vx, self.body.velocity.y)
+        self.body.set_velocity(
+            direction * settings.PLAYER_SPEED + carry_vx, self.body.velocity.y
+        )
 
     def jump(self) -> None:
         if self.is_grounded():
