@@ -17,14 +17,27 @@ class Player:
     def position(self) -> pygame.Vector2:
         return self.body.position
 
+    def _grounded_body(self):
+        """The specific body currently supporting the player, if any.
+        Used both for is_grounded() and to carry the player along with
+        a moving platform (see move()) - relying on friction alone to
+        keep a rigid body glued to a fast platform is unreliable in a
+        physics engine, so its velocity is added directly instead."""
+        for body in self.body.touching_bodies:
+            if body.user_data == "ground":
+                return body
+        return None
+
     def is_grounded(self) -> bool:
-        return any(body.user_data == "ground" for body in self.body.touching_bodies)
+        return self._grounded_body() is not None
 
     def move(self, direction: int) -> None:
         """
         :param direction: -1 to move left, 0 to stop, 1 to move right.
         """
-        self.body.set_velocity(direction * settings.PLAYER_SPEED, self.body.velocity.y)
+        ground = self._grounded_body()
+        carry_vx = ground.velocity.x if ground is not None else 0
+        self.body.set_velocity(direction * settings.PLAYER_SPEED + carry_vx, self.body.velocity.y)
 
     def jump(self) -> None:
         if self.is_grounded():
