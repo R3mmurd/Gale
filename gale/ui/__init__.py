@@ -18,10 +18,11 @@ from .list_view import ListView
 from .manager import UIManager
 from .panel import Panel
 from .progress_bar import ProgressBar
-from .text_box import TextBox
+from .text_box import PaginatedTextBox, TextBox
 from .text_input import TextInput
 from .theme import Theme, get_default_theme, set_default_theme
 from .widget import Widget
+from .window import Window
 
 __all__ = [
     "Button",
@@ -30,6 +31,7 @@ __all__ = [
     "Cursor",
     "Label",
     "ListView",
+    "PaginatedTextBox",
     "Panel",
     "ProgressBar",
     "Theme",
@@ -37,6 +39,7 @@ __all__ = [
     "TextInput",
     "UIManager",
     "Widget",
+    "Window",
     "get_default_theme",
     "set_default_theme",
 ]
