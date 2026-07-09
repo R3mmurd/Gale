@@ -9,13 +9,18 @@ from typing import Tuple, Union, TypeVar, NoReturn, Dict, List, Optional, Type
 
 import pygame
 
-INPUT_EVENTS: Tuple[int, int, int, int, int, int] = (
+INPUT_EVENTS: Tuple[int, ...] = (
     pygame.KEYDOWN,
     pygame.KEYUP,
     pygame.MOUSEBUTTONDOWN,
     pygame.MOUSEBUTTONUP,
     pygame.MOUSEWHEEL,
     pygame.MOUSEMOTION,
+    pygame.CONTROLLERBUTTONDOWN,
+    pygame.CONTROLLERBUTTONUP,
+    pygame.CONTROLLERAXISMOTION,
+    pygame.CONTROLLERDEVICEADDED,
+    pygame.CONTROLLERDEVICEREMOVED,
 )
 
 # Modifier keys that can be combined with a regular key to build a key
@@ -135,9 +140,69 @@ class MouseMotionData:
         return "mouse_motion"
 
 
+class GamepadButtonData:
+    """
+    Group the data associated to a gamepad button event. Uses SDL's
+    "game controller" abstraction (pygame's CONTROLLER* events, not
+    the lower-level, per-device JOY* ones), so button meaning (A, B,
+    the D-pad, the shoulders...) is consistent across controller
+    brands (Xbox, PlayStation, generic...) instead of varying by raw
+    button index.
+    """
+
+    def __init__(self, event: pygame.event.Event) -> None:
+        self.pressed: bool = event.type == pygame.CONTROLLERBUTTONDOWN
+        self.released: bool = event.type == pygame.CONTROLLERBUTTONUP
+        self.button: int = event.button
+        self.gamepad_id: int = event.instance_id
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+        return (event.instance_id, event.button)
+
+    @staticmethod
+    def get_action_name():
+        return "gamepad_button"
+
+
+class GamepadAxisData:
+    """
+    Group the data associated to a gamepad axis motion event (an
+    analog stick or a trigger). Fired continuously as the axis moves,
+    the same way MouseMotionData is: bind it once with
+    set_gamepad_axis_action and read value every time it is notified,
+    rather than expecting a single discrete event.
+    """
+
+    def __init__(self, event: pygame.event.Event) -> None:
+        value = event.value
+        # Most pygame builds already normalize this to [-1.0, 1.0]
+        # ([0.0, 1.0] for a trigger), but fall back to normalizing the
+        # raw SDL int16 range ([-32768, 32767]) in case a given build
+        # doesn't, so games never have to special-case this themselves.
+        self.value: float = value if abs(value) <= 1.0 else value / 32768.0
+        self.axis: int = event.axis
+        self.gamepad_id: int = event.instance_id
+
+    @staticmethod
+    def get_action_key(event: pygame.event.Event) -> Tuple[int, int]:
+        return (event.instance_id, event.axis)
+
+    @staticmethod
+    def get_action_name():
+        return "gamepad_axis"
+
+
 InputData = TypeVar(
     "InputData",
-    bound=Union[KeyboardData, MouseClickData, MouseWheelData, MouseMotionData],
+    bound=Union[
+        KeyboardData,
+        MouseClickData,
+        MouseWheelData,
+        MouseMotionData,
+        GamepadButtonData,
+        GamepadAxisData,
+    ],
 )
 
 
@@ -316,6 +381,42 @@ MOUSE_WHEEL_RIGHT: Tuple[int, int] = (1, 0)
 MOUSE_WHEEL_DOWN: Tuple[int, int] = (0, 1)
 MOUSE_WHEEL_LEFT: Tuple[int, int] = (-1, 0)
 
+GAMEPAD_BUTTON_A: int = pygame.CONTROLLER_BUTTON_A
+GAMEPAD_BUTTON_B: int = pygame.CONTROLLER_BUTTON_B
+GAMEPAD_BUTTON_X: int = pygame.CONTROLLER_BUTTON_X
+GAMEPAD_BUTTON_Y: int = pygame.CONTROLLER_BUTTON_Y
+GAMEPAD_BUTTON_BACK: int = pygame.CONTROLLER_BUTTON_BACK
+GAMEPAD_BUTTON_GUIDE: int = pygame.CONTROLLER_BUTTON_GUIDE
+GAMEPAD_BUTTON_START: int = pygame.CONTROLLER_BUTTON_START
+GAMEPAD_BUTTON_LEFTSTICK: int = pygame.CONTROLLER_BUTTON_LEFTSTICK
+GAMEPAD_BUTTON_RIGHTSTICK: int = pygame.CONTROLLER_BUTTON_RIGHTSTICK
+GAMEPAD_BUTTON_LEFTSHOULDER: int = pygame.CONTROLLER_BUTTON_LEFTSHOULDER
+GAMEPAD_BUTTON_RIGHTSHOULDER: int = pygame.CONTROLLER_BUTTON_RIGHTSHOULDER
+GAMEPAD_BUTTON_DPAD_UP: int = pygame.CONTROLLER_BUTTON_DPAD_UP
+GAMEPAD_BUTTON_DPAD_DOWN: int = pygame.CONTROLLER_BUTTON_DPAD_DOWN
+GAMEPAD_BUTTON_DPAD_LEFT: int = pygame.CONTROLLER_BUTTON_DPAD_LEFT
+GAMEPAD_BUTTON_DPAD_RIGHT: int = pygame.CONTROLLER_BUTTON_DPAD_RIGHT
+
+GAMEPAD_AXIS_LEFT_X: int = pygame.CONTROLLER_AXIS_LEFTX
+GAMEPAD_AXIS_LEFT_Y: int = pygame.CONTROLLER_AXIS_LEFTY
+GAMEPAD_AXIS_RIGHT_X: int = pygame.CONTROLLER_AXIS_RIGHTX
+GAMEPAD_AXIS_RIGHT_Y: int = pygame.CONTROLLER_AXIS_RIGHTY
+GAMEPAD_AXIS_TRIGGER_LEFT: int = pygame.CONTROLLER_AXIS_TRIGGERLEFT
+GAMEPAD_AXIS_TRIGGER_RIGHT: int = pygame.CONTROLLER_AXIS_TRIGGERRIGHT
+
+
+def apply_deadzone(value: float, threshold: float = 0.15) -> float:
+    """
+    Analog sticks rarely rest at exactly 0.0 (a bit of drift is
+    normal), so a raw GamepadAxisData.value is usually run through
+    this before acting on it.
+
+    :param value: A raw axis value, typically GamepadAxisData.value.
+    :param threshold: Values whose magnitude is at or below this are snapped to 0.0. The default value is 0.15.
+    :returns: 0.0 if abs(value) <= threshold, otherwise value unchanged.
+    """
+    return 0.0 if abs(value) <= threshold else value
+
 
 class InputHandler:
     """
@@ -328,6 +429,8 @@ class InputHandler:
     - Any pair (mouse_button, input_id) should be added to input_binding["mouse_click"].
     - Any pair (mouse_wheel, input_id) should be added to input_binding["mouse_wheel"].
     - Any pair (mouse_motion, input_id) should be added to input_binding["mouse_motion"].
+    - Any pair ((gamepad_id, button), input_id) should be added to input_binding["gamepad_button"].
+    - Any pair ((gamepad_id, axis), input_id) should be added to input_binding["gamepad_axis"].
 
     Keyboard bindings support combos with the modifier keys Shift, Ctrl, Alt,
     and Meta (also known as Super/Windows/Command key). Use set_keyboard_action
@@ -343,6 +446,16 @@ class InputHandler:
     A binding registered without modifiers (the default) is triggered
     regardless of which modifiers are held, as long as there is no more
     specific binding matching the exact combo that is currently pressed.
+
+    Gamepads need one extra call, once at startup, to be recognized at
+    all (see init_gamepads); once that's done, a game with a single
+    local player typically leaves gamepad_id as None on every binding
+    (the default), matching input from whichever gamepad is plugged
+    in. Local multiplayer instead binds the same button/axis to a
+    different action_id per player by passing each player's own
+    gamepad_id (see GamepadButtonData.gamepad_id/GamepadAxisData.gamepad_id
+    to find out which gamepad a given event came from in the first
+    place, e.g. while prompting "press A on your gamepad" during setup).
     """
 
     INPUT_DATA_TABLE: Dict[int, Type] = {
@@ -352,16 +465,52 @@ class InputHandler:
         pygame.MOUSEBUTTONDOWN: MouseClickData,
         pygame.MOUSEMOTION: MouseMotionData,
         pygame.MOUSEWHEEL: MouseWheelData,
+        pygame.CONTROLLERBUTTONDOWN: GamepadButtonData,
+        pygame.CONTROLLERBUTTONUP: GamepadButtonData,
+        pygame.CONTROLLERAXISMOTION: GamepadAxisData,
     }
 
-    input_binding: Dict[str, Union[Dict[Tuple[int, int], str], Dict[int, str]]] = {
+    input_binding: Dict[str, Dict] = {
         KeyboardData.get_action_name(): {},
         MouseClickData.get_action_name(): {},
         MouseWheelData.get_action_name(): {},
         MouseMotionData.get_action_name(): {},
+        GamepadButtonData.get_action_name(): {},
+        GamepadAxisData.get_action_name(): {},
     }
 
+    # Every currently connected gamepad, keyed by the instance_id
+    # GamepadButtonData/GamepadAxisData events report. A reference has
+    # to be kept alive here for as long as the gamepad is connected,
+    # or pygame/SDL closes the underlying device and stops sending
+    # events for it.
+    gamepads: Dict[int, "pygame.joystick.JoystickType"] = {}
+
     listeners: List[InputListener] = []
+
+    @classmethod
+    def init_gamepads(cls) -> None:
+        """
+        Open every currently connected gamepad, and start reacting to
+        CONTROLLERDEVICEADDED/CONTROLLERDEVICEREMOVED so gamepads
+        plugged in or unplugged later are picked up/dropped
+        automatically too. Call this once at startup, before any
+        gamepad input is expected to work (uninitialized, gamepad
+        events are never generated at all).
+        """
+        pygame.joystick.init()
+
+        for device_index in range(pygame.joystick.get_count()):
+            cls._open_gamepad(device_index)
+
+    @classmethod
+    def _open_gamepad(cls, device_index: int) -> None:
+        gamepad = pygame.joystick.Joystick(device_index)
+        cls.gamepads[gamepad.get_instance_id()] = gamepad
+
+    @classmethod
+    def _close_gamepad(cls, instance_id: int) -> None:
+        cls.gamepads.pop(instance_id, None)
 
     @classmethod
     def register_listener(cls, listener: InputListener) -> None:
@@ -414,7 +563,41 @@ class InputHandler:
         cls.input_binding[MouseMotionData.get_action_name()][direction] = action_id
 
     @classmethod
+    def set_gamepad_button_action(
+        cls, button: int, action_id: str, gamepad_id: Optional[int] = None
+    ) -> None:
+        """
+        :param button: One of the GAMEPAD_BUTTON_* constants.
+        :param action_id: The identifier of the action to notify.
+        :param gamepad_id: Restrict this binding to a single gamepad (its GamepadButtonData.gamepad_id, from an earlier event, e.g. while prompting a player to press a button during local co-op setup). The default value is None, matching this button on every connected gamepad, unless a more specific binding for the same button also exists for whichever gamepad triggered the event.
+        """
+        cls.input_binding[GamepadButtonData.get_action_name()][
+            (gamepad_id, button)
+        ] = action_id
+
+    @classmethod
+    def set_gamepad_axis_action(
+        cls, axis: int, action_id: str, gamepad_id: Optional[int] = None
+    ) -> None:
+        """
+        :param axis: One of the GAMEPAD_AXIS_* constants.
+        :param action_id: The identifier of the action to notify.
+        :param gamepad_id: Restrict this binding to a single gamepad. The default value is None, matching this axis on every connected gamepad, unless a more specific binding for the same axis also exists for whichever gamepad triggered the event. See set_gamepad_button_action for the local co-op use case this is for.
+        """
+        cls.input_binding[GamepadAxisData.get_action_name()][
+            (gamepad_id, axis)
+        ] = action_id
+
+    @classmethod
     def handle_input(cls, event: pygame.event.Event) -> None:
+        if event.type == pygame.CONTROLLERDEVICEADDED:
+            cls._open_gamepad(event.device_index)
+            return
+
+        if event.type == pygame.CONTROLLERDEVICEREMOVED:
+            cls._close_gamepad(event.instance_id)
+            return
+
         data_class: Optional[Type] = cls.INPUT_DATA_TABLE.get(event.type)
 
         if data_class is None:
@@ -433,6 +616,14 @@ class InputHandler:
             # back to the wildcard registered (if any) via
             # set_mouse_motion_action(None, action_id).
             action = bindings.get(None)
+        elif (
+            action is None
+            and data_class in (GamepadButtonData, GamepadAxisData)
+            and action_key[0] is not None
+        ):
+            # No binding matched this exact gamepad, fall back to a
+            # binding for the button/axis on any gamepad.
+            action = bindings.get((None, action_key[1]))
 
         if action is not None:
             data = data_class(event)
