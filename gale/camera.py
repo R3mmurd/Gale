@@ -1,7 +1,7 @@
 """
-gale.camera: a 2D scrolling/zooming camera. pygame has no GPU
-transform stack to push a matrix onto, so a Camera instead turns
-world coordinates into screen ones for you to blit with.
+gale.camera: a 2D scrolling/zooming camera — pygame has no GPU
+transform stack to push a matrix onto, so a Camera turns world
+coordinates into screen ones instead, for you to blit with.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
