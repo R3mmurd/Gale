@@ -1,8 +1,6 @@
 """
 gale.stencil: cut an arbitrary shape (drawn however you like: circles,
-polygons, another sprite, text...) out of a surface's alpha channel,
-the way love.graphics.stencil (https://love2d.org/wiki/love.graphics.stencil)
-lets you mask what gets drawn next.
+polygons, another sprite, text...) out of a surface's alpha channel.
 
 Pygame has no GPU stencil buffer to piggyback on, so this masks on the
 CPU instead: draw the shape you want visible into a Stencil's own
