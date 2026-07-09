@@ -134,6 +134,55 @@ through ``on_connect``, so on ``on_disconnect`` for the current host,
 whichever remaining peer has the lowest ``peer_id`` starts a new
 ``Server`` and everyone else reconnects to it.
 
+Room codes
+-----------
+
+Sharing a raw IP and port with a friend is fiddly and easy to
+mistype. ``encode``/``decode`` turn a ``(host, port)`` pair into a
+short, human-typeable code and back — a *local, symmetric encoding*,
+not a matchmaking service: there is no server involved, and no
+dependency on ``Server``/``Client``:
+
+.. code-block:: python
+
+   from gale.net import encode, decode
+
+   code = encode(public_ip, server.port)  # e.g. "7QK3M-2XHDR"
+   # ... shared with a friend, over voice chat or a chat message ...
+   host, port = decode(code)
+   client.connect(host, port)
+
+``decode`` ignores whitespace, the group separator, and (for a
+same-case alphabet, as the default is) letter case, so
+``"7qk3m 2xhdr"`` decodes the same as ``"7QK3M-2XHDR"``. The default
+format is Crockford's base32 (excludes ``I``, ``L``, ``O``, ``U`` to
+avoid transcription mistakes) in two groups of 5.
+
+Every part of the format is configurable per game through
+``RoomCodeFormat``, so a game can match its own house style instead of
+the default:
+
+.. code-block:: python
+
+   from gale.net import RoomCodeFormat, encode, decode
+
+   # e.g. "7qk3-m2xh-dr" style: lowercase, 4-4-2 groups, dash-separated.
+   my_format = RoomCodeFormat(
+       alphabet="0123456789abcdefghjkmnpqrstvwxyz",
+       group_size=4,
+   )
+   code = encode(public_ip, server.port, my_format)
+   host, port = decode(code, my_format)
+
+``host`` accepts either an IPv4 address or a resolvable hostname (in
+which case ``encode`` resolves it once, at encoding time, to bake the
+resulting address into the code). This is purely about turning an
+address into a shareable string: getting the right address to encode
+in the first place (the LAN address, the public address behind a
+NAT/router, and picking between the two) is up to the game, the same
+way ``gale.net`` never picks between LAN discovery and a direct
+connection for you.
+
 Security notes
 ----------------
 

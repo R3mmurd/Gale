@@ -5,11 +5,11 @@ gale.ui
 
 ``gale.ui`` is a small widget toolkit for menus, HUDs, and forms:
 ``Panel``, ``Label``, ``Button``, ``ProgressBar``, ``Checkbox``,
-``ListView``, ``Container``, ``TextBox``, ``TextInput``, and
-``Cursor``, styled through a shared ``Theme`` and driven by
-``gale.input_handler`` through a ``UIManager``. See
-``examples/rally`` for a full game built with it (menus, a "host:port"
-text field, buttons) alongside ``gale.net``.
+``ListView``, ``Container``, ``Window``, ``TextBox``,
+``PaginatedTextBox``, ``TextInput``, and ``Cursor``, styled through a
+shared ``Theme`` and driven by ``gale.input_handler`` through a
+``UIManager``. See ``examples/rally`` for a full game built with it
+(menus, a "host:port" text field, buttons) alongside ``gale.net``.
 
 A simple menu
 --------------
@@ -75,11 +75,15 @@ Widget list
    * - ``Container``
      - Groups any number of children; handles z-order, input dispatch, and focus movement between them.
    * - ``TextBox``
-     - Paginated dialogue/hint text; ``on_close`` fires after the last page.
+     - Click/Enter-to-continue dialogue/hint text; ``advance()`` moves a page at a time, ``on_close`` fires after the last one.
+   * - ``PaginatedTextBox``
+     - The same paginated text, but navigated with explicit "Previous"/"Next" buttons instead (e.g. a rules/help screen) — the buttons enable/disable themselves at the first/last page.
    * - ``TextInput``
      - A single-line editable field (a player name, a chat message, a "join code"/server address).
    * - ``Cursor``
      - A custom OS pointer (``set_as_system_cursor``) or a keyboard-navigation indicator sprite (passed to ``ListView(cursor=...)``).
+   * - ``Window``
+     - A ``Panel`` + optional title + optional close ("X") button, docked at the top-right corner, wrapped around any children — an inventory, a pause menu, a dismissible dialog.
 
 Mouse support
 --------------
@@ -141,6 +145,63 @@ Following the same convention as ``TEXTURES``/``FONTS``/``SOUNDS``:
 
    # Or pass it to a ListView for the keyboard-navigation indicator instead:
    ListView(..., cursor=settings.CURSORS["pointer"])
+
+Paginated text: click-through or buttons
+--------------------------------------------
+
+``TextBox`` word-wraps and paginates ``text`` on its own
+(``lines_per_page`` lines at a time) and is meant to be clicked or
+confirmed through, RPG-dialogue style — ``advance()`` moves to the
+next page, or, on the last one, hides the box and calls ``on_close``:
+
+.. code-block:: python
+
+   from gale.ui.text_box import TextBox
+
+   dialogue = TextBox(40, 120, 240, 48, "A long line of dialogue...", on_close=close_dialogue)
+   # advance() is wired to on_mouse_click/on_confirm already; call it
+   # yourself too if you want another input (e.g. Space) to work.
+
+For content the player should page through at their own pace with
+explicit buttons instead — a rules or help screen, where jumping back
+and forth matters — use ``PaginatedTextBox``, which wires up
+"Previous"/"Next" buttons under the text and keeps them
+enabled/disabled at the first/last page for you. Unlike ``TextBox``,
+it never auto-hides itself:
+
+.. code-block:: python
+
+   from gale.ui.text_box import PaginatedTextBox
+
+   help_box = PaginatedTextBox(160, 90, 320, 220, long_help_text)
+   # help_box.text_box.page_index / .page_count if you want to render
+   # a "page 2 of 5" indicator alongside it.
+
+Closable windows
+------------------
+
+``Window`` wraps a ``Panel``, an optional title, an optional close
+("X") button docked at the top-right corner, and any children you pass
+it, into a single ``Container``:
+
+.. code-block:: python
+
+   from gale.ui.window import Window
+   from gale.ui.text_box import PaginatedTextBox
+
+   def close_help() -> None:
+       menu.remove_child(help_window)  # or just help_window.visible = False
+
+   help_window = Window(
+       160, 90, 320, 220, title="How to play", on_close=close_help,
+       children=[PaginatedTextBox(160, 114, 320, 172, long_help_text)],
+   )
+
+Set ``closable=False`` to skip the close button (e.g. a modal the
+player must resolve by clicking something inside it instead), or call
+``window.close()`` yourself — from a keyboard shortcut, another
+widget's ``on_click``, whatever — to trigger the same hide-and-call-
+``on_close`` behavior the button does.
 
 Known limitations
 -------------------
