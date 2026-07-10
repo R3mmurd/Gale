@@ -17,6 +17,10 @@ torch/vision reveal over a dark fog-of-war overlay, a minimap cropped
 to a circle, a doorway that only shows what's behind it once you're
 close enough.
 
+See `examples/lantern <../../examples/lantern/README.md>`_ for a full
+game built on this: a top-down exploration game where the room is
+covered in darkness except for a circle of light around the player.
+
 Fog of war / vision reveal
 ----------------------------
 

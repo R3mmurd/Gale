@@ -66,11 +66,16 @@ built with gale, see ``examples/space_trip`` and, in particular for
 small stealth demo whose guards patrol, chase, and coordinate through a
 shared behavior tree, blackboard, and pathfinding; for
 ``gale.net``/``gale.ui``, `examples/rally <examples/rally/README.md>`_,
-a small online Pong playable over a LAN or the internet; and, for
+a small online Pong playable over a LAN or the internet; for
 ``gale.physics``, `examples/leap <examples/leap/README.md>`_, a
 platformer using all three body types, and
 `examples/hillclimb <examples/hillclimb/README.md>`_, a small
-vehicle-physics demo built on motorized wheel joints.
+vehicle-physics demo built on motorized wheel joints; for
+``gale.camera``, `examples/scavenger <examples/scavenger/README.md>`_,
+a coin-collecting game with a scrolling/zooming camera; and, for
+``gale.stencil``, `examples/lantern <examples/lantern/README.md>`_, a
+top-down exploration game where the room is only revealed in a circle
+around the player.
 
 Each example under ``examples/`` is a standalone project (its own
 ``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
