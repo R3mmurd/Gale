@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class ProgressBar.
+This file contains the implementation of the class ProgressBar: a
+filled bar showing value out of max_value, both plain public
+attributes so gale.timer.Timer.tween can animate them directly.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
