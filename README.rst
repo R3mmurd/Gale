@@ -1,13 +1,10 @@
-.. raw:: html
-
-   <p align="center">
-     <a href="https://github.com/R3mmurd/Gale/">
-       <img src="logo.png" alt="Gale">
-     </a>
-   </p>
+.. image:: https://raw.githubusercontent.com/R3mmurd/Gale/main/logo.png
+   :align: center
+   :alt: Gale
+   :target: https://github.com/R3mmurd/Gale/
 
 
-|Python3| |Pygame2| |License| |GithubCommits| |BlackFormatBadge| |CIBadge|
+|Python3| |Pygame2| |License| |PyPI| |GithubCommits| |BlackFormatBadge| |CIBadge|
 
 
 Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
@@ -35,6 +32,16 @@ Modules
 
 Installation
 ------------
+
+.. code-block:: bash
+
+   pip install gale-engine
+
+The package is published on PyPI as ``gale-engine`` (``gale`` and
+several close variants were already taken), but ``import gale`` stays
+exactly the same either way.
+
+To track ``main`` directly instead of the latest release:
 
 .. code-block:: bash
 
@@ -116,6 +123,9 @@ to them directly, so every change has to go through a pull request.
 - New work branches off ``develop`` and is merged back into ``develop``
   through a pull request.
 - Releases are cut by opening a pull request from ``develop`` into ``main``.
+  See `PACKAGING.md <PACKAGING.md>`_ for the full release/publishing
+  process — publishing a GitHub Release automatically pushes the new
+  version to PyPI.
 
 Every pull request (and every push to a branch with an open pull request)
 triggers the ``CI`` workflow defined in ``.github/workflows/ci.yml``, which
@@ -159,6 +169,9 @@ See docs/licenses for licenses of dependencies.
 
 .. |License| image:: https://img.shields.io/badge/License-MIT-yellow.svg
    :target: https://opensource.org/licenses/MIT
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
+   :target: https://pypi.org/project/gale-engine/
 
 .. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.6.0.svg
    :target: https://github.com/R3mmurd/Gale/compare/v1.6.0...main
