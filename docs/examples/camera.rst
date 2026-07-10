@@ -10,6 +10,11 @@ turns world coordinates into screen ones for you — you still ``blit``
 each entity yourself, just at the position (and size) the camera says
 to.
 
+See `examples/scavenger <../../examples/scavenger/README.md>`_ for a
+full game built on this: a coin-collecting game where the camera
+follows the player around a world much bigger than the viewport, with
+zoom and screen shake.
+
 Basic usage
 ------------
 
