@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Cursor.
+This file contains the implementation of the class Cursor: a custom
+cursor image, usable as the OS mouse pointer or as a ListView's
+keyboard-navigation indicator sprite.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

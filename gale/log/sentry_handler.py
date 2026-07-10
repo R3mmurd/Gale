@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class SentryHandler.
+This file contains the implementation of the class SentryHandler: a
+logging.Handler that sends each log record to Sentry as an event
+through its HTTP Store API, using only the standard library.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

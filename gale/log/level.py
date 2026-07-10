@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class LogLevel.
+This file contains the implementation of the class LogLevel: the
+standard library's own logging severities (DEBUG/INFO/WARNING/
+ERROR/CRITICAL), re-exported under gale's own name.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
