@@ -1,9 +1,11 @@
 """
-This file contains the class Factory that allows you to build
-new object given a prototype. This also contains the class
-Abstract factory to create factory of classes belonging to a module.
+This file contains the class Factory, holding a class (not an
+instance) and creating new instances of it at a given (x, y) position
+plus arbitrary extra constructor properties, and AbstractFactory,
+looking that class up by name within a given module so a Factory can
+be built from a string instead of importing the class directly.
 
-Author: Alejandro Mujica
+Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
 import sys

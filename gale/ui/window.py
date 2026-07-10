@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Window.
+This file contains the implementation of the class Window: a
+Panel-backed Container with an optional title and an optional close
+("X") button docked in its top-right corner.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

@@ -1,5 +1,8 @@
 """
-This file contains the implementation of a particle systems.
+This file contains the classes Particle (a single point with
+position/acceleration/velocity/lifetime, using numpy for the physics
+integration) and ParticleSystem, spawning and managing bursts of them
+— explosions, sparks, trails, and similar effects.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

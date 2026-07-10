@@ -1,5 +1,8 @@
 """
-This file contains the implementation of the class Container.
+This file contains the implementation of the class Container: a
+scene-graph node holding any number of child widgets, dispatching
+input to them (mouse hit-testing, keyboard focus/navigation) and
+rendering/updating them in add order.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
