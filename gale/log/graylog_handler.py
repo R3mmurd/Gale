@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class GraylogHandler.
+This file contains the implementation of the class GraylogHandler: a
+logging.Handler that sends each log record to a Graylog server as a
+GELF (Graylog Extended Log Format) datagram over UDP.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

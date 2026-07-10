@@ -1,5 +1,8 @@
 """
-This file contains the implementation of the class Body.
+This file contains the implementation of the class Body: a physics
+body and its fixtures, in pixel units, wrapping a single Box2D body
+without ever exposing Box2D itself. Created through
+World.create_static_body/create_dynamic_body/create_kinematic_body.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

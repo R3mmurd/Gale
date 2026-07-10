@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Text.
+This file contains render_text, a one-off helper to draw a string
+(optionally centered, with a background/drop shadow), and the class
+Text wrapping the same rendering as a reusable, movable object.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

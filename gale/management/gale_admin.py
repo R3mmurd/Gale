@@ -1,3 +1,11 @@
+"""
+This file contains gale-admin's click commands: create-project
+(scaffolds a new project's main.py/settings.py/src/assets layout) and
+create-state (scaffolds a new BaseState subclass inside one).
+
+Author: Alejandro Mujica (aledrums@gmail.com)
+"""
+
 import os
 import re
 from pathlib import Path

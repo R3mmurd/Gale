@@ -1,6 +1,8 @@
 """
-This file contains the functions to configure and obtain gale's
-loggers.
+This file contains configure (sets up the console/file handlers, or
+lets a game override them), get_logger (returns a named logger,
+auto-configuring with the defaults on first use), and add_handler/
+remove_handler for attaching extra destinations on top.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

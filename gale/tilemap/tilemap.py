@@ -1,6 +1,8 @@
 """
-This file contains the implementation of the classes Tileset and
-TileMap.
+This file contains the implementation of the classes Tileset (one
+tileset image sliced into tiles, occupying a range of global tile
+ids) and TileMap (a stack of named tile layers sharing tileset(s),
+rendered with gale.camera culling built in).
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

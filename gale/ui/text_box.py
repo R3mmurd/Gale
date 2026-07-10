@@ -1,5 +1,8 @@
 """
-This file contains the implementation of the class TextBox.
+This file contains the implementation of the classes TextBox, a
+paginated block of text advanced by click/Enter (RPG-dialogue style),
+and PaginatedTextBox, the same paginated text but navigated with
+explicit Previous/Next buttons instead.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

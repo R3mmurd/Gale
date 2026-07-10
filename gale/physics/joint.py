@@ -1,6 +1,8 @@
 """
-This file contains the implementation of the classes Joint,
-RevoluteJoint, and WheelJoint.
+This file contains Joint, RevoluteJoint, and WheelJoint: constraints
+between two Bodies (a hinge, and a wheel-on-a-suspension-spring,
+respectively), wrapping a Box2D joint without ever exposing Box2D
+itself. Created through World.create_revolute_joint/create_wheel_joint.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

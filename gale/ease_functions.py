@@ -1,8 +1,11 @@
 """
-This file contains the implementation of some ease functions to
-interpolate values.
+This file contains easing functions (linear, sine, quad, cubic,
+quart, quint, expo, circ, back, elastic, bounce, each with an
+in/out/in_out variant) mapping a normalized time t in [0, 1] to an
+eased progress value, and the EASE_FUNCTIONS registry gale.timer.Timer
+picks them from by name.
 
-Author: Alejandro Mujica
+Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
 import math

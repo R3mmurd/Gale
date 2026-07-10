@@ -1,5 +1,8 @@
 """
-This file contains the implementation of the class UIManager.
+This file contains the implementation of the class UIManager: connects
+a widget tree (a root Container) to gale.input_handler, rescaling
+mouse positions and routing keyboard/confirm/navigation input to the
+right widget.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

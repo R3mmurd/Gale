@@ -1,8 +1,10 @@
 """
-This file contains a function to generate frames from a spritesheets
-(a texture with multiple sprites).
+This file contains generate_frames, slicing a spritesheet (one image
+holding a regular grid of same-sized sprites, optionally with a margin
+around it and/or spacing between sprites) into the list of
+pygame.Rects each individual sprite occupies within it.
 
-Author: Alejandro Mujica
+Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
 from typing import List

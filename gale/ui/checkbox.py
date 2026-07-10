@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Checkbox.
+This file contains the implementation of the class Checkbox: a
+square toggle firing on_change(checked) on click or on_confirm while
+focused.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
