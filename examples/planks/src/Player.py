@@ -26,10 +26,16 @@ class Player:
     def update(self, dt: float, tilemap, layer_name: str) -> None:
         self.vy = min(self.vy + settings.GRAVITY * dt, settings.MAX_FALL_SPEED)
 
-        new_rect, hit_x, hit_y = move_and_collide(
-            tilemap, layer_name, self.get_rect(), self.vx * dt, self.vy * dt
+        self.x, self.y, hit_x, hit_y = move_and_collide(
+            tilemap,
+            layer_name,
+            self.x,
+            self.y,
+            self.width,
+            self.height,
+            self.vx * dt,
+            self.vy * dt,
         )
-        self.x, self.y = new_rect.x, new_rect.y
 
         if hit_y:
             if self.vy > 0:
