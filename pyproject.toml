@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gale-engine"
+version = "1.6.0"
+description = "Collection of reusable codes to make games by using pygame."
+readme = "README.rst"
+requires-python = ">=3.7"
+license = { file = "LICENSE.txt" }
+authors = [{ name = "Alejandro Mujica", email = "aledrums@gmail.com" }]
+keywords = ["pygame", "game", "game-development", "game-engine"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "Box2D==2.3.10",
+    "click",
+    "numpy",
+    "pygame",
+    "wheel",
+]
+
+[project.urls]
+Homepage = "https://github.com/R3mmurd/Gale"
+Repository = "https://github.com/R3mmurd/Gale"
+Issues = "https://github.com/R3mmurd/Gale/issues"
+
+[project.scripts]
+gale-admin = "gale.management:execute_from_command_line"
+
+[tool.setuptools]
+packages = [
+    "gale",
+    "gale.ai",
+    "gale.log",
+    "gale.management",
+    "gale.net",
+    "gale.physics",
+    "gale.ui",
+]
+zip-safe = false
+
+[tool.black]
+# Pinned explicitly so formatting doesn't shift with black's own
+# target-version auto-detection, which (absent this) infers from
+# requires-python above — an open-ended ">=3.7" range that includes
+# every Python black knows about, not just the floor this project
+# actually promises to run on.
+target-version = ["py37"]
