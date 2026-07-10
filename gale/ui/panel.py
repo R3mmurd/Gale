@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Panel.
+This file contains the implementation of the class Panel: a plain
+filled, bordered rectangle, typically used as background chrome
+behind other widgets or on its own as a HUD backdrop.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

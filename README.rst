@@ -26,6 +26,7 @@ Modules
 - ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`__)
 - ``gale.stencil``: Contains the class ``Stencil``, a CPU-side equivalent of `love.graphics.stencil <https://love2d.org/wiki/love.graphics.stencil>`__ to mask an arbitrary shape (a circle, a polygon, a sprite) out of a surface's alpha channel — handy for a top-down game's fog-of-war/vision reveal, a circular minimap crop, and similar effects. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/stencil.rst>`__)
 - ``gale.text``: Contains a util function to ease text rendering and a class ``Text``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/text.rst>`__)
+- ``gale.tilemap``: Contains ``TileMap``/``Tileset`` (grid-of-tiles rendering with ``gale.camera`` culling built in), ``load_tiled_map`` (loads a map exported as JSON from `Tiled <https://www.mapeditor.org/>`__, tilesets/object layers included), and an optional ``move_and_collide`` platformer collision helper (solid walls, one-way platforms) that never depends on ``gale.physics``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/tilemap.rst>`__)
 - ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/timer.rst>`__)
 - ``gale.ui``: Contains a widget toolkit for menus, HUDs, and forms — panels, labels, buttons, progress bars, checkboxes, list views, containers, text boxes (click/Enter-paginated, or button-paginated through ``PaginatedTextBox``), text inputs, cursors, and closable ``Window``\\ s, styled through a shared theme. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ui.rst>`__)
 
@@ -63,6 +64,7 @@ Examples
 - `gale.state <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`_
 - `gale.stencil <https://github.com/R3mmurd/Gale/blob/main/docs/examples/stencil.rst>`_: mask an arbitrary shape out of a surface, love2d-stencil style.
 - `gale.text <https://github.com/R3mmurd/Gale/blob/main/docs/examples/text.rst>`_
+- `gale.tilemap <https://github.com/R3mmurd/Gale/blob/main/docs/examples/tilemap.rst>`_: layers, tilesets, loading a Tiled JSON map, one-way platform collision.
 - `gale.timer <https://github.com/R3mmurd/Gale/blob/main/docs/examples/timer.rst>`_
 - `gale.ui <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ui.rst>`_: menus, HUDs, and forms built from panels, buttons, list views, text inputs, closable windows, and more.
 - `gale.ai <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
@@ -82,7 +84,10 @@ vehicle-physics demo built on motorized wheel joints; for
 a coin-collecting game with a scrolling/zooming camera; and, for
 ``gale.stencil``, `examples/lantern <https://github.com/R3mmurd/Gale/blob/main/examples/lantern/README.md>`_, a
 top-down exploration game where the room is only revealed in a circle
-around the player.
+around the player; and, for ``gale.tilemap``,
+`examples/planks <https://github.com/R3mmurd/Gale/blob/main/examples/planks/README.md>`_,
+a platformer loading a level made in Tiled, with one-way platforms and
+a scrolling camera.
 
 Each example under ``examples/`` is a standalone project (its own
 ``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
@@ -173,8 +178,8 @@ See docs/licenses for licenses of dependencies.
 .. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
    :target: https://pypi.org/project/gale-engine/
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.6.2.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.6.2...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.7.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.7.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black

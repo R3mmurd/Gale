@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class TextInput.
+This file contains the implementation of the class TextInput: a
+single-line editable text field (a player name, a chat message, a
+join code) driven by raw keyboard events.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

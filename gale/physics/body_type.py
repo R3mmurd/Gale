@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class BodyType.
+This file contains the implementation of the class BodyType: the
+constants identifying whether a Body is static, dynamic, or
+kinematic.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

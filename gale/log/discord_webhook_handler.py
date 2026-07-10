@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class DiscordWebhookHandler.
+This file contains the implementation of the class
+DiscordWebhookHandler: a logging.Handler that posts each log record
+to a Discord channel through an incoming webhook.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gale-engine"
-version = "1.6.2"
+version = "1.7.0"
 description = "Collection of reusable codes to make games by using pygame."
 readme = "README.rst"
 requires-python = ">=3.7"
@@ -44,6 +44,7 @@ packages = [
     "gale.management",
     "gale.net",
     "gale.physics",
+    "gale.tilemap",
     "gale.ui",
 ]
 zip-safe = false

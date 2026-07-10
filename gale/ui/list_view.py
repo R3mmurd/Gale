@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class ListView.
+This file contains the implementation of the class ListView: a
+vertical list of selectable (label, on_select) items, navigable by
+mouse or keyboard/gamepad.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

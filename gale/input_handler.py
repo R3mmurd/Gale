@@ -1,8 +1,11 @@
 """
-This file contains the implementation of an observer-pattern-based
-input handler.
+This file contains InputHandler, an observer-pattern-based dispatcher
+mapping keyboard (including modifier combos), mouse (clicks, wheel,
+motion), and gamepad (buttons, axes, hotplug) input to named actions,
+notifying every registered InputListener when one fires — plus every
+KEY_*/MOUSE_*/GAMEPAD_* constant and *Data class involved.
 
-Author: Alejandro Mujica
+Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
 from typing import Tuple, Union, TypeVar, NoReturn, Dict, List, Optional, Type

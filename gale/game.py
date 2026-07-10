@@ -1,11 +1,11 @@
 """
-This file contains the implementation of a basic class
-to implement a Game with pygame.
+This file contains the implementation of the class Game: the window,
+virtual-resolution scaling, and game loop (fixed-ish update/render,
+driven by real elapsed time) every gale game is built on top of.
 
-When this module is imported, it calls to pygame.init() to
-start a game.
+Importing this module calls pygame.init().
 
-Author: Alejandro Mujica
+Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
 import sys
