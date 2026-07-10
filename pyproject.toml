@@ -44,6 +44,7 @@ packages = [
     "gale.management",
     "gale.net",
     "gale.physics",
+    "gale.tilemap",
     "gale.ui",
 ]
 zip-safe = false
