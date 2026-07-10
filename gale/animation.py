@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Animation.
+This file contains the implementation of the class Animation: steps
+through a sequence of frames at a fixed time interval, with an
+optional loop count.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

@@ -1,5 +1,9 @@
 """
-This file contains utility classes that perform as timers.
+This file contains Every/After/Tween (a repeating callback, a
+one-shot delayed callback, and an eased attribute interpolation,
+respectively) and the class Timer, a process-wide scheduler managing
+all of them — call Timer.every/after/tween to start one, and
+Timer.update(dt) once a frame to drive them all.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

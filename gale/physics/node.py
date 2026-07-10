@@ -1,5 +1,8 @@
 """
-This file contains the implementation of the class Node.
+This file contains the implementation of the class Node: a lightweight
+scene graph node for organizing physics entities, optionally driven by
+a Body (whose position/angle then take over as the source of truth),
+with children for grouping/attachment.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

@@ -1,5 +1,6 @@
 """
-This file contains the implementation of the class Label.
+This file contains the implementation of the class Label: a piece of
+static or programmatically updatable (set_text) text.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

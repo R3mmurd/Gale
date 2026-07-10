@@ -1,3 +1,14 @@
+"""
+gale.ai: a modular toolkit to build autonomous characters — Kinematic
+bodies and steering behaviors, a behavior tree, a decision tree, a
+shared Blackboard, generic graphs with search algorithms, and the
+Agent class that ties them together.
+
+See docs/examples/gale_ai.rst for a walkthrough.
+
+Author: Alejandro Mujica (aledrums@gmail.com)
+"""
+
 from .steering import (
     SteeringOutput,
     Kinematic,

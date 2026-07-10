@@ -1,5 +1,7 @@
 """
-This file contains the implementation of the class Button.
+This file contains the implementation of the class Button: a
+clickable, labeled rectangle, activated by a mouse click or by
+on_confirm while focused.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

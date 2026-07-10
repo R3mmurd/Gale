@@ -1,5 +1,8 @@
 """
-This file contains the implementation of the class World.
+This file contains the implementation of the class World: a physics
+simulation, in pixel units, wrapping a Box2D world without ever
+exposing Box2D itself — creates every Body/Joint, steps the
+simulation, and dispatches collision callbacks.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
