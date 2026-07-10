@@ -67,7 +67,7 @@ class Game(InputListener):
         virtual_height: Optional[int] = None,
         fps: int = 60,
         *args: Tuple[Any],
-        **kwargs: Dict[str, Any]
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         Set the basic elements of the game in their initial values.
