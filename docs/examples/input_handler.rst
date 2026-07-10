@@ -120,3 +120,73 @@ With both bindings above in place:
 - Pressing Ctrl+S notifies ``"save"``.
 - Pressing Ctrl+Shift+S notifies ``"save_as"`` (the most specific combo wins).
 - Pressing S alone notifies nothing, since there is no plain binding for that key.
+
+Gamepads
+---------
+
+Gamepad support is built on SDL's "game controller" abstraction
+(pygame's ``CONTROLLER*`` events, not the lower-level, per-device
+``JOY*`` ones), so button/axis meaning (A, B, the D-pad, the left
+stick...) is consistent across controller brands instead of varying
+by raw button index per vendor.
+
+Call ``init_gamepads()`` once, at startup (in ``settings.py``,
+alongside ``pygame.mixer.init()``/``pygame.font.init()``) — until
+then, no gamepad event is ever generated at all, even with a
+controller already plugged in:
+
+.. code-block:: python
+
+   from gale.input_handler import InputHandler
+
+   InputHandler.init_gamepads()
+
+Then bind buttons and axes the same way as everything else:
+
+.. code-block:: python
+
+   from gale.input_handler import (
+       GAMEPAD_AXIS_LEFT_X,
+       GAMEPAD_BUTTON_A,
+       GAMEPAD_BUTTON_DPAD_LEFT,
+       GAMEPAD_BUTTON_DPAD_RIGHT,
+       InputHandler,
+   )
+
+   InputHandler.set_gamepad_button_action(GAMEPAD_BUTTON_A, "jump")
+   InputHandler.set_gamepad_button_action(GAMEPAD_BUTTON_DPAD_LEFT, "move_left")
+   InputHandler.set_gamepad_button_action(GAMEPAD_BUTTON_DPAD_RIGHT, "move_right")
+   InputHandler.set_gamepad_axis_action(GAMEPAD_AXIS_LEFT_X, "move_x")
+
+A button behaves like a keyboard key (``input_data.pressed``/``released``);
+an axis behaves like mouse motion — bound once, notified continuously
+as it moves, with the current position in ``input_data.value``
+(``-1.0``–``1.0``, or ``0.0``–``1.0`` for a trigger). Since a resting
+stick rarely reports exactly ``0.0``, run it through ``apply_deadzone``
+before acting on it:
+
+.. code-block:: python
+
+   from gale.input_handler import apply_deadzone
+
+   def on_input(self, input_id, input_data) -> None:
+       if input_id == "move_x":
+           self.player.vx = apply_deadzone(input_data.value) * PLAYER_SPEED
+
+Local multiplayer, where each player has their own gamepad, binds the
+same button/axis to a different ``action_id`` per player by passing
+``gamepad_id`` (every ``GamepadButtonData``/``GamepadAxisData`` carries
+which gamepad it came from as ``gamepad_id``, handy for a "press A on
+your controller" setup screen that asks each player to identify
+theirs):
+
+.. code-block:: python
+
+   InputHandler.set_gamepad_button_action(GAMEPAD_BUTTON_A, "p1_jump", gamepad_id=player_1_id)
+   InputHandler.set_gamepad_button_action(GAMEPAD_BUTTON_A, "p2_jump", gamepad_id=player_2_id)
+
+A binding registered without ``gamepad_id`` (the default) matches
+every connected gamepad, unless a more specific one for the same
+button/axis also exists for whichever gamepad triggered the event —
+the usual choice for a single local player, so it doesn't matter which
+port their controller is plugged into.

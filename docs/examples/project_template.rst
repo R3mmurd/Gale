@@ -147,3 +147,39 @@ It will create a directory with the same name with the following structure:
        def on_input(self, input_id: str, input_data: InputData) -> None:
            if (input_id == "quit" and input_data.pressed):
                self.quit()
+
+
+Adding a state (gale-admin create-state)
+------------------------------------------
+
+Once inside a project's directory (the one with ``main.py`` and
+``src/`` in it), you can scaffold a new ``gale.state.BaseState``
+subclass with:
+
+.. code-block:: bash
+
+   gale-admin create-state {state_name}
+
+For instance:
+
+.. code-block:: bash
+
+   gale-admin create-state menu
+
+creates ``src/states/menu_state.py`` (and ``src/states/__init__.py``,
+if it doesn't exist yet) with a ``MenuState`` class stubbed out with
+every ``BaseState`` method (``enter``, ``exit``, ``on_input``,
+``update``, ``render``), ready to be registered with a
+``StateMachine``:
+
+.. code-block:: python
+
+   from src.states.menu_state import MenuState
+
+   self.state_machine = StateMachine({"menu": MenuState})
+   self.state_machine.change("menu")
+
+The name is normalized regardless of how it's cased or whether a
+trailing ``state``/``State`` is already there — ``menu``,
+``menu_state``, and ``MenuState`` all produce the same
+``MenuState`` class in the same file.
