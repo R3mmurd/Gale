@@ -81,9 +81,9 @@ to ``"solid"`` or ``"platform"``:
 
    from gale.tilemap import move_and_collide
 
-   # In your Player's update(), instead of just self.rect.move_ip(dx, dy):
-   self.rect, hit_wall, hit_floor = move_and_collide(
-       tilemap, "ground", self.rect, self.vx * dt, self.vy * dt
+   # In your Player's update(), instead of just self.x += dx; self.y += dy:
+   self.x, self.y, hit_wall, hit_floor = move_and_collide(
+       tilemap, "ground", self.x, self.y, self.width, self.height, self.vx * dt, self.vy * dt
    )
 
    if hit_floor and self.vy > 0:
@@ -97,7 +97,19 @@ to ``"solid"`` or ``"platform"``:
   below" one-way platform every Mario/Metroidvania-style game has.
   It never blocks sideways movement or upward movement, on purpose.
 
-``move_and_collide`` resolves one axis at a time and snaps flush
+``move_and_collide`` takes and returns plain floats — ``self.x``/``self.y``,
+not a ``pygame.Rect`` — and never rounds them internally either, not
+even for the tile-overlap test itself. That matters more than it might
+seem: at a typical frame rate, one frame's movement under gravity near
+the ground is a fraction of a pixel, so if that got rounded away
+anywhere in the chain, an entity resting on solid ground would keep
+re-falling that fraction and re-colliding only once every few frames
+instead of every frame — which reads as flickering on and off the
+ground. Build a ``pygame.Rect`` only where you actually need one (to
+render, or to hit-test against something else):
+``pygame.Rect(round(self.x), round(self.y), self.width, self.height)``.
+
+``move_and_collide`` also resolves one axis at a time and snaps flush
 against whatever it hits (rather than just refusing to move), and
 sweeps the whole distance travelled this call rather than only
 checking the destination cell — a fast-moving body can't tunnel
