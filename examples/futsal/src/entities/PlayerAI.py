@@ -78,10 +78,14 @@ class PlayerAI(Agent):
         self.home_position: pygame.Vector2 = pygame.Vector2(home_position)
         self.world: World = world
         self.teammates: List["PlayerAI"] = []
-        # Whether this goalkeeper has already rolled its save chance
-        # for the current approach (see _make_save) -- reset once the
-        # ball leaves save range in _ball_within_save_range.
-        self._save_attempted: bool = False
+        # Seconds until this goalkeeper may roll its save chance again
+        # (see _make_save) -- sub-zero means a roll is due right now.
+        # A cooldown, not a one-shot flag: a single failed/blocked
+        # attempt must not permanently give up on a ball that's still
+        # sitting right next to the keeper (nobody else has any reason
+        # to touch a ball the keeper is closest to, so it would
+        # otherwise never move again).
+        self._save_cooldown: float = 0.0
 
         self._target: Kinematic = Kinematic()
         self._arrive: Arrive = Arrive(
@@ -294,17 +298,9 @@ class PlayerAI(Agent):
         ).length() < settings.GK_RUSH_RADIUS
 
     def _ball_within_save_range(self, agent: "PlayerAI") -> bool:
-        within = (
+        return (
             self.ball_position() - self.kinematic.position
         ).length() < settings.GK_SAVE_RADIUS
-
-        if not within:
-            # Leaving range ends this approach -- the next time the
-            # ball comes back within reach counts as a fresh shot,
-            # eligible for a fresh save roll.
-            self._save_attempted = False
-
-        return within
 
     def _make_save(self, agent: "PlayerAI", dt: float) -> Status:
         """
@@ -319,20 +315,33 @@ class PlayerAI(Agent):
         single shot within reach is an impenetrable wall, not a
         goalkeeper.
 
-        The chance is only rolled once per approach (see
-        _save_attempted/_ball_within_save_range), not on every tick the
-        ball happens to stay in range: a close-quarters contest can
-        last dozens of ticks, and re-rolling on each one turns a 55%
-        per-shot save rate into a near-100% chance across the whole
-        approach (the odds of missing every single one of, say, thirty
-        independent 45%-to-fail rolls in a row are astronomically
-        small) -- an unbeatable keeper, not a fallible one.
+        The chance is only rolled once per GK_SAVE_COOLDOWN seconds
+        (see _save_cooldown), not on every tick the ball happens to
+        stay in range: a close-quarters contest can last dozens of
+        ticks, and re-rolling on each one turns a 55% per-shot save
+        rate into a near-100% chance within a fraction of a second (the
+        odds of missing every single one of thirty independent
+        45%-to-fail rolls in a row are astronomically small) -- an
+        unbeatable keeper, not a fallible one.
+
+        This must be a cooldown, not a one-shot-per-approach flag: if
+        an attempt fails (or is blocked by
+        PlayerAI._kick_ball_towards's one-touch-per-tick rule) and the
+        ball just sits there afterwards, nothing else will ever kick it
+        away -- attackers only dribble/shoot while they hold
+        possession, which the keeper is hogging just by being closest
+        to a ball nobody's contesting -- so a one-shot flag would leave
+        the keeper standing frozen on top of a dead ball forever,
+        having permanently used up its only chance to clear it. Retrying
+        periodically guarantees it eventually does.
         """
         self._target.position = self.ball_position()
         self.set_steering_behavior(self._arrive)
 
-        if not self._save_attempted:
-            self._save_attempted = True
+        self._save_cooldown -= dt
+
+        if self._save_cooldown <= 0:
+            self._save_cooldown = settings.GK_SAVE_COOLDOWN
 
             if random.random() < settings.GK_SAVE_SUCCESS_CHANCE:
                 clear_target = pygame.Vector2(
@@ -445,10 +454,22 @@ class PlayerAI(Agent):
 
         if (goal - self.kinematic.position).length() < settings.SHOOT_RADIUS:
             self._kick_ball_towards(goal, settings.SHOT_SPEED)
+            # Shoot from here -- don't keep Arriving at goal center
+            # itself once in shooting range. goal center is usually
+            # exactly where the goalkeeper stands guard, and Arrive is
+            # *designed* to stop once it gets within target_radius of
+            # wherever it's aimed: literally walking the attacker into
+            # the keeper's spot and then halting there, permanently
+            # parked nose-to-nose (Separation alone can't rescue this,
+            # since the attacker isn't being pushed off course, it's
+            # deliberately driving to that exact point and arriving).
+            # Standing its ground and just striking the ball is both
+            # more realistic and avoids the freeze entirely.
+            self._target.position = pygame.Vector2(self.kinematic.position)
         else:
             self._kick_ball_towards(goal, settings.DRIBBLE_SPEED)
+            self._target.position = goal
 
-        self._target.position = goal
         # _arrive_and_spread, not bare _arrive: without Separation here,
         # an attacker driving straight at goal (right where the
         # goalkeeper usually stands guard) and the keeper closing in to
