@@ -66,6 +66,10 @@ class PlayState(BaseState):
                 "possession_entity": None,
                 "possession_team": None,
                 "ball_position": (settings.COURT_CENTER_X, settings.COURT_CENTER_Y),
+                "kickoff_active": False,
+                "kickoff_team": None,
+                "kickoff_touches": 0,
+                "kickoff_last_toucher": None,
             }
         )
         self.blackboard.observe("score_a", self._on_goal)
@@ -160,13 +164,28 @@ class PlayState(BaseState):
         )
 
         self.match_time = settings.MATCH_DURATION
+        self._reset_kickoff("A")
 
     def _on_goal(self, key, old_value, new_value) -> None:
         self.goal_flash_timer = settings.GOAL_FLASH_DURATION
         self.goal_flash_team = "A" if key == "score_a" else "B"
-        self._reset_kickoff()
+        # Strictly alternate which team kicks off next, independent of
+        # who just scored: the mandatory backward-pass-to-goalkeeper
+        # sequence (and the opponent's temporary, uncontested freedom
+        # to organize during it) turns out to leave the kicking team
+        # slightly worse off defensively for the following passage of
+        # play. Always handing the kickoff to whoever just conceded
+        # (the real football rule) fed that disadvantage right back
+        # into itself -- concede, kick off, concede again -- an
+        # unbreakable spiral confirmed by forcing one team to retake
+        # every single kickoff in isolation (it then lost 2-24).
+        # Alternating regardless of score means neither team can get
+        # trapped in that loop.
+        last_kickoff_team = self.blackboard.get("kickoff_team")
+        next_kickoff_team = "B" if last_kickoff_team == "A" else "A"
+        self._reset_kickoff(next_kickoff_team)
 
-    def _reset_kickoff(self) -> None:
+    def _reset_kickoff(self, kickoff_team: str) -> None:
         """
         BallSystem already recentres the ball on a goal, but every
         player's Position/Velocity is left exactly where it was --
@@ -181,12 +200,25 @@ class PlayState(BaseState):
         rather than a real match. Snapping every player back to its
         home_position (and zeroing velocity/fatigue drain) is the
         standard football kickoff reset that prevents that.
+
+        It also arms the kickoff rule itself: kickoff_team may not be
+        challenged for the ball (see PlayerAI._not_kickoff_restricted
+        and CollisionSystem) until two of its own players have touched
+        it (PlayerAI._kickoff_pass forces the first touch to be a
+        backward pass rather than a run at goal).
         """
         for player_ai in self.players:
             position = self.world.get_component(player_ai.entity, Position)
             velocity = self.world.get_component(player_ai.entity, Velocity)
             position.x, position.y = player_ai.home_position
             velocity.dx = velocity.dy = 0.0
+
+        self.blackboard.set("possession_entity", None)
+        self.blackboard.set("possession_team", None)
+        self.blackboard.set("kickoff_active", True)
+        self.blackboard.set("kickoff_team", kickoff_team)
+        self.blackboard.set("kickoff_touches", 0)
+        self.blackboard.set("kickoff_last_toucher", None)
 
     def update(self, dt: float) -> None:
         # Reset once per tick so PlayerAI._kick_ball_towards can tell

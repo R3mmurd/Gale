@@ -162,6 +162,9 @@ class CollisionSystem(System):
             ball_position, ball_radius = ball
             self.blackboard.set("ball_position", (ball_position.x, ball_position.y))
 
+            kickoff_active = self.blackboard.get("kickoff_active", False)
+            kickoff_team = self.blackboard.get("kickoff_team")
+
             current_entity = self.blackboard.get("possession_entity")
             current_distance = None
             closest_entity = None
@@ -169,6 +172,16 @@ class CollisionSystem(System):
             closest_distance = None
 
             for entity, position, radius, team, tag, _ in players:
+                if kickoff_active and team.team != kickoff_team:
+                    # The kickoff rule: the team that didn't take the
+                    # kickoff isn't allowed to touch the ball until two
+                    # of the kicking team's players have -- excluding
+                    # them from possession consideration entirely
+                    # enforces that directly, rather than relying on
+                    # every restricted player's own behavior tree to
+                    # never wander into range.
+                    continue
+
                 distance = math.hypot(
                     position.x - ball_position.x, position.y - ball_position.y
                 )
@@ -203,13 +216,33 @@ class CollisionSystem(System):
                 # single tick from a hair's-width difference, which
                 # never lets either of them actually settle into
                 # dribbling/passing.
-                pass
+                final_entity, final_team = current_entity, self.blackboard.get(
+                    "possession_team"
+                )
             elif closest_entity is not None:
+                final_entity, final_team = closest_entity, closest_team.team
                 self.blackboard.set("possession_entity", closest_entity)
                 self.blackboard.set("possession_team", closest_team.team)
             else:
+                final_entity, final_team = None, None
                 self.blackboard.set("possession_entity", None)
                 self.blackboard.set("possession_team", None)
+
+            if (
+                kickoff_active
+                and final_entity is not None
+                and final_team == kickoff_team
+                and final_entity != self.blackboard.get("kickoff_last_toucher")
+            ):
+                # A new member of the kicking team has touched the
+                # ball -- count it towards the two touches the kickoff
+                # rule requires before the opponent may contest again.
+                self.blackboard.set("kickoff_last_toucher", final_entity)
+                touches = self.blackboard.get("kickoff_touches", 0) + 1
+                self.blackboard.set("kickoff_touches", touches)
+
+                if touches >= 2:
+                    self.blackboard.set("kickoff_active", False)
 
         for i in range(len(players)):
             entity_a, position_a, radius_a, _, _, velocity_a = players[i]

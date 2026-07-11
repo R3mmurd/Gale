@@ -87,6 +87,12 @@ DEFENSIVE_THIRD_DEPTH = 170
 SHOOT_RADIUS = 150
 SHOT_SPEED = 260
 DRIBBLE_SPEED = 90
+# Speed of a short, deliberate pass to a nearby teammate (the
+# mandatory backward kickoff pass, see PlayerAI._kickoff_pass, and a
+# defender knocking the ball forward once it's under control, see
+# PlayerAI._advance_ball) -- gentler than a shot or even a dribble
+# push, since it's not an attempt to beat anyone.
+PASS_SPEED = 110
 
 # Fatigue: stamina drains while sprinting (and a little while jogging),
 # regenerates while idle/walking, and caps the effective max speed the
