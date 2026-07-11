@@ -1,8 +1,10 @@
 """
 gale.ai: a modular toolkit to build autonomous characters — Kinematic
 bodies and steering behaviors, a behavior tree, a decision tree, a
-shared Blackboard, generic graphs with search algorithms, and the
-Agent class that ties them together.
+shared Blackboard, generic graphs with search algorithms, the Agent
+class that ties them together, a vision-cone Perception system, and a
+minimax search with alpha-beta pruning for turn-based adversarial
+decisions.
 
 See docs/examples/gale_ai.rst for a walkthrough.
 
@@ -70,3 +72,10 @@ from .search import (
 )
 from .blackboard import Blackboard
 from .agent import Agent
+from .minimax import minimax, best_move
+from .perception import (
+    has_line_of_sight,
+    VisionCone,
+    AlertLevel,
+    Perception,
+)

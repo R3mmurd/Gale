@@ -40,6 +40,7 @@ gale-admin = "gale.management:execute_from_command_line"
 packages = [
     "gale",
     "gale.ai",
+    "gale.ecs",
     "gale.log",
     "gale.management",
     "gale.net",
