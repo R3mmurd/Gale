@@ -125,6 +125,43 @@ the same way ``collision`` is read. ``collision_type_at`` and
 if you'd rather reuse a property you already have under a different
 name.
 
+Isometric maps
+------------------
+
+``gale.tilemap.isometric`` renders the same rows x cols grid of gids
+as a 2:1 isometric diamond projection instead of an axis-aligned one
+— useful for a "Commandos"-style top-down-but-diamond prototype.
+``IsometricTileMap`` is a drop-in ``TileMap`` subclass: same
+``Tileset``/layers/``object_layers`` API, only ``position_of``,
+``tile_at``, ``pixel_width``/``pixel_height`` and ``render`` change:
+
+.. code-block:: python
+
+   import pygame
+   from gale.tilemap.isometric import IsometricTileMap
+
+   tiles_image = pygame.image.load("iso_tiles.png").convert_alpha()
+   tileset = Tileset(tiles_image, tile_width=64, tile_height=32, first_gid=1)
+
+   tilemap = IsometricTileMap(tile_width=64, tile_height=32, cols=20, rows=20)
+   tilemap.add_tileset(tileset)
+   ground = tilemap.add_layer("ground")
+   ground[5][10] = 1  # gid 1, at row 5, column 10
+
+   # Every frame:
+   tilemap.render(surface, camera)  # camera is optional, same as TileMap
+
+``(row 0, col 0)`` sits at the map's top corner, row increasing
+toward the bottom-left and col toward the bottom-right. Tile images
+are anchored at their top-center (the diamond's topmost point), since
+an isometric tile image is wider than it is tall. The module also
+exposes the underlying ``cartesian_to_isometric``/
+``isometric_to_cartesian`` functions directly, for converting any
+cartesian world/grid position to/from isometric screen space without
+going through a map at all — useful on their own in any context that
+needs isometric coordinate math (an entity's world position, a
+minimap, a cursor), not just for tile maps.
+
 Known limitations
 -------------------
 
