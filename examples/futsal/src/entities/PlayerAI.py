@@ -135,6 +135,7 @@ class PlayerAI(Agent):
                     ),
                     Sequence(
                         [
+                            Condition(self._not_kickoff_restricted),
                             Condition(self._ball_in_defensive_third),
                             Condition(self._ball_close_enough_to_rush),
                             Action(self._rush_ball),
@@ -154,6 +155,13 @@ class PlayerAI(Agent):
                 [
                     Sequence(
                         [
+                            Condition(self._has_possession),
+                            Action(self._advance_ball),
+                        ]
+                    ),
+                    Sequence(
+                        [
+                            Condition(self._not_kickoff_restricted),
                             Condition(self._ball_loose_in_own_half),
                             Action(self._challenge_ball),
                         ]
@@ -172,6 +180,12 @@ class PlayerAI(Agent):
                 [
                     Sequence(
                         [
+                            Condition(self._is_kickoff_first_touch),
+                            Action(self._kickoff_pass),
+                        ]
+                    ),
+                    Sequence(
+                        [
                             Condition(self._has_possession),
                             Action(self._dribble_and_shoot),
                         ]
@@ -182,7 +196,13 @@ class PlayerAI(Agent):
                             Action(self._seek_open_space),
                         ]
                     ),
-                    Action(self._chase_ball),
+                    Sequence(
+                        [
+                            Condition(self._not_kickoff_restricted),
+                            Action(self._chase_ball),
+                        ]
+                    ),
+                    Action(self._hold_position),
                 ]
             )
 
@@ -233,6 +253,19 @@ class PlayerAI(Agent):
         self.kinematic.velocity.x, self.kinematic.velocity.y = velocity.dx, velocity.dy
         self.kinematic.max_speed = fatigue.effective_max_speed
 
+        if self.role == "goalkeeper":
+            # Ticks down every real frame regardless of whether
+            # _make_save actually runs this tick (Condition predicates
+            # don't receive dt, so it can't live there) -- otherwise,
+            # if _ball_within_save_range only holds intermittently
+            # (the ball drifting in and out of range rather than
+            # staying put), the cooldown would only ever advance on
+            # those sparse ticks, taking far longer than
+            # GK_SAVE_COOLDOWN of *wall-clock* time to reach zero again
+            # and leaving the keeper essentially unable to ever
+            # attempt a second save for the rest of the match.
+            self._save_cooldown -= dt
+
         self.think(dt)
 
         steering = (
@@ -281,6 +314,20 @@ class PlayerAI(Agent):
         return self.blackboard.get(
             "possession_team"
         ) == self.team and not self._has_possession(agent)
+
+    def _not_kickoff_restricted(self, agent: "PlayerAI") -> bool:
+        """
+        The real football/futsal kickoff rule: the team that didn't
+        take the kickoff may not approach/challenge for the ball until
+        two of the kicking team's players have touched it (tracked and
+        actually enforced in CollisionSystem -- this Condition just
+        keeps a restricted team's own players from uselessly running
+        at a ball they mechanically cannot gain possession of anyway).
+        """
+        return not (
+            self.blackboard.get("kickoff_active", False)
+            and self.blackboard.get("kickoff_team") != self.team
+        )
 
     # -- Goalkeeper --------------------------------------------------------
 
@@ -337,8 +384,6 @@ class PlayerAI(Agent):
         """
         self._target.position = self.ball_position()
         self.set_steering_behavior(self._arrive)
-
-        self._save_cooldown -= dt
 
         if self._save_cooldown <= 0:
             self._save_cooldown = settings.GK_SAVE_COOLDOWN
@@ -430,6 +475,36 @@ class PlayerAI(Agent):
         self.set_steering_behavior(self._approach_and_spread)
         return Status.SUCCESS
 
+    def _advance_ball(self, agent: "PlayerAI", dt: float) -> Status:
+        """
+        Once this defender has the ball under control (having won a
+        challenge, or received a kickoff's mandatory backward pass),
+        knock it forward to the nearest attacking teammate instead of
+        just standing on it -- without this, the ball would sit dead at
+        the defender's feet forever (no other Condition/Action here
+        ever has a defender in possession do anything with the ball),
+        letting the opponent stroll up and retake it for free every
+        single time play restarts through this defender.
+        """
+        attacking_teammates = [
+            teammate for teammate in self.teammates if teammate.role == "attacker"
+        ]
+
+        if attacking_teammates:
+            target = min(
+                attacking_teammates,
+                key=lambda mate: (
+                    mate.kinematic.position - self.kinematic.position
+                ).length(),
+            ).kinematic.position
+        else:
+            target = pygame.Vector2(self.opponent_goal_x, self.kinematic.position.y)
+
+        self._kick_ball_towards(target, settings.PASS_SPEED)
+        self._target.position = pygame.Vector2(self.kinematic.position)
+        self.set_steering_behavior(self._arrive_and_spread)
+        return Status.SUCCESS
+
     def _support_attack(self, agent: "PlayerAI", dt: float) -> Status:
         ball = self.ball_position()
         target_x = (
@@ -448,6 +523,61 @@ class PlayerAI(Agent):
         return Status.SUCCESS
 
     # -- Attacker --------------------------------------------------------
+
+    def _is_kickoff_first_touch(self, agent: "PlayerAI") -> bool:
+        # kickoff_touches is bumped to 1 by CollisionSystem the very
+        # same tick it first registers this player as closest to the
+        # ball -- one tick *before* this Condition ever gets to see it
+        # (PlayerAI.step() runs, then CollisionSystem runs, then next
+        # tick's step() finally reads the new blackboard state). So by
+        # the time _has_possession is true here, kickoff_touches is
+        # already 1, never 0: checking for the *count* of exactly one
+        # touch, made by *this* player, is what actually identifies "my
+        # own first touch" rather than an unreachable touches == 0.
+        return (
+            self.blackboard.get("kickoff_active", False)
+            and self.blackboard.get("kickoff_team") == self.team
+            and self.blackboard.get("kickoff_touches", 0) == 1
+            and self.blackboard.get("kickoff_last_toucher") == self.entity
+            and self._has_possession(agent)
+        )
+
+    def _kickoff_pass(self, agent: "PlayerAI", dt: float) -> Status:
+        """
+        Real football/futsal kickoff rule: the kicking team must pass
+        backward to a teammate first, rather than driving the ball
+        straight at goal themselves. That teammate is specifically the
+        goalkeeper, not just whoever is nearest: an earlier version
+        passed to the nearest teammate, which in this 3-a-side roster
+        is always the defender -- dragging them out of their defensive
+        station right as the kickoff restriction lifts and the
+        opponent is freed to press. The instant the (now undermanned,
+        missing its defender) defense got dispossessed, the opponent
+        countered into a huge numerical advantage; the kicking team
+        conceded almost every single time, regardless of random
+        chance, because it was a structural flaw, not bad luck.
+        Passing to the goalkeeper instead -- who is never needed to
+        press higher up and already covers exactly the ground a
+        backward pass travels to -- keeps the defender at home the
+        whole time. The second touch (ending the opponent's kickoff
+        restriction) is tracked and enforced in CollisionSystem, not
+        here.
+        """
+        goalkeeper = next(
+            (mate for mate in self.teammates if mate.role == "goalkeeper"), None
+        )
+
+        if goalkeeper is not None:
+            self._kick_ball_towards(goalkeeper.kinematic.position, settings.PASS_SPEED)
+
+        self._target.position = pygame.Vector2(self.kinematic.position)
+        self.set_steering_behavior(self._arrive_and_spread)
+        return Status.SUCCESS
+
+    def _hold_position(self, agent: "PlayerAI", dt: float) -> Status:
+        self._target.position = pygame.Vector2(self.home_position)
+        self.set_steering_behavior(self._arrive_and_spread)
+        return Status.SUCCESS
 
     def _dribble_and_shoot(self, agent: "PlayerAI", dt: float) -> Status:
         goal = pygame.Vector2(self.opponent_goal_x, settings.COURT_CENTER_Y)
