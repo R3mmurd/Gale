@@ -183,6 +183,84 @@ NAT/router, and picking between the two) is up to the game, the same
 way ``gale.net`` never picks between LAN discovery and a direct
 connection for you.
 
+Client-side prediction and server reconciliation
+---------------------------------------------------
+
+``PredictionBuffer`` (in ``gale.net.prediction``) is optional, and not
+wired into ``Client``/``Server``: a game applies its own inputs
+immediately for responsiveness, records each predicted input/state
+pair, and replays whatever the server has not yet acknowledged on top
+of the authoritative state it sends back.
+
+.. code-block:: python
+
+   from gale.net.prediction import PredictionBuffer
+
+   buffer = PredictionBuffer()
+
+   def apply_input(state, input_payload, dt):
+       return {"x": state["x"] + input_payload["dx"] * dt}
+
+   # Every local frame, after predicting the result of an input:
+   sequence += 1
+   predicted_state = apply_input(current_state, payload, dt)
+   buffer.record(sequence, payload, predicted_state, dt=dt)
+   client.send("input", {"sequence": sequence, **payload})
+
+   # When the server reports how far it got:
+   client.on_message(
+       "snapshot",
+       lambda payload: buffer.reconcile(
+           payload["last_processed_sequence"], payload["state"], apply_input
+       ),
+   )
+
+``reconcile`` discards every buffered input up through
+``last_processed_sequence`` (the server already accounted for them)
+and replays the rest on top of the authoritative state. Smoothly
+correcting towards the reconciled result (rather than snapping) to
+hide any discrepancy with what was predicted before is left to the
+game, the same way the amount of snapshot-interpolation delay below is.
+
+Entity interpolation and lag compensation
+--------------------------------------------
+
+``SnapshotInterpolator`` (in ``gale.net.interpolation``) generalizes
+the buffering/interpolation recipe from
+``examples/rally/src/snapshot_buffer.py`` into a reusable, optional
+building block: buffer a remote entity's recent, timestamped snapshots
+and interpolate between the two that bracket the moment being
+rendered, instead of snapping to whatever the latest UDP packet said.
+
+.. code-block:: python
+
+   from gale.net.interpolation import SnapshotInterpolator
+
+   history = SnapshotInterpolator()
+   client.on_message("snapshot", lambda payload: history.add(payload))
+
+   # Every render frame, a bit in the past so there is usually a
+   # snapshot on either side to interpolate between:
+   render_time = time.monotonic() - interpolation_delay
+   state = history.sample(render_time)
+
+Keep one ``SnapshotInterpolator`` per remote entity. ``lag_compensated_position``
+builds on the same buffered history for the other classic use of it,
+lag compensation: rewinding a target back to how a laggy shooter
+perceived it before doing server-side hit detection.
+
+.. code-block:: python
+
+   from gale.net.interpolation import lag_compensated_position
+
+   # rewind_time is typically the shooter's RTT / 2 plus their own
+   # interpolation delay.
+   rewind_time = server.get_rtt(shooter.peer_id) / 2 + interpolation_delay
+   target_state = lag_compensated_position(target_history, rewind_time)
+
+   if target_state is not None:
+       check_hit(shot, target_state)
+
 Security notes
 ----------------
 
