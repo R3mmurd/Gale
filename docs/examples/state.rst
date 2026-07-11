@@ -101,6 +101,70 @@ The same trick is handy to give every character of a given type its own
            )
            self.state_machine.change("walk")
 
+HierarchicalState
+-----------------
+
+A ``HierarchicalState`` is a ``BaseState`` that owns its own nested
+``StateMachine`` (its "substate machine"). It is used to build hierarchical
+state machines (HFSM): a "superstate" such as ``Patrol`` can itself be made
+of finer-grained substates, without needing any machinery beyond
+``StateMachine`` and ``HierarchicalState`` composed together. Nesting a
+``HierarchicalState`` inside another one is enough to build deeper
+hierarchies.
+
+.. code-block:: python
+
+   from gale.state import BaseState, HierarchicalState, StateMachine
+
+
+   class Walking(BaseState):
+       def update(self, dt: float) -> None:
+           ...  # move towards the next waypoint
+           if self.reached_waypoint():
+               self.state_machine.change("looking_around")
+
+   class LookingAround(BaseState):
+       def update(self, dt: float) -> None:
+           ...  # rotate in place scanning the surroundings
+           if self.done_looking():
+               self.state_machine.change("walking")
+
+
+   class Patrol(HierarchicalState):
+       def __init__(self, state_machine: StateMachine) -> None:
+           super().__init__(
+               state_machine,
+               substates={"walking": Walking, "looking_around": LookingAround},
+               initial_substate="walking",
+           )
+
+
+   class Suspicious(BaseState):
+       ...
+
+   class Alert(BaseState):
+       ...
+
+   class Search(BaseState):
+       ...
+
+
+   guard_fsm = StateMachine({
+       "patrol": Patrol,
+       "suspicious": Suspicious,
+       "alert": Alert,
+       "search": Search,
+   })
+   guard_fsm.change("patrol")
+
+Because ``Patrol.enter`` (inherited from ``HierarchicalState``) selects
+``"walking"`` as soon as the guard enters the ``patrol`` state, calling
+``guard_fsm.update(dt)`` every frame automatically drives whichever substate
+(``Walking`` or ``LookingAround``) is currently active, in addition to
+``Patrol`` itself. If ``Patrol`` overrode ``update`` to check for the
+player, it would call ``super().update(dt)`` to keep that delegation
+working.
+
 StateStack
 ----------
 
