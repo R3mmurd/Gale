@@ -70,6 +70,12 @@ GK_SAVE_RADIUS = 18
 # turns into an impenetrable wall (0 goals conceded ever) rather than
 # a goalkeeper.
 GK_SAVE_SUCCESS_CHANCE = 0.55
+# Minimum time between save-chance rolls while the ball stays within
+# GK_SAVE_RADIUS (see PlayerAI._make_save) -- rolling every tick would
+# make the keeper nearly unbeatable; never rolling again after one
+# attempt would let a dead ball sitting next to him go untouched
+# forever.
+GK_SAVE_COOLDOWN = 0.4
 # How hard a save/clearance sends the ball back out towards midfield.
 GK_CLEAR_SPEED = 220
 # How close an opponent may be to the goalkeeper's own goal before he
