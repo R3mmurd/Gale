@@ -12,21 +12,22 @@ Gale_ is a collection of reusable codes to ease your life when building games wi
 
 Modules
 -------
-- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, a shared ``Blackboard``, generic graphs with search algorithms, and the ``Agent`` class that ties them together. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`__)
+- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, a shared ``Blackboard``, generic graphs with search algorithms, the ``Agent`` class that ties them together, a vision-cone ``Perception`` system (near/far alert zones, line-of-sight), and ``minimax`` search with alpha-beta pruning for turn-based adversarial decisions. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`__)
 - ``gale.animation``: Contains the class ``Animation``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/animation.rst>`__)
 - ``gale.camera``: Contains the class ``Camera``, a 2D scrolling/zooming camera — following a target, screen shake, bounds clamping, and screen/world coordinate conversion. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/camera.rst>`__)
+- ``gale.ecs``: Contains a Data-Oriented Design (ECS) toolkit — a ``World`` storing entities (plain integer ids) and components (plain Python objects), queried by ``System``/``SystemScheduler`` to process them in bulk every frame. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ecs.rst>`__)
 - ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/factory.rst>`__)
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/frames.rst>`__)
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building.
 - ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, gamepad button/axis definitions (local multiplayer included), classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/input_handler.rst>`__)
 - ``gale.log``: Contains logging configuration for gale games — printed to the terminal and written to a plain-text file by default, extensible to Graylog, Sentry, a Discord channel, or anywhere else by attaching another ``logging.Handler``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/log.rst>`__)
-- ``gale.net``: Contains a pure-Python, pygame-free toolkit for LAN/internet multiplayer: ``Server``, ``Client``, a hand-rolled reliability layer over UDP, per-peer round-trip-time tracking, LAN discovery, and configurable-format room codes (``encode``/``decode``) for sharing a host/port pair as a short, human-typeable string. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/net.rst>`__)
+- ``gale.net``: Contains a pure-Python, pygame-free toolkit for LAN/internet multiplayer: ``Server``, ``Client``, a hand-rolled reliability layer over UDP, per-peer round-trip-time tracking, LAN discovery, configurable-format room codes (``encode``/``decode``) for sharing a host/port pair as a short, human-typeable string, a ``PredictionBuffer`` for client-side prediction/server reconciliation, and a ``SnapshotInterpolator``/``lag_compensated_position`` for entity interpolation and lag compensation. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/net.rst>`__)
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/particle_system.rst>`__)
 - ``gale.physics``: Contains a Box2D-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes Box2D itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`__)
-- ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine`` and a basic class ``StateStack``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`__)
+- ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine``, a basic class ``StateStack``, and ``HierarchicalState`` for nesting a sub-``StateMachine`` inside a state (HFSM). (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`__)
 - ``gale.stencil``: Contains the class ``Stencil``, a CPU-side equivalent of `love.graphics.stencil <https://love2d.org/wiki/love.graphics.stencil>`__ to mask an arbitrary shape (a circle, a polygon, a sprite) out of a surface's alpha channel — handy for a top-down game's fog-of-war/vision reveal, a circular minimap crop, and similar effects. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/stencil.rst>`__)
 - ``gale.text``: Contains a util function to ease text rendering and a class ``Text``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/text.rst>`__)
-- ``gale.tilemap``: Contains ``TileMap``/``Tileset`` (grid-of-tiles rendering with ``gale.camera`` culling built in), ``load_tiled_map`` (loads a map exported as JSON from `Tiled <https://www.mapeditor.org/>`__, tilesets/object layers included), and an optional ``move_and_collide`` platformer collision helper (solid walls, one-way platforms) that never depends on ``gale.physics``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/tilemap.rst>`__)
+- ``gale.tilemap``: Contains ``TileMap``/``Tileset`` (grid-of-tiles rendering with ``gale.camera`` culling built in), ``IsometricTileMap`` (the same kind of map rendered in a diamond/isometric projection, plus the standalone ``cartesian_to_isometric``/``isometric_to_cartesian`` transforms, reusable for isometric coordinate math outside of tile maps too), ``load_tiled_map`` (loads a map exported as JSON from `Tiled <https://www.mapeditor.org/>`__, tilesets/object layers included), and an optional ``move_and_collide`` platformer collision helper (solid walls, one-way platforms) that never depends on ``gale.physics``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/tilemap.rst>`__)
 - ``gale.timer``: Contains classes to handle timers that execute action every x seconds, after x seconds, and tweening. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/timer.rst>`__)
 - ``gale.ui``: Contains a widget toolkit for menus, HUDs, and forms — panels, labels, buttons, progress bars, checkboxes, list views, containers, text boxes (click/Enter-paginated, or button-paginated through ``PaginatedTextBox``), text inputs, cursors, and closable ``Window``\\ s, styled through a shared theme. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ui.rst>`__)
 
@@ -68,6 +69,7 @@ Examples
 - `gale.timer <https://github.com/R3mmurd/Gale/blob/main/docs/examples/timer.rst>`_
 - `gale.ui <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ui.rst>`_: menus, HUDs, and forms built from panels, buttons, list views, text inputs, closable windows, and more.
 - `gale.ai <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
+- `gale.ecs <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ecs.rst>`_: World, components, queries, and Systems/SystemScheduler.
 
 These are short, focused snippets per module. For full running games
 built with gale, see ``examples/space_trip`` and, in particular for
@@ -88,6 +90,22 @@ around the player; and, for ``gale.tilemap``,
 `examples/planks <https://github.com/R3mmurd/Gale/blob/main/examples/planks/README.md>`_,
 a platformer loading a level made in Tiled, with one-way platforms and
 a scrolling camera.
+
+Three more full games showcase the isometric tilemap, perception,
+HFSM, minimax, networked prediction/interpolation, and ECS additions:
+`examples/outpost <https://github.com/R3mmurd/Gale/blob/main/examples/outpost/README.md>`_,
+a small isometric stealth prototype where patrolling guards spot the
+player through a vision cone and a hierarchical state machine, and a
+terminal minigame is defended by a minimax AI; `examples/circuit
+<https://github.com/R3mmurd/Gale/blob/main/examples/circuit/README.md>`_,
+a small online racing prototype with client-side prediction/server
+reconciliation, entity interpolation, lag compensation, and an AI
+racer following the track with A*/steering; and `examples/futsal
+<https://github.com/R3mmurd/Gale/blob/main/examples/futsal/README.md>`_,
+a small futsal match simulation where each team's behavior
+tree/Blackboard-driven roles decide intent that a ``gale.ecs``
+World/SystemScheduler simulates in bulk (movement, fatigue, ball/player
+collisions).
 
 Each example under ``examples/`` is a standalone project (its own
 ``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
@@ -178,8 +196,8 @@ See docs/licenses for licenses of dependencies.
 .. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
    :target: https://pypi.org/project/gale-engine/
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.7.0.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.7.0...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.8.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.8.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
