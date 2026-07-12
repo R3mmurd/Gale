@@ -113,6 +113,14 @@ tree/Blackboard-driven roles decide intent that a ``gale.ecs``
 World/SystemScheduler simulates in bulk (movement, fatigue, ball/player
 collisions).
 
+`examples/wayfarer <https://github.com/R3mmurd/Gale/blob/main/examples/wayfarer/README.md>`_
+showcases the ``gale.sequence``/``gale.quest``/``gale.cutscene``
+additions: a small top-down adventure where an intro cutscene (a
+character walking to a mark, pose changes, input-advanced dialogue)
+hands off into free-roam play, collecting herbs, defeating a wolf, and
+reporting back to an NPC progress a two-stage ``QuestLog``-tracked
+quest, completing it triggers a victory cutscene.
+
 Each example under ``examples/`` is a standalone project (its own
 ``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
 inside this repository unless it's actually installed. From the
