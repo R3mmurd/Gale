@@ -15,6 +15,7 @@ Modules
 - ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, a shared ``Blackboard``, generic graphs with search algorithms, the ``Agent`` class that ties them together, a vision-cone ``Perception`` system (near/far alert zones, line-of-sight), and ``minimax`` search with alpha-beta pruning for turn-based adversarial decisions. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`__)
 - ``gale.animation``: Contains the class ``Animation``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/animation.rst>`__)
 - ``gale.camera``: Contains the class ``Camera``, a 2D scrolling/zooming camera — following a target, screen shake, bounds clamping, and screen/world coordinate conversion. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/camera.rst>`__)
+- ``gale.cutscene``: Contains ``Cutscene`` (a ``gale.sequence.Sequence`` of beats that also ticks/renders any actors involved every frame) and its beats — ``ShowImage``, ``PlayAnimation`` (a dependency-free stand-in for video playback), ``MoveActor``, ``SetActorAnimation``, ``Dialogue``, ``Wait`` — each lasting a fixed duration or advancing on a specific input. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/cutscene.rst>`__)
 - ``gale.ecs``: Contains a Data-Oriented Design (ECS) toolkit — a ``World`` storing entities (plain integer ids) and components (plain Python objects), queried by ``System``/``SystemScheduler`` to process them in bulk every frame. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ecs.rst>`__)
 - ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/factory.rst>`__)
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/frames.rst>`__)
@@ -24,6 +25,8 @@ Modules
 - ``gale.net``: Contains a pure-Python, pygame-free toolkit for LAN/internet multiplayer: ``Server``, ``Client``, a hand-rolled reliability layer over UDP, per-peer round-trip-time tracking, LAN discovery, configurable-format room codes (``encode``/``decode``) for sharing a host/port pair as a short, human-typeable string, a ``PredictionBuffer`` for client-side prediction/server reconciliation, and a ``SnapshotInterpolator``/``lag_compensated_position`` for entity interpolation and lag compensation. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/net.rst>`__)
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/particle_system.rst>`__)
 - ``gale.physics``: Contains a Box2D-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes Box2D itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`__)
+- ``gale.quest``: Contains a customizable-per-game quest system built on ``gale.sequence`` — ``Objective``, ``Stage`` (a group of objectives), ``Quest`` (a sequence of stages), and ``QuestLog`` (tracks/starts every quest and broadcasts progress events to whichever are active). (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/quest.rst>`__)
+- ``gale.sequence``: Contains ``Step``, ``StepGroup``, and ``Sequence`` — the generic "do this until it's done, then do the next thing" engine shared by ``gale.quest`` and ``gale.cutscene``; a step completes after a fixed duration, on a specific input, or by a subclass's own condition. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/sequence.rst>`__)
 - ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine``, a basic class ``StateStack``, and ``HierarchicalState`` for nesting a sub-``StateMachine`` inside a state (HFSM). (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`__)
 - ``gale.stencil``: Contains the class ``Stencil``, a CPU-side equivalent of `love.graphics.stencil <https://love2d.org/wiki/love.graphics.stencil>`__ to mask an arbitrary shape (a circle, a polygon, a sprite) out of a surface's alpha channel — handy for a top-down game's fog-of-war/vision reveal, a circular minimap crop, and similar effects. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/stencil.rst>`__)
 - ``gale.text``: Contains a util function to ease text rendering and a class ``Text``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/text.rst>`__)
@@ -70,6 +73,9 @@ Examples
 - `gale.ui <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ui.rst>`_: menus, HUDs, and forms built from panels, buttons, list views, text inputs, closable windows, and more.
 - `gale.ai <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
 - `gale.ecs <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ecs.rst>`_: World, components, queries, and Systems/SystemScheduler.
+- `gale.sequence <https://github.com/R3mmurd/Gale/blob/main/docs/examples/sequence.rst>`_: Step, StepGroup, and Sequence, the shared engine behind quests and cutscenes.
+- `gale.quest <https://github.com/R3mmurd/Gale/blob/main/docs/examples/quest.rst>`_: Objective, Stage, Quest, and QuestLog.
+- `gale.cutscene <https://github.com/R3mmurd/Gale/blob/main/docs/examples/cutscene.rst>`_: Cutscene and its beats — images, "video", actor movement, dialogue.
 
 These are short, focused snippets per module. For full running games
 built with gale, see ``examples/space_trip`` and, in particular for
@@ -106,6 +112,14 @@ a small futsal match simulation where each team's behavior
 tree/Blackboard-driven roles decide intent that a ``gale.ecs``
 World/SystemScheduler simulates in bulk (movement, fatigue, ball/player
 collisions).
+
+`examples/wayfarer <https://github.com/R3mmurd/Gale/blob/main/examples/wayfarer/README.md>`_
+showcases the ``gale.sequence``/``gale.quest``/``gale.cutscene``
+additions: a small top-down adventure where an intro cutscene (a
+character walking to a mark, pose changes, input-advanced dialogue)
+hands off into free-roam play, collecting herbs, defeating a wolf, and
+reporting back to an NPC progress a two-stage ``QuestLog``-tracked
+quest, completing it triggers a victory cutscene.
 
 Each example under ``examples/`` is a standalone project (its own
 ``settings.py`` and ``src/``), so it doesn't see the copy of ``gale``
@@ -196,8 +210,8 @@ See docs/licenses for licenses of dependencies.
 .. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
    :target: https://pypi.org/project/gale-engine/
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.8.0.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.8.0...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.9.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.9.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
