@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gale-engine"
-version = "1.9.0"
+version = "1.9.1"
 description = "Collection of reusable codes to make games by using pygame."
 readme = "README.rst"
 requires-python = ">=3.7"
@@ -32,6 +32,7 @@ dependencies = [
 Homepage = "https://github.com/R3mmurd/Gale"
 Repository = "https://github.com/R3mmurd/Gale"
 Issues = "https://github.com/R3mmurd/Gale/issues"
+Documentation = "https://r3mmurd.github.io/GaleDoc/"
 
 [project.scripts]
 gale-admin = "gale.management:execute_from_command_line"
