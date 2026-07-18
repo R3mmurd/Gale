@@ -9,7 +9,7 @@
 
 Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
 
-Full documentation: https://r3mmurd.github.io/GaleDoc/
+Full documentation: https://r3mmurd.github.io/Gale/
 
 
 Modules
