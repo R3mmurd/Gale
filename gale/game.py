@@ -1,7 +1,9 @@
 """
 This file contains the implementation of the class Game: the window,
-virtual-resolution scaling, and game loop (fixed-ish update/render,
-driven by real elapsed time) every gale game is built on top of.
+virtual-resolution scaling, and game loop (a variable-rate
+update/render pair driven by real elapsed time, plus a fixed_update
+that steps at a constant rate regardless of frame rate) every gale
+game is built on top of.
 
 Importing this module calls pygame.init().
 
@@ -56,6 +58,19 @@ class Game(InputListener):
 
         game = MyGame(title='Title of my game')
         game.exec()
+
+    fixed_update() is optional and only needed for logic that must
+    advance by the same amount of time every call, independent of the
+    frame rate (e.g. driving gale.physics.World.fixed_update()
+    directly instead of its own internal accumulator, or a networked
+    simulation tick):
+
+        class MyGame(Game):
+            def init(self) -> None:
+                self.world = World()
+
+            def fixed_update(self) -> None:
+                self.world.fixed_update()
     """
 
     def __init__(
@@ -66,6 +81,7 @@ class Game(InputListener):
         virtual_width: Optional[int] = None,
         virtual_height: Optional[int] = None,
         fps: int = 60,
+        fixed_timestep: float = 1.0 / 60.0,
         *args: Tuple[Any],
         **kwargs: Dict[str, Any],
     ) -> None:
@@ -78,12 +94,15 @@ class Game(InputListener):
         :param virtual_width: Width we're trying to emulate. By default is None to set the same value of window_width.
         :param virtual_height: Height we're trying to emulate. By default is None to set the same value of window_height.
         :param fps: Number of frame per seconds. *args and **kwargs Any argument list of keyword arguments that are accepted by pygame.display.set_mode.
+        :param fixed_timestep: Seconds between two fixed_update() calls. By default is 1/60. Unrelated to fps: fixed_update() runs zero, one, or several times per frame so it always advances by exactly this much real time, regardless of the frame rate.
         """
         self.window_width: int = window_width
         self.window_height: int = window_height
         self.virtual_width: int = virtual_width or self.window_width
         self.virtual_height: int = virtual_height or self.window_height
         self.fps = fps
+        self.fixed_timestep: float = fixed_timestep
+        self._accumulator: float = 0.0
 
         # Setting the screen
         self.screen: pygame.Surface = pygame.display.set_mode(
@@ -122,6 +141,18 @@ class Game(InputListener):
         """
         pass
 
+    def fixed_update(self) -> None:
+        """
+        Empty. Override for deterministic, frame-rate-independent logic
+        (e.g. driving a gale.physics.World, or anything else that
+        needs to advance by the same amount of time on every call
+        regardless of how fast frames are rendering): unlike update(),
+        this runs zero, one, or several times per frame so that it
+        always advances the game by exactly fixed_timestep seconds
+        each time it's called.
+        """
+        pass
+
     def render(self, surface: pygame.Surface) -> None:
         """
         Empty. This should be implemented by the extension class.
@@ -133,9 +164,16 @@ class Game(InputListener):
 
     def __update(self, dt: float) -> None:
         """
-        Update the timer and call the the method update
-        that you should implement.
+        Advance fixed_update() by as many fixed_timestep steps as the
+        accumulated time covers, update the timer, and call the
+        method update that you should implement.
         """
+        self._accumulator += dt
+
+        while self._accumulator >= self.fixed_timestep:
+            self.fixed_update()
+            self._accumulator -= self.fixed_timestep
+
         Timer.update(dt)
         self.update(dt)
 

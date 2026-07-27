@@ -19,7 +19,7 @@ class FlyingSaucer:
         self.movement_direction.x = x
         self.movement_direction.y = y
 
-    def __limit_boundaries(self):
+    def _limit_boundaries(self):
         if not (0 < self.position.x < settings.VIRTUAL_WIDTH - self.width):
             self.position.x = max(
                 0, min(self.position.x, settings.VIRTUAL_WIDTH - self.width)
@@ -43,7 +43,7 @@ class FlyingSaucer:
         movement = (v0 + v1) * dt * 0.5
         self.position += movement
         self.velocity = v1
-        self.__limit_boundaries()
+        self._limit_boundaries()
 
     def render(self, surface: pygame.Surface) -> None:
         surface.blit(settings.TEXTURES["ufo"], self.position)
