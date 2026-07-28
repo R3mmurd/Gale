@@ -51,6 +51,7 @@ def configure(
     for handler in list(logger.handlers):
         if getattr(handler, "_gale_default", False):
             logger.removeHandler(handler)
+            handler.close()
 
     formatter = logging.Formatter(_FORMAT)
 

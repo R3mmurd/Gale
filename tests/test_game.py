@@ -3,6 +3,7 @@ import types
 import unittest
 
 from gale.game import Game
+from gale.input_handler import InputHandler
 
 
 class RecordingGame(Game):
@@ -40,6 +41,17 @@ class GameTestCase(unittest.TestCase):
         self.game._Game__update(1.0 / 60.0 * 0.5)
         self.assertEqual(self.game.fixed_update_calls, 1)
         self.assertEqual(self.game.update_calls, 2)
+
+    def test_zero_fixed_timestep_raises_instead_of_hanging(self) -> None:
+        self.assertRaises(ValueError, RecordingGame, fixed_timestep=0)
+
+    def test_negative_fixed_timestep_raises(self) -> None:
+        self.assertRaises(ValueError, RecordingGame, fixed_timestep=-1.0 / 60.0)
+
+    def test_quit_unregisters_from_input_handler(self) -> None:
+        self.assertIn(self.game, InputHandler.listeners)
+        self.game.quit()
+        self.assertNotIn(self.game, InputHandler.listeners)
 
 
 class GameSettingsResolutionTestCase(unittest.TestCase):

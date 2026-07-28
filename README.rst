@@ -19,12 +19,15 @@ Modules
 - ``gale.camera``: Contains the class ``Camera``, a 2D scrolling/zooming camera — following a target, screen shake, bounds clamping, and screen/world coordinate conversion. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/camera.rst>`__)
 - ``gale.conf``: Contains ``settings``, a lazily-loaded, overridable settings object — the same role ``django.conf.settings`` plays for Django. It reads your project's own ``settings.py`` first, falling back to ``gale.conf.global_settings`` (the same defaults ``gale.game.Game`` used to hardcode directly) for anything you don't override, and lets you define your own extra settings the same way. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/project_template.rst>`__)
 - ``gale.cutscene``: Contains ``Cutscene`` (a ``gale.sequence.Sequence`` of beats that also ticks/renders any actors involved every frame) and its beats — ``ShowImage``, ``PlayAnimation`` (a dependency-free stand-in for video playback), ``MoveActor``, ``SetActorAnimation``, ``Dialogue``, ``Wait`` — each lasting a fixed duration or advancing on a specific input. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/cutscene.rst>`__)
+- ``gale.ease_functions``: Contains the 30 standard easing functions (linear, sine/quad/cubic/quart/quint/expo/circ/back/elastic/bounce, each with an ``in``/``out``/``in_out`` variant) used by ``gale.timer.Tween``, plus an ``EASE_FUNCTIONS`` dict looking them up by name.
 - ``gale.ecs``: Contains a Data-Oriented Design (ECS) toolkit — a ``World`` storing entities (plain integer ids) and components (plain Python objects), queried by ``System``/``SystemScheduler`` to process them in bulk every frame. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ecs.rst>`__)
 - ``gale.factory``: Contains the classes ``Factory`` and ``Abstract Factory``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/factory.rst>`__)
 - ``gale.frames``: Contains a util function to generate rectangle frames from a sprite sheet. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/frames.rst>`__)
 - ``gale.game``: Contains a base class ``Game`` to be inherited to ease your game building — a variable-rate ``update``/``render`` pair driven by real elapsed time, plus a ``fixed_update`` that steps at a constant rate regardless of frame rate, for anything that needs to be frame-rate-independent (e.g. driving a ``gale.physics.World``). Every constructor argument (title, window/virtual size, fps, ...) defaults to whatever ``gale.conf.settings`` resolves it to when omitted.
 - ``gale.input_handler``: Contains key definitions, mouse button definitions, mouse wheel input definitions, mouse move input definitions, gamepad button/axis definitions (local multiplayer included), classes to store the information about an input, an interface to listen the input handler and the class ``InputHandler``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/input_handler.rst>`__)
 - ``gale.log``: Contains logging configuration for gale games — printed to the terminal and written to a plain-text file by default, extensible to Graylog, Sentry, a Discord channel, or anywhere else by attaching another ``logging.Handler``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/log.rst>`__)
+- ``gale.management``: Contains ``gale-admin``, the ``create-project``/``create-state`` command-line tool that scaffolds a new game's ``main.py``/``settings.py``/``src/`` layout, or a new ``BaseState`` subclass inside one. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/project_template.rst>`__)
+- ``gale.math_util``: Contains ``real_equal``, a tolerance-based float equality check used by ``gale.ease_functions`` to detect ``t=0``/``t=1`` exactly despite floating-point drift.
 - ``gale.net``: Contains a pure-Python, pygame-free toolkit for LAN/internet multiplayer: ``Server``, ``Client``, a hand-rolled reliability layer over UDP, per-peer round-trip-time tracking, LAN discovery, configurable-format room codes (``encode``/``decode``) for sharing a host/port pair as a short, human-typeable string, a ``PredictionBuffer`` for client-side prediction/server reconciliation, and a ``SnapshotInterpolator``/``lag_compensated_position`` for entity interpolation and lag compensation. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/net.rst>`__)
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/particle_system.rst>`__)
 - ``gale.physics``: Contains a Box2D-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes Box2D itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`__)
@@ -194,8 +197,15 @@ Contributors
 
 Dependencies
 ------------
-Gale is obviously strongly dependent on Python and Pygame. It also depends on the
-library Click for our command line implementation.
+Gale is obviously strongly dependent on Python and Pygame. It also depends on
+Click for the ``gale-admin`` command line tool, NumPy for ``gale.particle_system``,
+and Box2D for ``gale.physics`` and ``gale.tilemap.collision``.
+
+
+Changelog
+---------
+See `CHANGELOG.md <https://github.com/R3mmurd/Gale/blob/main/CHANGELOG.md>`_
+for the history of notable changes across releases.
 
 
 License
@@ -220,8 +230,8 @@ See docs/licenses for licenses of dependencies.
 .. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
    :target: https://pypi.org/project/gale-engine/
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.12.1.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.12.1...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.13.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.13.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black

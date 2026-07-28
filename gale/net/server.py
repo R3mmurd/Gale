@@ -139,6 +139,9 @@ class Server:
         :param name: The name shown to clients discovering this server.
         :param discovery_port: The UDP port to listen for discovery requests on. The default value is DEFAULT_DISCOVERY_PORT.
         """
+        if self._discovery_socket is not None:
+            self._discovery_socket.close()
+
         self._discovery_name = name
         self._discovery_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._discovery_socket.setblocking(False)
@@ -213,6 +216,12 @@ class Server:
 
         if self._discovery_socket is not None:
             self._discovery_socket.close()
+
+    def __enter__(self) -> "Server":
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self.close()
 
     def update(self, dt: float) -> None:
         """

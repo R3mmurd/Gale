@@ -8,7 +8,7 @@ Timer.update(dt) once a frame to drive them all.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
-from typing import Callable, Optional, Any, Sequence, Tuple, Dict, Union
+from typing import Callable, List, Optional, Any, Sequence, Tuple, Dict, Union
 
 from .ease_functions import EASE_FUNCTIONS
 
@@ -123,7 +123,7 @@ class Tween(TimerItemBase):
 
 
 class Timer:
-    items: Union[Every, After, Tween] = []
+    items: List[Union[Every, After, Tween]] = []
     paused: bool = False
 
     @classmethod

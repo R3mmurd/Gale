@@ -39,6 +39,19 @@ messages always surface later, through the callbacks registered with
 ``on_connect``/``on_connect_failed``/``on_disconnect``/``on_message``,
 the next time you call ``update(dt)``.
 
+Both ``Server`` and ``Client`` support the context manager protocol, so
+their underlying socket is always closed on the way out, exceptions
+included, without needing an explicit ``close()`` call in every exit
+path:
+
+.. code-block:: python
+
+   with Server(port=9000) as server, Client() as client:
+       client.connect("127.0.0.1", server.port)
+       # ... game loop ...
+   # Both sockets are closed here, whether the block exited normally
+   # or an exception was raised.
+
 Choosing a channel
 -------------------
 
