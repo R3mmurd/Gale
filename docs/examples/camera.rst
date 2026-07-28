@@ -3,12 +3,10 @@
 gale.camera
 ============
 
-love2d has ``love.graphics.push``/``translate``/``scale``/``pop`` to
-scroll and zoom a whole scene at once; pygame has no GPU transform
-stack to piggyback on the same way, so ``gale.camera.Camera`` instead
-turns world coordinates into screen ones for you — you still ``blit``
-each entity yourself, just at the position (and size) the camera says
-to.
+pygame has no scene-wide transform stack to scroll/zoom everything at
+once, so ``gale.camera.Camera`` instead turns world coordinates into
+screen ones for you — you still ``blit`` each entity yourself, just at
+the position (and size) the camera says to.
 
 See `examples/scavenger <../../examples/scavenger/README.md>`_ for a
 full game built on this: a coin-collecting game where the camera

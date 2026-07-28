@@ -3,7 +3,10 @@ This file contains the implementation of the class Game: the window,
 virtual-resolution scaling, and game loop (a variable-rate
 update/render pair driven by real elapsed time, plus a fixed_update
 that steps at a constant rate regardless of frame rate) every gale
-game is built on top of.
+game is built on top of. Every constructor argument is optional and
+falls back to gale.conf.settings (see gale.conf) when omitted, so a
+project's settings.py is enough to configure it without passing
+anything explicitly.
 
 Importing this module calls pygame.init().
 
@@ -16,6 +19,7 @@ from typing import Optional, Any, Tuple, Dict
 
 import pygame
 
+from .conf import settings
 from .timer import Timer
 from .input_handler import InputHandler, InputListener, InputData, INPUT_EVENTS
 
@@ -76,39 +80,57 @@ class Game(InputListener):
     def __init__(
         self,
         title: Optional[str] = None,
-        window_width: int = 800,
-        window_height: int = 600,
+        window_width: Optional[int] = None,
+        window_height: Optional[int] = None,
         virtual_width: Optional[int] = None,
         virtual_height: Optional[int] = None,
-        fps: int = 60,
-        fixed_timestep: float = 1.0 / 60.0,
+        fps: Optional[int] = None,
+        fixed_timestep: Optional[float] = None,
         *args: Tuple[Any],
         **kwargs: Dict[str, Any],
     ) -> None:
         """
         Set the basic elements of the game in their initial values.
 
-        :param title: Title of the game to show in the window title. By default is None to set the title 'Game'.
-        :param window_width: Width of the window to show the game. By default is 800.
-        :param window_height: Height of the window to show the game. By default is 600.
-        :param virtual_width: Width we're trying to emulate. By default is None to set the same value of window_width.
-        :param virtual_height: Height we're trying to emulate. By default is None to set the same value of window_height.
-        :param fps: Number of frame per seconds. *args and **kwargs Any argument list of keyword arguments that are accepted by pygame.display.set_mode.
-        :param fixed_timestep: Seconds between two fixed_update() calls. By default is 1/60. Unrelated to fps: fixed_update() runs zero, one, or several times per frame so it always advances by exactly this much real time, regardless of the frame rate.
+        Every parameter below defaults to None, in which case it is
+        resolved from gale.conf.settings instead: the project's own
+        settings.py if it defines that setting, or
+        gale.conf.global_settings otherwise. Pass a value explicitly
+        to override settings for this instance specifically.
+
+        :param title: Title of the game to show in the window title. Resolved from settings.TITLE, itself None by default, meaning 'Game'.
+        :param window_width: Width of the window to show the game. Resolved from settings.WINDOW_WIDTH, itself 800 by default.
+        :param window_height: Height of the window to show the game. Resolved from settings.WINDOW_HEIGHT, itself 600 by default.
+        :param virtual_width: Width we're trying to emulate. Resolved from settings.VIRTUAL_WIDTH, itself None by default, meaning the same value as window_width.
+        :param virtual_height: Height we're trying to emulate. Resolved from settings.VIRTUAL_HEIGHT, itself None by default, meaning the same value as window_height.
+        :param fps: Number of frame per seconds. Resolved from settings.FPS, itself 60 by default. *args and **kwargs Any argument list of keyword arguments that are accepted by pygame.display.set_mode.
+        :param fixed_timestep: Seconds between two fixed_update() calls. Resolved from settings.FIXED_TIMESTEP, itself 1/60 by default. Unrelated to fps: fixed_update() runs zero, one, or several times per frame so it always advances by exactly this much real time, regardless of the frame rate.
         """
-        self.window_width: int = window_width
-        self.window_height: int = window_height
-        self.virtual_width: int = virtual_width or self.window_width
-        self.virtual_height: int = virtual_height or self.window_height
-        self.fps = fps
-        self.fixed_timestep: float = fixed_timestep
+        self.window_width: int = (
+            window_width if window_width is not None else settings.WINDOW_WIDTH
+        )
+        self.window_height: int = (
+            window_height if window_height is not None else settings.WINDOW_HEIGHT
+        )
+        resolved_virtual_width = (
+            virtual_width if virtual_width is not None else settings.VIRTUAL_WIDTH
+        )
+        resolved_virtual_height = (
+            virtual_height if virtual_height is not None else settings.VIRTUAL_HEIGHT
+        )
+        self.virtual_width: int = resolved_virtual_width or self.window_width
+        self.virtual_height: int = resolved_virtual_height or self.window_height
+        self.fps = fps if fps is not None else settings.FPS
+        self.fixed_timestep: float = (
+            fixed_timestep if fixed_timestep is not None else settings.FIXED_TIMESTEP
+        )
         self._accumulator: float = 0.0
 
         # Setting the screen
         self.screen: pygame.Surface = pygame.display.set_mode(
             (self.window_width, self.window_height), *args, **kwargs
         )
-        self.title: str = title or "Game"
+        self.title: str = title or settings.TITLE or "Game"
         pygame.display.set_caption(self.title)
 
         # Creating the virtual screen

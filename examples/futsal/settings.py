@@ -15,6 +15,8 @@ from gale import input_handler
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, "quit")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
+TITLE = "Futsal"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 640
 VIRTUAL_HEIGHT = 360
