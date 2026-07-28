@@ -123,7 +123,6 @@ COLOR_GOALKEEPER_RING = (255, 220, 60)
 COLOR_TEXT = (235, 235, 235)
 COLOR_FLASH = (255, 210, 60)
 
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),

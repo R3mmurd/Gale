@@ -65,7 +65,6 @@ COLOR_WHEEL_MARK = (200, 200, 200)
 COLOR_GOAL = (255, 210, 60)
 COLOR_TEXT = (235, 235, 235)
 
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),

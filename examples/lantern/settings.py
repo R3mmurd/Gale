@@ -54,7 +54,6 @@ COLOR_EXIT = (120, 230, 140)
 COLOR_OVERLAY = (5, 5, 8)
 COLOR_TEXT = (235, 235, 235)
 
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),

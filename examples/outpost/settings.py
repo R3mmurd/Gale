@@ -109,7 +109,6 @@ COLOR_ALERT_TEXT = (255, 90, 90)
 COLOR_GOOD_TEXT = (140, 230, 160)
 
 # No custom font file needed for this demo, just pygame's built-in default.
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),
