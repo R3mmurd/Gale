@@ -19,6 +19,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_UP, "jump")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_w, "jump")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
+TITLE = "Leap"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 400
 VIRTUAL_HEIGHT = 240

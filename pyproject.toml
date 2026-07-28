@@ -41,6 +41,7 @@ gale-admin = "gale.management:execute_from_command_line"
 packages = [
     "gale",
     "gale.ai",
+    "gale.conf",
     "gale.cutscene",
     "gale.ecs",
     "gale.log",

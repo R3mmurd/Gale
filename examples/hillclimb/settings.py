@@ -17,6 +17,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_LEFT, "reverse"
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_a, "reverse")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
+TITLE = "Hillclimb"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 800
 VIRTUAL_HEIGHT = 200

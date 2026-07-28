@@ -32,6 +32,8 @@ input_handler.InputHandler.set_mouse_click_action(input_handler.MOUSE_BUTTON_1, 
 # ones matching an exact unit-vector direction.
 input_handler.InputHandler.set_mouse_motion_action(None, "mouse_move")
 
+TITLE = "Circuit"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 480
 VIRTUAL_HEIGHT = 320

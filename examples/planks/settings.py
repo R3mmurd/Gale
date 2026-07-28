@@ -25,6 +25,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confir
 
 BASE_DIR = pathlib.Path(__file__).parent
 
+TITLE = "Planks"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 320
 VIRTUAL_HEIGHT = 192
