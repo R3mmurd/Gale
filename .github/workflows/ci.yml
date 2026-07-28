@@ -14,6 +14,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        # pyproject.toml declares requires-python = ">=3.7"; 3.7 itself
+        # is left out here since actions/setup-python no longer has a
+        # prebuilt binary for it on current runners, but every version
+        # actually likely to be used today is covered.
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+
     env:
       SDL_AUDIODRIVER: dummy
       SDL_VIDEODRIVER: dummy
@@ -23,7 +32,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -34,4 +43,4 @@ jobs:
         run: black --check --diff .
 
       - name: Run tests
-        run: pytest
+        run: pytest --cov=gale --cov-report=term-missing

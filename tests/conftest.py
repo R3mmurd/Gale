@@ -1,6 +1,8 @@
 import pytest
 
 from gale.conf import settings as conf_settings
+from gale.input_handler import InputHandler
+from gale.timer import Timer
 
 
 @pytest.fixture(autouse=True)
@@ -19,3 +21,25 @@ def _reset_gale_conf_settings_cache():
     yield
     conf_settings._loaded = False
     conf_settings._project_settings = None
+
+
+@pytest.fixture(autouse=True)
+def _reset_input_handler_and_timer_state():
+    """
+    InputHandler.listeners/gamepads and Timer.items/paused are also
+    process-wide, class-level shared state: any Game (or Agent, or a
+    test constructing one directly) registers itself with
+    InputHandler on __init__, and most tests never call quit() to
+    unregister -- so without a reset, listeners/timers from one test
+    would otherwise keep piling up and firing throughout the rest of
+    the suite.
+    """
+    InputHandler.listeners = []
+    InputHandler.gamepads = {}
+    Timer.items = []
+    Timer.paused = False
+    yield
+    InputHandler.listeners = []
+    InputHandler.gamepads = {}
+    Timer.items = []
+    Timer.paused = False

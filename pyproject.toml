@@ -25,7 +25,6 @@ dependencies = [
     "click",
     "numpy",
     "pygame",
-    "wheel",
 ]
 
 [project.urls]
