@@ -11,7 +11,7 @@ Author: Alejandro Mujica (aledrums@gmail.com)
 import math
 import random
 
-from typing import Optional, Sequence, Tuple
+from typing import Callable, Optional, Sequence, Tuple
 
 import pygame
 
@@ -327,6 +327,49 @@ class Face(Align):
             self.target = original_target
 
 
+class LookWhereYoureGoing(Align):
+    """
+    Steers the character to face the direction it is currently moving
+    in, by reusing Align with a virtual target oriented towards the
+    character's own velocity. Complements Face (which orients towards
+    a target's position instead) and is typically combined with
+    Arrive/Seek/Wander, all of which only steer the linear motion and
+    leave orientation to whatever else is driving it.
+    """
+
+    def __init__(
+        self,
+        character: Kinematic,
+        target_radius: float = 0.05,
+        slow_radius: float = 0.5,
+        time_to_target: float = 0.1,
+    ) -> None:
+        """
+        :param character: The kinematic that will be steered.
+        :param target_radius: Angle (in radians) below which the character is considered aligned.
+        :param slow_radius: Angle (in radians) below which the character starts to slow down its rotation.
+        :param time_to_target: Time in which the character should reach its target rotation.
+        """
+        super().__init__(
+            character, character, target_radius, slow_radius, time_to_target
+        )
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        if self.character.velocity.length_squared() == 0:
+            return SteeringOutput()
+
+        facing_target = Kinematic(
+            self.character.position.x,
+            self.character.position.y,
+            orientation=Kinematic.vector_to_orientation(self.character.velocity),
+        )
+        original_target, self.target = self.target, facing_target
+        try:
+            return super().get_steering(dt)
+        finally:
+            self.target = original_target
+
+
 class VelocityMatch(SteeringBehavior):
     """
     Steers the character to match the target's velocity.
@@ -598,6 +641,301 @@ class ObstacleAvoidance(SteeringBehavior):
         return SteeringOutput(linear=avoidance_direction)
 
 
+class CollisionAvoidance(SteeringBehavior):
+    """
+    Steers the character away from other moving characters it is on a
+    collision course with, by predicting the time of closest approach
+    to each and, for whichever is soonest and close enough, steering
+    away from its predicted position at that time. Complements
+    Separation (which only reacts to how close targets already are,
+    ignoring where they're headed) and ObstacleAvoidance/WallAvoidance
+    (which are for static geometry, not other moving characters).
+    """
+
+    def __init__(
+        self,
+        character: Kinematic,
+        targets: Sequence[Kinematic],
+        collision_radius: float = 20,
+        max_prediction: float = 2,
+        max_acceleration: Optional[float] = None,
+    ) -> None:
+        """
+        :param character: The kinematic that will be steered.
+        :param targets: The other moving kinematics to avoid colliding with.
+        :param collision_radius: Combined radius below which two kinematics are considered to collide.
+        :param max_prediction: Maximum time (in seconds) ahead to look for a collision.
+        :param max_acceleration: Acceleration applied away from the predicted collision. The default value is character.max_acceleration.
+        """
+        self.character: Kinematic = character
+        self.targets: Sequence[Kinematic] = targets
+        self.collision_radius: float = collision_radius
+        self.max_prediction: float = max_prediction
+        self.max_acceleration: float = (
+            character.max_acceleration if max_acceleration is None else max_acceleration
+        )
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        shortest_time = self.max_prediction
+        first_target: Optional[Kinematic] = None
+        first_relative_position: Optional[pygame.Vector2] = None
+
+        for target in self.targets:
+            if target is self.character:
+                continue
+
+            relative_position = target.position - self.character.position
+            relative_velocity = target.velocity - self.character.velocity
+            relative_speed_squared = relative_velocity.length_squared()
+
+            if relative_speed_squared == 0:
+                continue
+
+            time_to_closest = (
+                -relative_position.dot(relative_velocity) / relative_speed_squared
+            )
+
+            if time_to_closest <= 0 or time_to_closest >= shortest_time:
+                continue
+
+            closest_distance = (
+                relative_position + relative_velocity * time_to_closest
+            ).length()
+
+            if closest_distance < self.collision_radius:
+                shortest_time = time_to_closest
+                first_target = target
+                first_relative_position = relative_position
+
+        if first_target is None or first_relative_position is None:
+            return SteeringOutput()
+
+        relative_position_at_closest = (
+            first_relative_position
+            + (first_target.velocity - self.character.velocity) * shortest_time
+        )
+
+        if relative_position_at_closest.length_squared() == 0:
+            heading = self.character.velocity
+            avoidance_direction = (
+                pygame.Vector2(-heading.y, heading.x)
+                if heading.length_squared() > 0
+                else pygame.Vector2(1, 0)
+            )
+        else:
+            avoidance_direction = -relative_position_at_closest
+
+        avoidance_direction.scale_to_length(self.max_acceleration)
+        return SteeringOutput(linear=avoidance_direction)
+
+
+class Wall:
+    """
+    A straight wall segment to be used with WallAvoidance.
+    """
+
+    def __init__(self, start: Tuple[float, float], end: Tuple[float, float]) -> None:
+        """
+        :param start: One endpoint of the wall segment.
+        :param end: The other endpoint of the wall segment.
+        """
+        self.start: pygame.Vector2 = pygame.Vector2(start)
+        self.end: pygame.Vector2 = pygame.Vector2(end)
+
+    def normal(self) -> pygame.Vector2:
+        """
+        :returns: A unit vector perpendicular to this wall.
+        """
+        direction = self.end - self.start
+
+        if direction.length_squared() == 0:
+            return pygame.Vector2(0, -1)
+
+        direction = direction.normalize()
+        return pygame.Vector2(-direction.y, direction.x)
+
+
+class WallAvoidance(SteeringBehavior):
+    """
+    Steers the character away from walls by casting a short whisker
+    ahead of it (along its current velocity) and, if the whisker
+    crosses a wall, steering along that wall's normal -- the classic
+    whisker-based avoidance for straight geometry, as opposed to the
+    circular obstacles ObstacleAvoidance handles.
+    """
+
+    def __init__(
+        self,
+        character: Kinematic,
+        walls: Sequence[Wall],
+        whisker_length: float = 40,
+        max_acceleration: Optional[float] = None,
+    ) -> None:
+        """
+        :param character: The kinematic that will be steered.
+        :param walls: The wall segments to avoid.
+        :param whisker_length: How far ahead of the character to check for a wall crossing.
+        :param max_acceleration: Acceleration applied away from the wall. The default value is character.max_acceleration.
+        """
+        self.character: Kinematic = character
+        self.walls: Sequence[Wall] = walls
+        self.whisker_length: float = whisker_length
+        self.max_acceleration: float = (
+            character.max_acceleration if max_acceleration is None else max_acceleration
+        )
+
+    @staticmethod
+    def _segment_intersection(
+        p1: pygame.Vector2,
+        p2: pygame.Vector2,
+        p3: pygame.Vector2,
+        p4: pygame.Vector2,
+    ) -> Optional[pygame.Vector2]:
+        r = p2 - p1
+        s = p4 - p3
+        denominator = r.x * s.y - r.y * s.x
+
+        if denominator == 0:
+            return None
+
+        diff = p3 - p1
+        t = (diff.x * s.y - diff.y * s.x) / denominator
+        u = (diff.x * r.y - diff.y * r.x) / denominator
+
+        if 0 <= t <= 1 and 0 <= u <= 1:
+            return p1 + r * t
+
+        return None
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        if self.character.velocity.length_squared() == 0:
+            return SteeringOutput()
+
+        heading = self.character.velocity.normalize()
+        whisker_end = self.character.position + heading * self.whisker_length
+
+        closest_point: Optional[pygame.Vector2] = None
+        closest_distance = self.whisker_length
+        closest_wall: Optional[Wall] = None
+
+        for wall in self.walls:
+            point = self._segment_intersection(
+                self.character.position, whisker_end, wall.start, wall.end
+            )
+
+            if point is None:
+                continue
+
+            distance = (point - self.character.position).length()
+
+            if distance < closest_distance:
+                closest_distance = distance
+                closest_point = point
+                closest_wall = wall
+
+        if closest_point is None or closest_wall is None:
+            return SteeringOutput()
+
+        avoidance_direction = closest_wall.normal()
+        avoidance_direction.scale_to_length(self.max_acceleration)
+        return SteeringOutput(linear=avoidance_direction)
+
+
+class PathFollow(SteeringBehavior):
+    """
+    Steers the character to follow a path (an ordered sequence of
+    points, such as one obtained from gale.ai.search over a
+    gale.ai.graph.NavGraph) by predicting the character's future
+    position, finding the closest point on the path to it, and Seeking
+    a target a fixed distance further along the path -- so the
+    character cuts corners smoothly instead of visiting every point
+    exactly.
+    """
+
+    def __init__(
+        self,
+        character: Kinematic,
+        path: Sequence[Tuple[float, float]],
+        path_offset: float = 30,
+        prediction_time: float = 0.2,
+    ) -> None:
+        """
+        :param character: The kinematic that will be steered.
+        :param path: Ordered points describing the path to follow.
+        :param path_offset: Distance, measured along the path, to look ahead of the closest point when picking the Seek target.
+        :param prediction_time: How far ahead (in seconds) to predict the character's position before projecting it onto the path.
+        """
+        self.character: Kinematic = character
+        self.path: Sequence[Tuple[float, float]] = path
+        self.path_offset: float = path_offset
+        self.prediction_time: float = prediction_time
+        self._seek = Seek(character, Kinematic())
+
+    def _closest_param(self, position: pygame.Vector2) -> Tuple[int, float, float]:
+        best_segment = 0
+        best_distance_along = 0.0
+        best_distance_squared = float("inf")
+        cumulative = 0.0
+
+        for i in range(len(self.path) - 1):
+            start = pygame.Vector2(self.path[i])
+            end = pygame.Vector2(self.path[i + 1])
+            segment = end - start
+            segment_length_squared = segment.length_squared()
+
+            if segment_length_squared == 0:
+                t = 0.0
+            else:
+                t = max(
+                    0.0,
+                    min(1.0, (position - start).dot(segment) / segment_length_squared),
+                )
+
+            closest_point = start + segment * t
+            distance_squared = (position - closest_point).length_squared()
+
+            if distance_squared < best_distance_squared:
+                best_distance_squared = distance_squared
+                best_segment = i
+                best_distance_along = cumulative + segment.length() * t
+
+            cumulative += segment.length()
+
+        return best_segment, best_distance_along, cumulative
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        if len(self.path) < 2:
+            return SteeringOutput()
+
+        future_position = (
+            self.character.position + self.character.velocity * self.prediction_time
+        )
+        _, distance_along, _ = self._closest_param(future_position)
+        target_distance = distance_along + self.path_offset
+
+        cumulative = 0.0
+        target_point = pygame.Vector2(self.path[-1])
+
+        for i in range(len(self.path) - 1):
+            start = pygame.Vector2(self.path[i])
+            end = pygame.Vector2(self.path[i + 1])
+            segment_length = (end - start).length()
+
+            if cumulative + segment_length >= target_distance:
+                t = (
+                    (target_distance - cumulative) / segment_length
+                    if segment_length > 0
+                    else 0.0
+                )
+                target_point = start.lerp(end, max(0.0, min(1.0, t)))
+                break
+
+            cumulative += segment_length
+
+        self._seek.target.position = target_point
+        return self._seek.get_steering(dt)
+
+
 class BlendedSteering(SteeringBehavior):
     """
     Combines several steering behaviors by adding their weighted outputs
@@ -667,3 +1005,113 @@ class PrioritySteering(SteeringBehavior):
                 return steering
 
         return SteeringOutput()
+
+
+def _default_score(steering: SteeringOutput) -> float:
+    return steering.linear.length_squared() + steering.angular**2
+
+
+class CooperativeArbitration(SteeringBehavior):
+    """
+    Blends each group of behaviors independently (like PrioritySteering
+    does), but -- unlike it -- evaluates every group instead of
+    stopping at the first meaningful one, and returns whichever scores
+    highest under score. Useful when the "best" behavior isn't simply
+    the highest-priority one that happens to produce output, but
+    whichever actually addresses the situation the most (for instance,
+    preferring a strong flanking maneuver over a weak direct approach
+    even though both fire at once).
+    """
+
+    def __init__(
+        self,
+        character: Kinematic,
+        groups: Sequence[Sequence[Tuple[SteeringBehavior, float]]],
+        score: Callable[[SteeringOutput], float] = _default_score,
+    ) -> None:
+        """
+        :param character: The kinematic that will be steered.
+        :param groups: Sequence of groups, each one a sequence of pairs (behavior, weight).
+        :param score: Callable ranking a candidate SteeringOutput; the group with the highest score wins. The default value scores by squared magnitude.
+        """
+        self.character: Kinematic = character
+        self.groups: Sequence[Sequence[Tuple[SteeringBehavior, float]]] = groups
+        self.score: Callable[[SteeringOutput], float] = score
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        best_steering = SteeringOutput()
+        best_score = self.score(best_steering)
+
+        for group in self.groups:
+            steering = BlendedSteering(self.character, group).get_steering(dt)
+            candidate_score = self.score(steering)
+
+            if candidate_score > best_score:
+                best_score = candidate_score
+                best_steering = steering
+
+        return best_steering
+
+
+class OutputFilter(SteeringBehavior):
+    """
+    Wraps another steering behavior and smooths its output over time
+    (exponential smoothing) instead of applying it outright, to avoid
+    jittery, frame-to-frame-inconsistent motor output from a noisy
+    underlying behavior.
+    """
+
+    def __init__(self, behavior: SteeringBehavior, smoothing: float = 0.2) -> None:
+        """
+        :param behavior: The steering behavior to filter.
+        :param smoothing: How much of the new output to blend in each call, between 0 (output never changes) and 1 (no filtering at all). The default value is 0.2.
+        """
+        self.behavior: SteeringBehavior = behavior
+        self.smoothing: float = smoothing
+        self._filtered: SteeringOutput = SteeringOutput()
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        raw = self.behavior.get_steering(dt)
+        self._filtered = SteeringOutput(
+            linear=self._filtered.linear.lerp(raw.linear, self.smoothing),
+            angular=self._filtered.angular
+            + (raw.angular - self._filtered.angular) * self.smoothing,
+        )
+        return self._filtered
+
+
+class CapabilityFilter(SteeringBehavior):
+    """
+    Wraps another steering behavior and clamps its output to a set of
+    capabilities that may be more restrictive than the character's own
+    Kinematic limits -- for instance, reusing the same targeting logic
+    across a fast scout and a slow, heavy tank sharing the same
+    character.max_acceleration, but where the tank's turret should
+    still turn slower than its chassis's own limits allow.
+    """
+
+    def __init__(
+        self,
+        behavior: SteeringBehavior,
+        max_acceleration: float,
+        max_angular_acceleration: float,
+    ) -> None:
+        """
+        :param behavior: The steering behavior to filter.
+        :param max_acceleration: Maximum linear acceleration magnitude to allow through.
+        :param max_angular_acceleration: Maximum angular acceleration magnitude to allow through.
+        """
+        self.behavior: SteeringBehavior = behavior
+        self.max_acceleration: float = max_acceleration
+        self.max_angular_acceleration: float = max_angular_acceleration
+
+    def get_steering(self, dt: float = 0) -> SteeringOutput:
+        raw = self.behavior.get_steering(dt)
+        angular = raw.angular
+
+        if abs(angular) > self.max_angular_acceleration:
+            angular = math.copysign(self.max_angular_acceleration, angular)
+
+        return SteeringOutput(
+            linear=_clamp_to_length(raw.linear, self.max_acceleration), angular=angular
+        )
