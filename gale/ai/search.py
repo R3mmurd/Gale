@@ -11,7 +11,17 @@ Author: Alejandro Mujica (aledrums@gmail.com)
 import heapq
 
 from collections import deque
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
+from typing import (
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 from .graph import Graph
 
@@ -135,32 +145,50 @@ def breadth_first_search(
     return None
 
 
-def _uniform_cost_search(
-    start: T, goal: T, neighbors_fn: NeighborsFn, heuristic: Callable[[T, T], float]
-) -> Optional[List[T]]:
+def _best_first_search_steps(
+    start: T,
+    is_goal: Callable[[T], bool],
+    neighbors_fn: NeighborsFn,
+    heuristic: Callable[[T], float],
+) -> Iterator[Optional[List[T]]]:
     """
-    Shared implementation behind dijkstra and a_star: both explore
-    nodes ordered by cost-so-far plus heuristic(node, goal), which
-    degenerates to plain Dijkstra when heuristic always returns 0.
+    Generator core shared by _uniform_cost_search (behind dijkstra and
+    a_star) and the incremental/open-goal searches in
+    gale.ai.pathfinding: explores nodes ordered by cost-so-far plus
+    heuristic(node), yielding None after every node expansion so a
+    caller can advance it a limited number of steps at a time, then
+    finally yielding the found path, or None if the goal is
+    unreachable, as its last value.
+
+    :param start: The node to start the search from.
+    :param is_goal: Callable returning whether a node is an acceptable goal.
+    :param neighbors_fn: Callable node -> iterable of (neighbor, weight) pairs. Weights must not be negative.
+    :param heuristic: Callable node -> estimated cost to reach the goal from it. Must not overestimate the real cost for the found path to be guaranteed optimal.
     """
+    if is_goal(start):
+        yield [start]
+        return
+
     costs: Dict[T, float] = {start: 0.0}
     came_from: Dict[T, T] = {}
     visited = set()
     # The counter breaks ties between equal-priority entries so the
     # heap never needs to compare two nodes directly against each other.
     counter = 1
-    queue: List[Tuple[float, int, T]] = [(heuristic(start, goal), 0, start)]
+    queue: List[Tuple[float, int, T]] = [(heuristic(start), 0, start)]
 
     while queue:
         _, _, node = heapq.heappop(queue)
 
         if node in visited:
+            yield None
             continue
 
         visited.add(node)
 
-        if node == goal:
-            return _reconstruct_path(came_from, start, goal)
+        if is_goal(node):
+            yield _reconstruct_path(came_from, start, node)
+            return
 
         for neighbor, weight in neighbors_fn(node):
             new_cost = costs[node] + weight
@@ -168,11 +196,35 @@ def _uniform_cost_search(
             if new_cost < costs.get(neighbor, float("inf")):
                 costs[neighbor] = new_cost
                 came_from[neighbor] = node
-                priority = new_cost + heuristic(neighbor, goal)
+                priority = new_cost + heuristic(neighbor)
                 heapq.heappush(queue, (priority, counter, neighbor))
                 counter += 1
 
-    return None
+        yield None
+
+    yield None
+
+
+def _uniform_cost_search(
+    start: T, goal: T, neighbors_fn: NeighborsFn, heuristic: Callable[[T, T], float]
+) -> Optional[List[T]]:
+    """
+    Shared implementation behind dijkstra and a_star: both explore
+    nodes ordered by cost-so-far plus heuristic(node, goal), which
+    degenerates to plain Dijkstra when heuristic always returns 0. Runs
+    _best_first_search_steps to completion in one call.
+    """
+    result = None
+
+    for result in _best_first_search_steps(
+        start,
+        lambda node: node == goal,
+        neighbors_fn,
+        lambda node: heuristic(node, goal),
+    ):
+        pass
+
+    return result
 
 
 def dijkstra(start: T, goal: T, graph_or_neighbors_fn: GraphLike) -> Optional[List[T]]:

@@ -7,17 +7,25 @@ from gale.ai.steering import (
     Align,
     Arrive,
     BlendedSteering,
+    CapabilityFilter,
+    CollisionAvoidance,
+    CooperativeArbitration,
     Evade,
     Flee,
     Kinematic,
+    LookWhereYoureGoing,
     Obstacle,
     ObstacleAvoidance,
+    OutputFilter,
+    PathFollow,
     PrioritySteering,
     Pursue,
     Seek,
     Separation,
     SteeringOutput,
     VelocityMatch,
+    Wall,
+    WallAvoidance,
     Wander,
 )
 
@@ -211,3 +219,109 @@ class BlendedAndPriorityTestCase(unittest.TestCase):
         )
         steering = priority.get_steering()
         self.assertGreater(steering.linear.length(), 0)
+
+
+class LookWhereYoureGoingTestCase(unittest.TestCase):
+    def test_orients_towards_current_velocity(self) -> None:
+        character = Kinematic(0, 0, orientation=0)
+        character.velocity.x, character.velocity.y = 0, 10
+        steering = LookWhereYoureGoing(character).get_steering()
+        self.assertGreater(steering.angular, 0)
+
+    def test_produces_no_steering_when_standing_still(self) -> None:
+        character = Kinematic(0, 0)
+        steering = LookWhereYoureGoing(character).get_steering()
+        self.assertEqual(steering.angular, 0)
+
+
+class CollisionAvoidanceTestCase(unittest.TestCase):
+    def test_avoids_character_on_collision_course(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        character.velocity.x = 10
+        other = Kinematic(100, 0)
+        other.velocity.x = -10
+        steering = CollisionAvoidance(
+            character, [other], collision_radius=20, max_prediction=10
+        ).get_steering()
+        self.assertGreater(steering.linear.length(), 0)
+
+    def test_ignores_character_moving_away(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        character.velocity.x = 10
+        other = Kinematic(100, 0)
+        other.velocity.x = 10
+        steering = CollisionAvoidance(
+            character, [other], collision_radius=20, max_prediction=10
+        ).get_steering()
+        self.assertEqual(steering.linear.length(), 0)
+
+
+class WallAvoidanceTestCase(unittest.TestCase):
+    def test_avoids_wall_ahead(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        character.velocity.x = 10
+        wall = Wall((20, -50), (20, 50))
+        steering = WallAvoidance(character, [wall], whisker_length=40).get_steering()
+        self.assertGreater(steering.linear.length(), 0)
+
+    def test_ignores_wall_not_crossed(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        character.velocity.x = 10
+        wall = Wall((0, 100), (20, 100))
+        steering = WallAvoidance(character, [wall], whisker_length=40).get_steering()
+        self.assertEqual(steering.linear.length(), 0)
+
+
+class PathFollowTestCase(unittest.TestCase):
+    def test_seeks_a_point_ahead_on_the_path(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        path = [(0, 0), (100, 0), (100, 100)]
+        steering = PathFollow(character, path, path_offset=10).get_steering()
+        self.assertGreater(steering.linear.x, 0)
+
+    def test_no_steering_with_a_degenerate_path(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        steering = PathFollow(character, [(0, 0)]).get_steering()
+        self.assertEqual(steering.linear.length(), 0)
+
+
+class CooperativeArbitrationTestCase(unittest.TestCase):
+    def test_picks_the_highest_scoring_group(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        weak_target = Kinematic(1, 0)
+        strong_target = Kinematic(50, 0)
+        arbitration = CooperativeArbitration(
+            character,
+            [
+                [(Seek(character, weak_target), 0.01)],
+                [(Seek(character, strong_target), 1.0)],
+            ],
+        )
+        steering = arbitration.get_steering()
+        strong_steering = Seek(character, strong_target).get_steering()
+        self.assertAlmostEqual(steering.linear.x, strong_steering.linear.x)
+
+
+class OutputFilterTestCase(unittest.TestCase):
+    def test_smooths_output_towards_the_raw_value_over_calls(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=100)
+        target = Kinematic(10, 0)
+        filtered = OutputFilter(Seek(character, target), smoothing=0.5)
+        first = filtered.get_steering().linear.x
+        second = filtered.get_steering().linear.x
+        raw = Seek(character, target).get_steering().linear.x
+        self.assertLess(abs(first), abs(raw))
+        self.assertGreater(abs(second), abs(first))
+
+
+class CapabilityFilterTestCase(unittest.TestCase):
+    def test_clamps_output_below_the_wrapped_behaviors_own_limit(self) -> None:
+        character = Kinematic(0, 0, max_acceleration=1000)
+        target = Kinematic(10, 0)
+        filtered = CapabilityFilter(
+            Seek(character, target),
+            max_acceleration=5,
+            max_angular_acceleration=1,
+        )
+        steering = filtered.get_steering()
+        self.assertAlmostEqual(steering.linear.length(), 5)
