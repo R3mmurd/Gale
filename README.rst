@@ -14,7 +14,7 @@ Full documentation: https://r3mmurd.github.io/Gale/
 
 Modules
 -------
-- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and steering behaviors, a behavior tree, a decision tree, a shared ``Blackboard``, generic graphs with search algorithms, the ``Agent`` class that ties them together, a vision-cone ``Perception`` system (near/far alert zones, line-of-sight), and ``minimax`` search with alpha-beta pruning for turn-based adversarial decisions. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`__)
+- ``gale.ai``: Contains a modular toolkit to build autonomous characters: the ``Kinematic`` body and a full set of steering behaviors (seek/flee/arrive/align/pursue/evade/wander/wall & obstacle & collision avoidance/path following) plus combination (blending, priority, cooperative arbitration) and motor-control (output filtering, capability limits) variants; a behavior tree, a decision tree, and data-driven scripting to build either from a plain dict; a shared ``Blackboard``; generic graphs with search algorithms — flat, hierarchical, interruptible/time-sliced, and open-goal; the ``Agent`` class that ties them together; a vision-cone ``Perception`` system; fuzzy logic; naive-Bayes/n-gram learning models; projectile aiming/targeting (including under drag); coordinated-movement formations; Markov chains/state machines; goal-oriented action planning (GOAP); a forward-chaining rule engine; tactical influence maps; and ``minimax`` search with alpha-beta pruning for turn-based adversarial decisions. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`__)
 - ``gale.animation``: Contains the class ``Animation``. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/animation.rst>`__)
 - ``gale.camera``: Contains the class ``Camera``, a 2D scrolling/zooming camera — following a target, screen shake, bounds clamping, and screen/world coordinate conversion. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/camera.rst>`__)
 - ``gale.cutscene``: Contains ``Cutscene`` (a ``gale.sequence.Sequence`` of beats that also ticks/renders any actors involved every frame) and its beats — ``ShowImage``, ``PlayAnimation`` (a dependency-free stand-in for video playback), ``MoveActor``, ``SetActorAnimation``, ``Dialogue``, ``Wait`` — each lasting a fixed duration or advancing on a specific input. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/cutscene.rst>`__)
@@ -73,7 +73,7 @@ Examples
 - `gale.tilemap <https://github.com/R3mmurd/Gale/blob/main/docs/examples/tilemap.rst>`_: layers, tilesets, loading a Tiled JSON map, one-way platform collision.
 - `gale.timer <https://github.com/R3mmurd/Gale/blob/main/docs/examples/timer.rst>`_
 - `gale.ui <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ui.rst>`_: menus, HUDs, and forms built from panels, buttons, list views, text inputs, closable windows, and more.
-- `gale.ai <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`_: steering behaviors, behavior tree, decision tree, Blackboard, graphs/search, and the ``Agent`` class.
+- `gale.ai <https://github.com/R3mmurd/Gale/blob/main/docs/examples/gale_ai.rst>`_: steering behaviors (and their combination/motor-control variants), behavior tree, decision tree, data-driven scripting, Blackboard, graphs/search/pathfinding, the ``Agent`` class, fuzzy logic, learning models, targeting, formations, Markov chains, GOAP, rules, and tactical influence maps.
 - `gale.ecs <https://github.com/R3mmurd/Gale/blob/main/docs/examples/ecs.rst>`_: World, components, queries, and Systems/SystemScheduler.
 - `gale.sequence <https://github.com/R3mmurd/Gale/blob/main/docs/examples/sequence.rst>`_: Step, StepGroup, and Sequence, the shared engine behind quests and cutscenes.
 - `gale.quest <https://github.com/R3mmurd/Gale/blob/main/docs/examples/quest.rst>`_: Objective, Stage, Quest, and QuestLog.
@@ -83,7 +83,14 @@ These are short, focused snippets per module. For full running games
 built with gale, see ``examples/space_trip`` and, in particular for
 ``gale.ai``, `examples/nightwatch <https://github.com/R3mmurd/Gale/blob/main/examples/nightwatch/README.md>`_, a
 small stealth demo whose guards patrol, chase, and coordinate through a
-shared behavior tree, blackboard, and pathfinding; for
+shared behavior tree, blackboard, and pathfinding, and
+`examples/skirmish <https://github.com/R3mmurd/Gale/blob/main/examples/skirmish/README.md>`_, a small
+squad-tactics demo covering the rest of the toolkit: a formation of
+allies following an anchor, guards whose alertness is driven by fuzzy
+logic and whose decisions come from a data-driven behavior tree, a
+Markov state machine varying their patrol routine, an influence map
+guiding where they take up position, GOAP planning for an
+objective-driven captain, and gravity-aware projectile targeting; for
 ``gale.net``/``gale.ui``, `examples/rally <https://github.com/R3mmurd/Gale/blob/main/examples/rally/README.md>`_,
 a small online Pong playable over a LAN or the internet; for
 ``gale.physics``, `examples/leap <https://github.com/R3mmurd/Gale/blob/main/examples/leap/README.md>`_, a
