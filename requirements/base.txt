@@ -3,4 +3,3 @@ black
 click
 numpy
 pygame
-wheel

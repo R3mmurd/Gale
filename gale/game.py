@@ -124,6 +124,14 @@ class Game(InputListener):
         self.fixed_timestep: float = (
             fixed_timestep if fixed_timestep is not None else settings.FIXED_TIMESTEP
         )
+
+        if self.fixed_timestep <= 0:
+            raise ValueError(
+                f"fixed_timestep must be positive, got {self.fixed_timestep!r} -- "
+                "a zero or negative value would make __update's accumulator loop "
+                "run forever."
+            )
+
         self._accumulator: float = 0.0
 
         # Setting the screen
@@ -235,6 +243,8 @@ class Game(InputListener):
 
     def quit(self) -> None:
         """
-        Mark the game to exit.
+        Mark the game to exit and stop it from receiving further input,
+        undoing the registration __init__ made with InputHandler.
         """
         self.running = False
+        InputHandler.unregister_listener(self)

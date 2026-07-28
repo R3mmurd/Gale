@@ -85,6 +85,16 @@ class LogConfigTestCase(unittest.TestCase):
 
         self.assertIn(custom_handler, get_logger().handlers)
 
+    def test_reconfigure_closes_the_previous_file_handler(self) -> None:
+        configure(log_file=self.log_path, console=False)
+        old_file_handler = next(
+            h for h in get_logger().handlers if isinstance(h, logging.FileHandler)
+        )
+
+        configure(log_file=self.log_path, console=False)
+
+        self.assertIsNone(old_file_handler.stream)
+
     def test_level_constants_match_stdlib(self) -> None:
         self.assertEqual(LogLevel.DEBUG, logging.DEBUG)
         self.assertEqual(LogLevel.INFO, logging.INFO)

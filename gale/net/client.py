@@ -205,6 +205,12 @@ class Client:
         """
         self._socket.close()
 
+    def __enter__(self) -> "Client":
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self.close()
+
     def update(self, dt: float) -> None:
         """
         Poll the network and drive the connection state: attempt/retry

@@ -107,6 +107,16 @@ class ServerClientTestCase(unittest.TestCase):
         pump(self.server, until=lambda: len(disconnected) == 1, deadline=1.0)
         self.assertEqual(len(disconnected), 1)
 
+    def test_enable_lan_discovery_twice_closes_the_previous_socket(self) -> None:
+        self.server.enable_lan_discovery("first", discovery_port=0)
+        first_socket = self.server._discovery_socket
+
+        self.server.enable_lan_discovery("second", discovery_port=0)
+        second_socket = self.server._discovery_socket
+
+        self.assertIsNot(first_socket, second_socket)
+        self.assertEqual(first_socket.fileno(), -1)
+
     def test_connect_failed_when_server_unreachable(self) -> None:
         failed = []
         client = Client(timeout=1.0)
@@ -115,6 +125,15 @@ class ServerClientTestCase(unittest.TestCase):
         pump(client, until=lambda: len(failed) == 1, deadline=1.0)
         client.close()
         self.assertEqual(len(failed), 1)
+
+    def test_server_and_client_support_the_context_manager_protocol(self) -> None:
+        with Server(port=0) as server, Client() as client:
+            client.connect("127.0.0.1", server.port)
+            connected = pump(server, client, until=lambda: client.connected)
+            self.assertTrue(connected)
+
+        self.assertEqual(server._socket.fileno(), -1)
+        self.assertEqual(client._socket.fileno(), -1)
 
 
 if __name__ == "__main__":

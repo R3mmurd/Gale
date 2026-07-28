@@ -2,4 +2,5 @@
 build
 pre-commit
 pytest
+pytest-cov
 twine
