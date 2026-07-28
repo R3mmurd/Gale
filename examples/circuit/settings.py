@@ -98,8 +98,6 @@ COLOR_JOINER_CAR = (80, 160, 235)
 COLOR_AI_CAR = (235, 200, 60)
 COLOR_TEXT = (235, 235, 235)
 
-pygame.font.init()
-
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),

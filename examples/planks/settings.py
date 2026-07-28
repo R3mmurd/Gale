@@ -52,7 +52,6 @@ COLOR_COIN = (255, 210, 60)
 COLOR_GOAL = (120, 230, 140)
 COLOR_TEXT = (20, 20, 25)
 
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),

@@ -62,6 +62,11 @@ TEXTURES = {
     ),
 }
 
+# Unlike font, mixer isn't guaranteed to have initialized successfully
+# just because pygame.init() (called when gale.game is imported) ran
+# without raising -- it silently skips a subsystem it couldn't start
+# (e.g. no audio device) instead. This example actually loads real
+# sound/music files below, so it needs to know for sure.
 pygame.mixer.init()
 
 SOUNDS = {
@@ -72,8 +77,6 @@ SOUNDS = {
 }
 
 pygame.mixer.music.load(BASE_DIR / "assets" / "sounds" / "space.ogg")
-
-pygame.font.init()
 
 FONTS = {
     "stars": pygame.font.Font(BASE_DIR / "assets" / "fonts" / "stars.ttf", 18),

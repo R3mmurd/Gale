@@ -228,8 +228,9 @@ class Game(InputListener):
             self.__update(dt)
             self.__render()
 
-        pygame.font.quit()
-        pygame.mixer.quit()
+        # pygame.quit() already uninitializes every subsystem
+        # pygame.init() started (font and mixer included), so there's
+        # no need to quit them individually first.
         pygame.quit()
 
     def quit(self) -> None:

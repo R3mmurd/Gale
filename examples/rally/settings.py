@@ -54,8 +54,6 @@ COLOR_BALL = (255, 210, 60)
 COLOR_NET = (60, 60, 72)
 COLOR_TEXT = (235, 235, 235)
 
-pygame.font.init()
-
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),
