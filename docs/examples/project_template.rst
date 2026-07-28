@@ -83,6 +83,12 @@ It will create a directory with the same name with the following structure:
    from gale import frames
    from gale import input_handler
 
+   # No need to call pygame.mixer.init()/pygame.font.init() here: importing
+   # gale.game (which this project's src/ module does) already calls
+   # pygame.init(), which initializes every subsystem pygame ships with,
+   # mixer and font included -- and does so without raising if, say, no
+   # audio device is available, unlike calling pygame.mixer.init() directly.
+
    input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, "quit")
 
    TITLE = "My First Arpg Game"
@@ -109,15 +115,11 @@ It will create a directory with the same name with the following structure:
    # }
    FRAMES = {}
 
-   pygame.mixer.init()
-
    # Register your sound from the sounds ```folder, for instance:
    # SOUNDS = {
    #     "my_sound": pygame.mixer.Sound(BASE_DIR, "assets" / "sounds/my_sound.wav"),
    # }
    SOUNDS = {}
-
-   pygame.font.init()
 
    # Register your fonts from the fonts folder, for instance:
    # FONTS = {

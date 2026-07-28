@@ -66,6 +66,21 @@ class CreateProjectTestCase(unittest.TestCase):
             sys.modules.pop("src", None)
             sys.modules.pop("settings", None)
 
+    def test_settings_does_not_eagerly_init_mixer_or_font(self) -> None:
+        """
+        Importing gale.game (which src/demo_game.py does) already calls
+        pygame.init(), covering every subsystem gale.game.Game needs --
+        calling pygame.mixer.init()/pygame.font.init() again here would
+        be redundant and, for mixer specifically, would raise instead of
+        degrading gracefully if no audio device is available.
+        """
+        self.runner.invoke(create_project, ["demo_game"])
+        lines = open("demo_game/settings.py").read().splitlines()
+        # Only reject an actual call statement, not the explanatory
+        # comment mentioning pygame.mixer.init() by name.
+        self.assertNotIn("pygame.mixer.init()", lines)
+        self.assertNotIn("pygame.font.init()", lines)
+
     def test_already_existing_project_is_not_overwritten(self) -> None:
         self.runner.invoke(create_project, ["demo_game"])
         result = self.runner.invoke(create_project, ["demo_game"])

@@ -66,7 +66,6 @@ COLOR_QUEST_TITLE = (255, 210, 90)
 COLOR_QUEST_DONE = (120, 230, 140)
 COLOR_POSE_MARKER = (255, 240, 180)
 
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),

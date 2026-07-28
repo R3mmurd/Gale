@@ -76,7 +76,6 @@ COLOR_NAV_EDGE = (55, 60, 75)
 COLOR_TEXT = (235, 235, 235)
 COLOR_ALERT_TEXT = (255, 90, 90)
 
-pygame.font.init()
 FONTS = {
     "small": pygame.font.Font(None, 16),
     "medium": pygame.font.Font(None, 24),
