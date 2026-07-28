@@ -4,6 +4,21 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.13.0] - 2026-07-28
+
+### Added
+- `gale.net.Server`/`Client` support the context manager protocol (`with Server(...) as server:`), guaranteeing the socket closes even on exceptions.
+
+### Changed
+- Expanded CI to a Python 3.8-3.13 test matrix and added coverage reporting.
+- Removed the unused `wheel` dependency.
+
+### Fixed
+- `gale.log.config.configure()` leaked a file descriptor on every call by never closing the handlers it replaced.
+- `Server.enable_lan_discovery()` leaked its UDP socket if called more than once.
+- `Game` no longer hangs forever if constructed with `fixed_timestep <= 0`; it now raises `ValueError` instead.
+- `Game.quit()` now unregisters the game from `InputHandler`, matching what `__init__` registered.
+
 ## [1.12.1] - 2026-07-28
 
 ### Fixed
@@ -147,6 +162,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.13.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.13.0
 [1.12.1]: https://github.com/R3mmurd/Gale/releases/tag/v1.12.1
 [1.12.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.12.0
 [1.11.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.11.0
