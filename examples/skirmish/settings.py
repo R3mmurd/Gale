@@ -26,6 +26,8 @@ input_handler.InputHandler.set_keyboard_action(
     input_handler.KEY_r, "restart", modifiers=input_handler.MOD_CTRL
 )
 
+TITLE = "Skirmish"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 800
 VIRTUAL_HEIGHT = 450

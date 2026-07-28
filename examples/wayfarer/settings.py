@@ -22,6 +22,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_s, "move_down")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_SPACE, "confirm")
 
+TITLE = "Wayfarer"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 480
 VIRTUAL_HEIGHT = 270

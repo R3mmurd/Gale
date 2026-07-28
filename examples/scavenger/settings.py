@@ -22,6 +22,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_EQUALS, "zoom_i
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_MINUS, "zoom_out")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
+TITLE = "Scavenger"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 400
 VIRTUAL_HEIGHT = 240

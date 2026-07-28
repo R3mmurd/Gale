@@ -21,6 +21,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_DOWN, "move_dow
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_s, "move_down")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
+TITLE = "Lantern"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 400
 VIRTUAL_HEIGHT = 240

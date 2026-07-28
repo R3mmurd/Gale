@@ -1,3 +1,5 @@
+import sys
+import types
 import unittest
 
 from gale.game import Game
@@ -38,6 +40,55 @@ class GameTestCase(unittest.TestCase):
         self.game._Game__update(1.0 / 60.0 * 0.5)
         self.assertEqual(self.game.fixed_update_calls, 1)
         self.assertEqual(self.game.update_calls, 2)
+
+
+class GameSettingsResolutionTestCase(unittest.TestCase):
+    def setUp(self) -> None:
+        self._had_settings_module = "settings" in sys.modules
+        self._original_settings_module = sys.modules.get("settings")
+        sys.modules.pop("settings", None)
+
+    def tearDown(self) -> None:
+        if self._had_settings_module:
+            sys.modules["settings"] = self._original_settings_module
+        else:
+            sys.modules.pop("settings", None)
+
+    def test_defaults_come_from_gale_conf_global_settings_without_a_project_settings_module(
+        self,
+    ) -> None:
+        game = RecordingGame()
+        self.assertEqual(game.window_width, 800)
+        self.assertEqual(game.window_height, 600)
+        self.assertEqual(game.virtual_width, 800)
+        self.assertEqual(game.virtual_height, 600)
+        self.assertEqual(game.fps, 60)
+        self.assertAlmostEqual(game.fixed_timestep, 1.0 / 60.0)
+        self.assertEqual(game.title, "Game")
+
+    def test_project_settings_module_overrides_defaults(self) -> None:
+        module = types.ModuleType("settings")
+        module.TITLE = "My Game"
+        module.WINDOW_WIDTH = 1280
+        module.WINDOW_HEIGHT = 720
+        module.VIRTUAL_WIDTH = 640
+        sys.modules["settings"] = module
+
+        game = RecordingGame()
+        self.assertEqual(game.title, "My Game")
+        self.assertEqual(game.window_width, 1280)
+        self.assertEqual(game.window_height, 720)
+        self.assertEqual(game.virtual_width, 640)
+        # VIRTUAL_HEIGHT wasn't overridden: falls back to window_height.
+        self.assertEqual(game.virtual_height, 720)
+
+    def test_explicit_constructor_argument_wins_over_settings(self) -> None:
+        module = types.ModuleType("settings")
+        module.WINDOW_WIDTH = 1280
+        sys.modules["settings"] = module
+
+        game = RecordingGame(window_width=320)
+        self.assertEqual(game.window_width, 320)
 
 
 if __name__ == "__main__":

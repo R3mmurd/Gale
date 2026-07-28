@@ -15,6 +15,8 @@ input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RIGHT, "right")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_UP, "up")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
+TITLE = "Space Trip"
+
 # Size we want to emulate
 VIRTUAL_WIDTH = 640
 VIRTUAL_HEIGHT = 360
