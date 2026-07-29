@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.14.0] - 2026-07-28
+
+### Added
+- `gale.save`: a general-purpose save-game system. `SaveManager` persists any JSON-serializable dict into named slots on disk, with per-slot metadata for a save-select screen, a pluggable serializer/deserializer for the wire format, a schema version + migrations for evolving what a save contains across releases, and atomic (crash-safe) writes.
+
 ## [1.13.0] - 2026-07-28
 
 ### Added
@@ -162,6 +167,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.14.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.0
 [1.13.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.13.0
 [1.12.1]: https://github.com/R3mmurd/Gale/releases/tag/v1.12.1
 [1.12.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.12.0
