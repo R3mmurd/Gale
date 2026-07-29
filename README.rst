@@ -32,6 +32,7 @@ Modules
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/particle_system.rst>`__)
 - ``gale.physics``: Contains a Box2D-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes Box2D itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`__)
 - ``gale.quest``: Contains a customizable-per-game quest system built on ``gale.sequence`` — ``Objective``, ``Stage`` (a group of objectives), ``Quest`` (a sequence of stages), and ``QuestLog`` (tracks/starts every quest and broadcasts progress events to whichever are active). (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/quest.rst>`__)
+- ``gale.save``: Contains ``SaveManager``, a general-purpose save-game system — persists whatever JSON-serializable dict a game gives it into named slots on disk, with per-slot metadata for a save-select screen, a pluggable ``serializer``/``deserializer`` for the wire format, and a schema ``version``/``migrations`` mapping for evolving what a save contains across releases without breaking old saves. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/save.rst>`__)
 - ``gale.sequence``: Contains ``Step``, ``StepGroup``, and ``Sequence`` — the generic "do this until it's done, then do the next thing" engine shared by ``gale.quest`` and ``gale.cutscene``; a step completes after a fixed duration, on a specific input, or by a subclass's own condition. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/sequence.rst>`__)
 - ``gale.state``: Contains the class ``BaseState``, a basic class ``StateMachine``, a basic class ``StateStack``, and ``HierarchicalState`` for nesting a sub-``StateMachine`` inside a state (HFSM). (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`__)
 - ``gale.stencil``: Contains the class ``Stencil``, a CPU-side equivalent of `love.graphics.stencil <https://love2d.org/wiki/love.graphics.stencil>`__ to mask an arbitrary shape (a circle, a polygon, a sprite) out of a surface's alpha channel — handy for a top-down game's fog-of-war/vision reveal, a circular minimap crop, and similar effects. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/stencil.rst>`__)
@@ -82,6 +83,7 @@ Examples
 - `gale.sequence <https://github.com/R3mmurd/Gale/blob/main/docs/examples/sequence.rst>`_: Step, StepGroup, and Sequence, the shared engine behind quests and cutscenes.
 - `gale.quest <https://github.com/R3mmurd/Gale/blob/main/docs/examples/quest.rst>`_: Objective, Stage, Quest, and QuestLog.
 - `gale.cutscene <https://github.com/R3mmurd/Gale/blob/main/docs/examples/cutscene.rst>`_: Cutscene and its beats — images, "video", actor movement, dialogue.
+- `gale.save <https://github.com/R3mmurd/Gale/blob/main/docs/examples/save.rst>`_: SaveManager, slots, metadata, schema versioning/migrations, pluggable serialization.
 
 These are short, focused snippets per module. For full running games
 built with gale, see ``examples/space_trip`` and, in particular for
@@ -230,8 +232,8 @@ See docs/licenses for licenses of dependencies.
 .. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
    :target: https://pypi.org/project/gale-engine/
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.13.0.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.13.0...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.14.0.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.14.0...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
