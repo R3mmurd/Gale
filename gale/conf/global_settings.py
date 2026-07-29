@@ -19,3 +19,10 @@ VIRTUAL_WIDTH = None
 VIRTUAL_HEIGHT = None
 FPS = 60
 FIXED_TIMESTEP = 1.0 / 60.0
+
+# gale.save.SaveManager's defaults. SAVE_DIR is relative to the
+# project's own working directory, the same convention gale-admin's
+# generated settings.py already uses for assets/.
+SAVE_DIR = "saves"
+SAVE_VERSION = 1
+SAVE_FILE_EXTENSION = "sav"
