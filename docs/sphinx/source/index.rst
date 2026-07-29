@@ -34,6 +34,7 @@ and is published on PyPI as `gale-engine <https://pypi.org/project/gale-engine/>
    examples/particle_system
    examples/physics
    examples/project_template
+   examples/save
    examples/state
    examples/stencil
    examples/text
