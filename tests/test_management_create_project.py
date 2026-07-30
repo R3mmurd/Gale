@@ -66,24 +66,21 @@ class CreateProjectTestCase(unittest.TestCase):
             sys.modules.pop("src", None)
             sys.modules.pop("settings", None)
 
-    def test_settings_calls_the_full_pygame_init(self) -> None:
+    def test_settings_does_not_need_to_init_pygame_itself(self) -> None:
         """
-        settings.py builds TEXTURES/FONTS/SOUNDS at import time, and
-        other project modules are free to `import settings` directly
-        rather than only reaching it indirectly through gale.game (see
-        every example's entity/state modules) -- so settings.py can't
-        rely on something else having initialized pygame first, and
-        must do it itself. It must call the full pygame.init() (safe
-        to call again if gale.game's own import already did) rather
-        than pygame.mixer.init()/pygame.font.init() directly, since
-        those raise instead of degrading gracefully if, say, no audio
-        device is available.
+        settings.py builds TEXTURES/FONTS/SOUNDS at import time, which
+        needs pygame's font/mixer/display subsystems already
+        initialized -- but it shouldn't need a pygame.init() call of
+        its own to get that: importing gale.__init__ (which happens
+        the moment anything under gale is imported, here `gale.frames`/
+        `gale.input_handler`) already guarantees it, see gale/__init__.py.
+        Calling pygame.mixer.init()/pygame.font.init() directly would
+        be actively wrong: those raise instead of degrading gracefully
+        if, say, no audio device is available.
         """
         self.runner.invoke(create_project, ["demo_game"])
         lines = open("demo_game/settings.py").read().splitlines()
-        self.assertIn("pygame.init()", lines)
-        # Only reject an actual call statement, not an explanatory
-        # comment mentioning pygame.mixer.init()/pygame.font.init() by name.
+        self.assertNotIn("pygame.init()", lines)
         self.assertNotIn("pygame.mixer.init()", lines)
         self.assertNotIn("pygame.font.init()", lines)
 
