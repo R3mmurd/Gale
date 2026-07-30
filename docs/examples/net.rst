@@ -119,8 +119,10 @@ The same ``Server`` class covers both:
   ``Server`` (and usually plays too, driving its own state locally
   rather than through the network — see how ``examples/rally``'s host
   simulates the ball/paddles directly and just broadcasts the result).
-- **Dedicated server**: a separate, pygame-free script imports only
-  ``gale.net`` and runs its own loop:
+- **Dedicated server**: a separate script imports only ``gale.net``
+  and runs its own loop, no display or audio device needed (``gale.net``'s
+  own code never touches pygame, even though gale-engine depends on it
+  regardless of which of its modules a game actually uses):
 
   .. code-block:: python
 
