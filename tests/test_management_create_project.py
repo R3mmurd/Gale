@@ -66,18 +66,24 @@ class CreateProjectTestCase(unittest.TestCase):
             sys.modules.pop("src", None)
             sys.modules.pop("settings", None)
 
-    def test_settings_does_not_eagerly_init_mixer_or_font(self) -> None:
+    def test_settings_calls_the_full_pygame_init(self) -> None:
         """
-        Importing gale.game (which src/demo_game.py does) already calls
-        pygame.init(), covering every subsystem gale.game.Game needs --
-        calling pygame.mixer.init()/pygame.font.init() again here would
-        be redundant and, for mixer specifically, would raise instead of
-        degrading gracefully if no audio device is available.
+        settings.py builds TEXTURES/FONTS/SOUNDS at import time, and
+        other project modules are free to `import settings` directly
+        rather than only reaching it indirectly through gale.game (see
+        every example's entity/state modules) -- so settings.py can't
+        rely on something else having initialized pygame first, and
+        must do it itself. It must call the full pygame.init() (safe
+        to call again if gale.game's own import already did) rather
+        than pygame.mixer.init()/pygame.font.init() directly, since
+        those raise instead of degrading gracefully if, say, no audio
+        device is available.
         """
         self.runner.invoke(create_project, ["demo_game"])
         lines = open("demo_game/settings.py").read().splitlines()
-        # Only reject an actual call statement, not the explanatory
-        # comment mentioning pygame.mixer.init() by name.
+        self.assertIn("pygame.init()", lines)
+        # Only reject an actual call statement, not an explanatory
+        # comment mentioning pygame.mixer.init()/pygame.font.init() by name.
         self.assertNotIn("pygame.mixer.init()", lines)
         self.assertNotIn("pygame.font.init()", lines)
 
