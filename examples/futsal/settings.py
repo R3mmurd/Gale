@@ -12,6 +12,17 @@ import pygame
 
 from gale import input_handler
 
+# This module builds FONTS (and possibly TEXTURES/SOUNDS/CURSORS)
+# below, which needs pygame's font/mixer/display subsystems already
+# initialized -- and since other project modules are free to `import
+# settings` directly (not only indirectly, by importing gale.game
+# first), this module can't rely on something else having initialized
+# pygame first. Safe to call again if gale.game's own import already
+# did (pygame.init() is idempotent), and never raises even without an
+# audio device, unlike calling pygame.mixer.init()/pygame.font.init()
+# directly.
+pygame.init()
+
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, "quit")
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_RETURN, "confirm")
 
