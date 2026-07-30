@@ -8,6 +8,14 @@ optional building blocks for client-side prediction/server
 reconciliation (PredictionBuffer) and entity interpolation/lag
 compensation (SnapshotInterpolator, lag_compensated_position).
 
+"pygame-free" describes this module's own code (no import here ever
+touches pygame) -- a dedicated server built on gale.net alone needs no
+display or audio device. Importing gale.net still runs gale/__init__'s
+pygame.init() as a side effect, like importing any gale submodule
+does, since gale is one package; that call never raises even where
+there is no display/audio device, and gale-engine already depends on
+pygame regardless of which of its modules a game actually uses.
+
 See docs/examples/net.rst for a walkthrough.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
