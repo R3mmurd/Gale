@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.14.2] - 2026-07-30
+
+### Changed
+- The pygame-initialization guarantee from v1.14.1 moved from every project's `settings.py` into `gale/__init__.py` itself: importing anything under the `gale` package now initializes pygame automatically, so a project's `settings.py` never needs a `pygame.init()` call of its own (the ones v1.14.1 added to gale-admin's template and every example were reverted).
+
 ## [1.14.1] - 2026-07-29
 
 ### Fixed
@@ -172,6 +177,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.14.2]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.2
 [1.14.1]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.1
 [1.14.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.0
 [1.13.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.13.0
