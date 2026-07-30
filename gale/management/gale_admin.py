@@ -94,11 +94,16 @@ import pygame
 from gale import frames
 from gale import input_handler
 
-# No need to call pygame.mixer.init()/pygame.font.init() here: importing
-# gale.game (which this project's src/ module does) already calls
-# pygame.init(), which initializes every subsystem pygame ships with,
-# mixer and font included -- and does so without raising if, say, no
-# audio device is available, unlike calling pygame.mixer.init() directly.
+# This module builds TEXTURES/FONTS/SOUNDS below, which needs pygame's
+# font/mixer/display subsystems already initialized -- and since other
+# modules in this project are free to `import settings` directly
+# (not only indirectly, by importing gale.game first), this module
+# can't rely on something else having initialized pygame first. Call
+# the full pygame.init() (never pygame.mixer.init()/pygame.font.init()
+# directly: those raise instead of degrading gracefully when, say, no
+# audio device is available) -- safe to call again if gale.game's own
+# import already did, since pygame.init() is idempotent.
+pygame.init()
 
 input_handler.InputHandler.set_keyboard_action(input_handler.KEY_ESCAPE, 'quit')
 
