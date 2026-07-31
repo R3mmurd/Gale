@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.14.3] - 2026-07-31
+
+### Changed
+- `gale.conf`'s docstrings and docs no longer describe it by comparing it to Django's settings module -- they just describe what it does and how to use it.
+
 ## [1.14.2] - 2026-07-30
 
 ### Changed
@@ -177,6 +182,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.14.3]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.3
 [1.14.2]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.2
 [1.14.1]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.1
 [1.14.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.0

@@ -139,9 +139,7 @@ falling back to ``gale.conf.global_settings`` -- the same defaults
 project doesn't define. That's why ``main.py`` above can call
 ``MyFirstArpgGame()`` with no arguments at all: everything it needs
 already comes from ``settings.py`` (or, for whatever ``settings.py``
-doesn't set, gale's own defaults) automatically, the same relationship
-``django.conf.settings`` has to a Django project's own settings module
-and its defaults.
+doesn't set, gale's own defaults) automatically.
 
 This works both ways: if you delete a constant from ``settings.py``
 entirely (say, ``FPS``, which the template doesn't even generate),
