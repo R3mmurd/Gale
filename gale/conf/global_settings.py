@@ -2,9 +2,8 @@
 Every setting gale.conf.settings falls back to when a project's own
 settings.py doesn't define it -- the full list of what gale.game.Game
 reads from settings, with the same default values Game itself used to
-hardcode directly in its constructor. Mirrors the role
-django.conf.global_settings plays for Django: a project only needs to
-define what it wants to change.
+hardcode directly in its constructor. A project only needs to define
+what it wants to change.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

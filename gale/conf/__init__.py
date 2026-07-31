@@ -1,8 +1,7 @@
 """
-gale.conf: a lazily-loaded, overridable settings object, the same role
-django.conf plays for Django (and the reason for the name: so it never
-collides with a project's own settings.py, which "gale.settings"
-would).
+gale.conf: a lazily-loaded, overridable settings object (named
+"gale.conf" rather than "gale.settings" so it never collides with a
+project's own top-level settings.py).
 
 `from gale.conf import settings` gives you a single object with every
 setting gale.game.Game understands (see gale.conf.global_settings for
