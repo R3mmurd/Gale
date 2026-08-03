@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gale-engine"
 version = "1.14.3"
-description = "Collection of reusable codes to make games by using pygame."
+description = "Gale (Game Architecture & Logic Engine): a collection of reusable codes to make games by using pygame."
 readme = "README.rst"
 requires-python = ">=3.7"
 license = { file = "LICENSE.txt" }
