@@ -1,7 +1,7 @@
 Gale documentation
 ===================
 
-Gale is a collection of reusable Python modules built on top of
+Gale (Game Architecture & Logic Engine) is a collection of reusable Python modules built on top of
 `pygame <https://www.pygame.org/>`_ to make building 2D games faster:
 steering behaviors, behavior trees, finite and hierarchical state
 machines, A*/Dijkstra pathfinding, minimax with alpha-beta pruning,

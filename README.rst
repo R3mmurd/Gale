@@ -7,7 +7,7 @@
 |Python3| |Pygame2| |License| |PyPI| |GithubCommits| |BlackFormatBadge| |CIBadge|
 
 
-Gale_ is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
+Gale_ (Game Architecture & Logic Engine) is a collection of reusable codes to ease your life when building games with Python_ and Pygame_.
 
 Full documentation: https://r3mmurd.github.io/Gale/
 
@@ -232,8 +232,8 @@ See docs/licenses for licenses of dependencies.
 .. |PyPI| image:: https://img.shields.io/pypi/v/gale-engine.svg
    :target: https://pypi.org/project/gale-engine/
 
-.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.14.3.svg
-   :target: https://github.com/R3mmurd/Gale/compare/v1.14.3...main
+.. |GithubCommits| image:: https://img.shields.io/github/commits-since/R3mmurd/Gale/v1.14.4.svg
+   :target: https://github.com/R3mmurd/Gale/compare/v1.14.4...main
 
 .. |BlackFormatBadge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
