@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.14.4] - 2026-07-31
+
+### Added
+- Gale now has a full name: Game Architecture & Logic Engine.
+
 ## [1.14.3] - 2026-07-31
 
 ### Changed
@@ -182,6 +187,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.14.4]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.4
 [1.14.3]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.3
 [1.14.2]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.2
 [1.14.1]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.1
