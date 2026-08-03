@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.14.5] - 2026-08-03
+
+### Changed
+- Restructured README.rst around what Gale solves (tagline, "Why Gale?", quick start, use cases) instead of opening straight into a long module list; the module list is still there, now titled "What Gale includes" further down.
+
 ## [1.14.4] - 2026-07-31
 
 ### Added
@@ -187,6 +192,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.14.5]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.5
 [1.14.4]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.4
 [1.14.3]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.3
 [1.14.2]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.2
