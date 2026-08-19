@@ -106,7 +106,7 @@ Why Gale?
   prediction/server reconciliation, entity interpolation, LAN
   discovery, and shareable room codes -- pure Python, no external
   networking dependency.
-- **Tested.** 670+ tests, black-formatted, CI across Python 3.8-3.13
+- **Tested.** 670+ tests, black-formatted, CI across Python 3.9-3.13
   on every pull request.
 
 
