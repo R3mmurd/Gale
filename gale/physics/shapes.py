@@ -1,8 +1,9 @@
 """
 This file contains the implementation of the classes CircleShape,
 BoxShape, and PolygonShape: plain descriptors for a Body's fixtures.
-None of them ever touch Box2D directly — Body translates them into
-Box2D fixtures, in pixel units converted to meters internally.
+None of them ever touch the underlying physics engine directly — Body
+translates them into its fixtures, in pixel units converted to meters
+internally.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
@@ -83,8 +84,7 @@ class BoxShape:
 
 class PolygonShape:
     """
-    An arbitrary convex polygon fixture (at most 8 vertices, Box2D's
-    own limit).
+    An arbitrary convex polygon fixture.
 
     Usage example:
 
@@ -100,7 +100,7 @@ class PolygonShape:
         is_sensor: bool = False,
     ) -> None:
         """
-        :param points: The polygon's vertices, in pixels, relative to its body's position, in either winding order (Box2D normalizes it). Must describe a convex polygon.
+        :param points: The polygon's vertices, in pixels, relative to its body's position, in either winding order (normalized internally). Must describe a convex polygon.
         :param density: Mass per unit area, used to compute the body's total mass. The default value is 1.0.
         :param friction: How much this fixture resists sliding against another, from 0 (frictionless) to 1 (high friction) and beyond. The default value is 0.3.
         :param restitution: Bounciness, from 0 (no bounce) to 1 (perfectly elastic) and beyond. The default value is 0.0.

@@ -97,9 +97,10 @@ Why Gale?
   behaviors, behavior/decision trees, A*/HPA*, fuzzy logic, GOAP,
   Markov chains, tactical influence maps, and ``minimax`` -- most of a
   standard "AI for games" curriculum, ready to compose.
-- **Physics without the Box2D API leaking through.** ``gale.physics``
-  wraps Box2D for real 2D physics (bodies, joints, collisions) behind
-  gale's own, much smaller API -- you never import Box2D directly.
+- **Physics without the pymunk/Chipmunk2D API leaking through.**
+  ``gale.physics`` wraps pymunk for real 2D physics (bodies, joints,
+  collisions) behind gale's own, much smaller API -- you never import
+  pymunk directly.
 - **Multiplayer building blocks that actually work over the internet.**
   ``gale.net`` is a hand-rolled reliable UDP layer with client-side
   prediction/server reconciliation, entity interpolation, LAN
@@ -131,7 +132,7 @@ Short, focused snippets, one per module:
 - `gale.log <https://github.com/R3mmurd/Gale/blob/main/docs/examples/log.rst>`_: console/file defaults, adding Graylog, Sentry, Discord, or any other destination.
 - `gale.net <https://github.com/R3mmurd/Gale/blob/main/docs/examples/net.rst>`_: ``Server``/``Client``, channel choice, RTT, LAN discovery, room codes.
 - `gale.particle_system <https://github.com/R3mmurd/Gale/blob/main/docs/examples/particle_system.rst>`_
-- `gale.physics <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`_: bodies, shapes, joints, collision callbacks, and the scene graph, with Box2D never exposed directly.
+- `gale.physics <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`_: bodies, shapes, joints, collision callbacks, and the scene graph, with pymunk never exposed directly.
 - `gale.state <https://github.com/R3mmurd/Gale/blob/main/docs/examples/state.rst>`_
 - `gale.stencil <https://github.com/R3mmurd/Gale/blob/main/docs/examples/stencil.rst>`_: mask an arbitrary shape out of a surface, love2d-stencil style.
 - `gale.text <https://github.com/R3mmurd/Gale/blob/main/docs/examples/text.rst>`_
@@ -225,7 +226,7 @@ What Gale includes
 - ``gale.math_util``: Contains ``real_equal``, a tolerance-based float equality check used by ``gale.ease_functions`` to detect ``t=0``/``t=1`` exactly despite floating-point drift.
 - ``gale.net``: Contains a pure-Python, pygame-free toolkit for LAN/internet multiplayer: ``Server``, ``Client``, a hand-rolled reliability layer over UDP, per-peer round-trip-time tracking, LAN discovery, configurable-format room codes (``encode``/``decode``) for sharing a host/port pair as a short, human-typeable string, a ``PredictionBuffer`` for client-side prediction/server reconciliation, and a ``SnapshotInterpolator``/``lag_compensated_position`` for entity interpolation and lag compensation. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/net.rst>`__)
 - ``gale.particle_system``: Contains classes to handle particle systems in your game. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/particle_system.rst>`__)
-- ``gale.physics``: Contains a Box2D-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes Box2D itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`__)
+- ``gale.physics``: Contains a pymunk-backed 2D physics toolkit — ``World``, ``Body``, body types, shapes, joints — that never exposes pymunk itself, plus a lightweight scene graph (``Node``) for organizing physics entities. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/physics.rst>`__)
 - ``gale.quest``: Contains a customizable-per-game quest system built on ``gale.sequence`` — ``Objective``, ``Stage`` (a group of objectives), ``Quest`` (a sequence of stages), and ``QuestLog`` (tracks/starts every quest and broadcasts progress events to whichever are active). (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/quest.rst>`__)
 - ``gale.save``: Contains ``SaveManager``, a general-purpose save-game system — persists whatever JSON-serializable dict a game gives it into named slots on disk, with per-slot metadata for a save-select screen, a pluggable ``serializer``/``deserializer`` for the wire format, and a schema ``version``/``migrations`` mapping for evolving what a save contains across releases without breaking old saves. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/save.rst>`__)
 - ``gale.sequence``: Contains ``Step``, ``StepGroup``, and ``Sequence`` — the generic "do this until it's done, then do the next thing" engine shared by ``gale.quest`` and ``gale.cutscene``; a step completes after a fixed duration, on a specific input, or by a subclass's own condition. (`example <https://github.com/R3mmurd/Gale/blob/main/docs/examples/sequence.rst>`__)
@@ -295,7 +296,7 @@ Dependencies
 ------------
 Gale is obviously strongly dependent on Python and Pygame. It also depends on
 Click for the ``gale-admin`` command line tool, NumPy for ``gale.particle_system``,
-and Box2D for ``gale.physics`` and ``gale.tilemap.collision``.
+and pymunk for ``gale.physics``.
 
 
 Changelog

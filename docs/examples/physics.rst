@@ -3,9 +3,10 @@
 gale.physics
 =============
 
-``gale.physics`` is 2D physics for gale games, backed by Box2D — but
-you never import or touch Box2D directly: everything here works in
-plain pixel units and gale's own vocabulary (``World``, ``Body``,
+``gale.physics`` is 2D physics for gale games, backed by
+pymunk/Chipmunk2D — but you never import or touch pymunk directly:
+everything here works in plain pixel units and gale's own vocabulary
+(``World``, ``Body``,
 ``BodyType``, shapes, joints), plus a lightweight scene graph
 (``Node``) for organizing physics entities. See ``examples/leap`` (a
 platformer using all three body types) and ``examples/hillclimb`` (a
@@ -54,11 +55,11 @@ or attached later with ``body.add_box``/``add_circle``/``add_polygon``.
 Stepping the simulation: update vs. fixed_update
 ---------------------------------------------------
 
-Box2D's solver wants a fixed timestep for stable results, but your
+The physics solver wants a fixed timestep for stable results, but your
 game loop's ``dt`` is real and variable. ``World`` follows the same
 split Unity uses: call ``update(dt)`` once a frame, same as every
 other gale subsystem; it accumulates that time and calls
-``fixed_update()`` (a real Box2D step, at ``fixed_timestep``, default
+``fixed_update()`` (a real simulation step, at ``fixed_timestep``, default
 ``1/60``) as many times as needed to consume it. ``fixed_update()`` is
 itself a normal public method, useful in tests (or the rare game) that
 want to drive the simulation one fixed step at a time directly:
@@ -81,6 +82,7 @@ Reading and driving a body
    body.apply_force(fx, fy)     # continuous, call every frame
    body.apply_impulse(ix, iy)   # instantaneous, e.g. a jump
    body.apply_torque(t)
+   body.set_damping(linear_damping, angular_damping)  # air resistance; 0/0 (the default) is none
 
 Collision: callbacks vs. touching_bodies
 --------------------------------------------
@@ -119,6 +121,13 @@ motorized wheel with a spring/damper suspension) — see
    joint.enable_motor = True
    joint.motor_speed = 20        # positive drives toward +x
    joint.max_motor_torque = 2000
+
+   # RevoluteJoint also takes an angle limit, settable either at
+   # creation (as options) or later (as properties), same as the motor:
+   arm_joint = world.create_revolute_joint(
+       anchor_body, arm, (100, 50),
+       enable_limit=True, lower_angle=-0.5, upper_angle=0.5,
+   )
 
 Scene graph
 ------------

@@ -21,7 +21,8 @@ jobs:
         # is left out here since actions/setup-python no longer has a
         # prebuilt binary for it on current runners, but every version
         # actually likely to be used today is covered.
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version:
+          ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
     env:
       SDL_AUDIODRIVER: dummy

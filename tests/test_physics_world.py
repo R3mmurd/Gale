@@ -79,6 +79,11 @@ class FixedTimestepTestCase(unittest.TestCase):
     def test_fixed_update_is_public_and_directly_callable(self) -> None:
         body = self.world.create_dynamic_body(100, 0, CircleShape(radius=5))
         start_y = body.position.y
+        # Two calls, not one: the underlying integrator applies a
+        # step's gravity to velocity before using that velocity to
+        # move position, so a body starting at rest only starts
+        # displacing on the step after the one that first accelerates it.
+        self.world.fixed_update()
         self.world.fixed_update()
         self.assertGreater(body.position.y, start_y)
 

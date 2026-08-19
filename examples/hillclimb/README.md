@@ -50,8 +50,8 @@ python main.py
   `motor_speed` — the suspension and traction are what turn that into
   actual forward motion over uneven ground.
 - A static body per terrain segment (`src/Terrain.py`), each a small
-  convex polygon fixture rather than one long chain, since Box2D
-  polygons must be convex.
+  convex polygon fixture rather than one long chain, since polygon
+  fixtures must be convex.
 - `gale.state`/`gale.text.render_text`, the same shape every other
   example uses for its states/HUD.
 

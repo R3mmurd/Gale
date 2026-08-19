@@ -12,7 +12,7 @@ Requirements
 
 * Python 3.7+
 * pygame
-* Box2D (``Box2D``)
+* pymunk
 * numpy
 
 These are installed automatically as dependencies of the ``gale-engine``
