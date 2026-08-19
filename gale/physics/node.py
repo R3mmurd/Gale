@@ -47,7 +47,7 @@ class Node:
         children: Optional[Sequence["Node"]] = None,
     ) -> None:
         """
-        :param x: Initial x position. If body is set, overwritten every update() with the body's own absolute position (Box2D bodies have no concept of a parent-relative transform). Otherwise, this is a fixed offset from this node's parent (or an absolute position, if it has none). The default value is 0.
+        :param x: Initial x position. If body is set, overwritten every update() with the body's own absolute position (physics bodies have no concept of a parent-relative transform). Otherwise, this is a fixed offset from this node's parent (or an absolute position, if it has none). The default value is 0.
         :param y: Initial y position, same rules as x. The default value is 0.
         :param body: The Body driving this node's transform. The default value is None, meaning this node's position is either fixed (no parent) or a fixed offset from its parent.
         :param children: Child nodes to add immediately. The default value is None.
@@ -81,7 +81,7 @@ class Node:
     @property
     def world_position(self) -> pygame.Vector2:
         """
-        :returns: This node's absolute position. A node with a body already has an absolute position (Box2D bodies are always in world coordinates); otherwise, this composes every ancestor's position with this node's own offset.
+        :returns: This node's absolute position. A node with a body already has an absolute position (physics bodies are always in world coordinates); otherwise, this composes every ancestor's position with this node's own offset.
         """
         if self.body is not None or self.parent is None:
             return pygame.Vector2(self.x, self.y)

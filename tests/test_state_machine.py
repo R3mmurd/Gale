@@ -122,11 +122,12 @@ class HierarchicalStateTestCase(unittest.TestCase):
 
     def test_change_substate_calls_exit_and_enter(self) -> None:
         self.state_machine.change("patrol")
-        with patch.object(
-            WalkingState, "exit", return_value=None
-        ) as exit_method, patch.object(
-            LookingAroundState, "enter", return_value=None
-        ) as enter_method:
+        with (
+            patch.object(WalkingState, "exit", return_value=None) as exit_method,
+            patch.object(
+                LookingAroundState, "enter", return_value=None
+            ) as enter_method,
+        ):
             self.state_machine.current.change_substate("looking_around")
         exit_method.assert_called_once()
         enter_method.assert_called_once()

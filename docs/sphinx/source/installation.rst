@@ -10,9 +10,9 @@ Gale is published on PyPI as ``gale-engine``:
 Requirements
 ------------
 
-* Python 3.7+
+* Python 3.9+
 * pygame
-* Box2D (``Box2D``)
+* pymunk
 * numpy
 
 These are installed automatically as dependencies of the ``gale-engine``
