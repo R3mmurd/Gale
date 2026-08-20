@@ -1,4 +1,4 @@
-Box2D==2.3.10
+pymunk>=7.0,<8
 black
 click
 numpy

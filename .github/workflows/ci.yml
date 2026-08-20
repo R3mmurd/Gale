@@ -17,11 +17,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # pyproject.toml declares requires-python = ">=3.7"; 3.7 itself
-        # is left out here since actions/setup-python no longer has a
-        # prebuilt binary for it on current runners, but every version
-        # actually likely to be used today is covered.
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        # pyproject.toml declares requires-python = ">=3.9" (the floor
+        # pymunk, gale.physics's backend, itself requires). 3.14 isn't
+        # here yet despite pymunk already publishing cp314 wheels:
+        # plain pygame doesn't have cp314 wheels of its own yet (only
+        # its pygame-ce fork does, a different PyPI package gale
+        # doesn't depend on), so `pip install gale-engine` still can't
+        # complete on 3.14 today — add it back once pygame catches up.
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     env:
       SDL_AUDIODRIVER: dummy

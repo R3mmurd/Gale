@@ -1,8 +1,8 @@
 """
-gale.physics: 2D physics for gale games, backed by Box2D (never
-exposed in the public API — everything here works in plain pixel
-units and gale's own vocabulary) plus a lightweight scene graph for
-organizing physics entities.
+gale.physics: 2D physics for gale games, backed by pymunk/Chipmunk2D
+(never exposed in the public API — everything here works in plain
+pixel units and gale's own vocabulary) plus a lightweight scene graph
+for organizing physics entities.
 
 See docs/examples/physics.rst for a walkthrough.
 

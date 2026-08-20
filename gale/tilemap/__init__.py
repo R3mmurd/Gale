@@ -15,7 +15,7 @@ solid tiles block in every direction, platform tiles are one-way
 (stand on top, jump up through). Anything richer (slopes, hazards,
 ladders...) is deliberately left to the game, read from whatever
 custom tile properties it defines in Tiled — this module never
-requires gale.physics/Box2D, or any particular physics approach at
+requires gale.physics, or any particular physics approach at
 all.
 
 See docs/examples/tilemap.rst for a walkthrough.

@@ -70,7 +70,7 @@ Collision: solid walls and one-way platforms
 ------------------------------------------------
 
 An optional layer on top — ``TileMap``/``load_tiled_map`` never
-require it, and it never touches ``gale.physics``/Box2D, so it works
+require it, and it never touches ``gale.physics``, so it works
 the same whether your game uses that or nothing at all.
 
 Mark a tile as a wall or a platform with a custom property named

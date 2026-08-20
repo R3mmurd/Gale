@@ -1,7 +1,7 @@
 """
 This file contains platformer collision helpers for TileMap: an
 optional, opt-in layer on top of it, not a required part of using
-TileMap at all. It never touches gale.physics/Box2D — this is plain
+TileMap at all. It never touches gale.physics — this is plain
 AABB-against-a-grid, the same kind of hand-rolled collision most 2D
 platformers actually use, in or out of a physics engine.
 

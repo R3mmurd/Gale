@@ -15,6 +15,9 @@ class NodeTestCase(unittest.TestCase):
         body = world.create_dynamic_body(50, 0, CircleShape(radius=5))
         node = Node(body=body)
 
+        # Two calls, not one: see the comment in
+        # test_physics_world.py's test_fixed_update_is_public_and_directly_callable.
+        world.fixed_update()
         world.fixed_update()
         node.update(1 / 60)
 
