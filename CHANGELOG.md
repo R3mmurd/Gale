@@ -4,6 +4,19 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.15.0] - 2026-08-19
+
+### Changed
+- `gale.physics`'s backend is now pymunk instead of Box2D (the `Box2D` PyPI package has no wheels or sdist for Python 3.14 and no upstream activity to add them, so `pip install gale-engine` failed outright there). `World`/`Body`/`BodyType`/`Joint`/`RevoluteJoint`/`WheelJoint`/`Node`/shapes keep every name, signature, and documented behavior -- no game built on gale should need to change a line.
+- Raised the Python floor to 3.9 (from 3.7): pymunk 7.x, needed for the contact-handling API this backend swap relies on, itself requires 3.9+.
+
+### Added
+- `Body.set_damping(linear_damping, angular_damping)`: gale.physics had no per-body damping before, which had led at least one project to reach past `Body` into the wrapped engine directly to get it.
+- `RevoluteJoint.enable_limit`/`lower_angle`/`upper_angle`, and `enableMotor`/`motorSpeed`/`maxMotorTorque`/`enableLimit`/`lowerAngle`/`upperAngle` (or their snake_case equivalents) as `create_revolute_joint`/`create_wheel_joint` construction-time options.
+
+### Fixed
+- `Body.touching_bodies` never reported a sensor fixture's overlaps (a wind zone, a goal trigger) -- only solid-vs-solid contacts.
+
 ## [1.14.5] - 2026-08-03
 
 ### Changed
@@ -192,6 +205,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.15.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.15.0
 [1.14.5]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.5
 [1.14.4]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.4
 [1.14.3]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.3
