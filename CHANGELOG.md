@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.16.0] - 2026-08-23
+
+### Added
+- `gale.command`: a stateless, reusable Command-pattern implementation integrated with `gale.input_handler` -- `Command` (the receiver is passed into `execute`/`__call__`, never the constructor, so a single instance can be shared across every entity that performs it, and used directly as an AI-driven callable), `CommandBindings` (maps an `input_handler` action id to a press/release pair of commands), and `CommandControlled` (an `InputListener` mixin dispatching `on_input` through a `CommandBindings`).
+
 ## [1.15.0] - 2026-08-19
 
 ### Changed
@@ -205,6 +210,7 @@ No release notes recorded.
 
 Initial release.
 
+[1.16.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.16.0
 [1.15.0]: https://github.com/R3mmurd/Gale/releases/tag/v1.15.0
 [1.14.5]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.5
 [1.14.4]: https://github.com/R3mmurd/Gale/releases/tag/v1.14.4
