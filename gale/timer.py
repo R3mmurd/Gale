@@ -10,13 +10,12 @@ Every item can optionally be tagged with a group (any hashable — a
 string tag or an owning object both work) so a subset can be
 paused/resumed/cleared independently of the rest: Timer.pause(group=
 "enemies") stops only that group, Timer.clear(group=level_object)
-drops everything tagged with it, the same "kill everything belonging
-to X" DOTween's Kill(target) gives. An item can also be paused on its
-own through item.pause()/item.resume(), and set to ignore_global_pause
-so a global Timer.pause() (say, from a pause menu) leaves it running —
+drops everything tagged with it -- "kill everything belonging to X"
+in one call. An item can also be paused on its own through
+item.pause()/item.resume(), and set to ignore_global_pause so a
+global Timer.pause() (say, from a pause menu) leaves it running --
 useful for a UI's own timers/tweens, which usually shouldn't freeze
-just because gameplay did (the same thing Godot's Timer.process_mode
-gives per-node).
+just because gameplay did.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """

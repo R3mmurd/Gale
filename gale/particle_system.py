@@ -7,15 +7,15 @@ integration) and ParticleSystem, spawning and managing bursts of them
 A particle's appearance is either a geometric shape (SHAPE_CIRCLE by
 default, plus SHAPE_SQUARE/SHAPE_TRIANGLE/SHAPE_DIAMOND/SHAPE_STAR/
 SHAPE_LINE — see PARTICLE_SHAPES) or a texture (any pygame.Surface,
-tinted by the particle's own color through BLEND_RGBA_MULT, the same
-"multiply a greyscale/white texture by a per-particle color" technique
-Unity/Godot particle systems use); a texture always takes precedence
-over a shape when both are set on a single particle. ParticleSystem's
-set_shapes/set_textures let a single burst mix both — each generated
-particle draws its own appearance from the combined pool, the same
-way it already draws its own color from set_colors — so, for
-instance, an explosion can combine sharp geometric sparks with a soft
-textured smoke puff in the same effect.
+tinted by the particle's own color through BLEND_RGBA_MULT — the same
+as multiplying a greyscale/white texture by a per-particle color); a
+texture always takes precedence over a shape when both are set on a
+single particle. ParticleSystem's set_shapes/set_textures let a
+single burst mix both — each generated particle draws its own
+appearance from the combined pool, the same way it already draws its
+own color from set_colors — so, for instance, an explosion can
+combine sharp geometric sparks with a soft textured smoke puff in the
+same effect.
 
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
