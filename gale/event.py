@@ -5,8 +5,7 @@ priority-ordered, connect(..., once=True) for a listener that detaches
 itself before it runs so it can safely reconnect from inside its own
 callback), EventEmitter (a mixin/composable object owning any number
 of ad hoc, string-named Signals created lazily on first use --
-on/off/once/emit, the same shape knife.event and Godot's by-name
-signal API use), and EventBus, a ready-to-use global EventEmitter
+on/off/once/emit), and EventBus, a ready-to-use global EventEmitter
 exposed as classmethods over a single module-level instance, the same
 shape gale.input_handler.InputHandler already uses for its own
 listeners -- for cross-module communication that shouldn't have to
@@ -23,9 +22,8 @@ so one broken subscriber can never break every other, independently
 owned listener on the same event. That is a deliberately stricter
 contract than InputHandler.notify's fail-fast one: InputHandler always
 routes to a single active entity, while an event here is a fan-out to
-an arbitrary number of unrelated listeners, the same guarantee
-addEventListener and Unity's UnityEvent give a DOM/Inspector-wired
-audience.
+an arbitrary number of unrelated, independently owned listeners, where
+one of them breaking should never take the rest down with it.
 
 See docs/examples/event.rst for a walkthrough.
 

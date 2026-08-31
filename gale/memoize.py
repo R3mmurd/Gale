@@ -20,8 +20,7 @@ the game instead of expiring while a menu is open:
   many times it's called before the next update(dt), the wrapped
   function runs once. Useful for a query several independent systems
   might ask for in the same frame (the nearest enemy, a pathfinding
-  cost), the same "guard on the frame counter" trick Unity/Godot code
-  reaches for by hand.
+  cost) without each paying for its own computation.
 - ttl=N (seconds): cached for up to N seconds of game time -- useful
   for anything a game can afford to have go stale for a moment (an
   AI's last line-of-sight check, a UI's damage-number aggregation),
