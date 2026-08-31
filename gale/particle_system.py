@@ -151,8 +151,16 @@ class Particle:
             tinted.fill(self.color, special_flags=pygame.BLEND_RGBA_MULT)
             return tinted
 
-        image = pygame.Surface((size, size))
-        image.set_alpha(self.color[3])
+        # Per-pixel alpha (SRCALPHA), starting fully transparent, so
+        # whatever the shape function doesn't draw over stays
+        # invisible -- a shape rarely fills its whole size x size box
+        # (a triangle/diamond/star leaves its corners empty, and even
+        # a circle leaves its four corners just outside it), and a
+        # rotated image's own newly-exposed corners need to stay
+        # transparent too. A plain (non-SRCALPHA) surface with only a
+        # whole-surface set_alpha() would instead paint every one of
+        # those untouched pixels a solid, semi-transparent black.
+        image = pygame.Surface((size, size), pygame.SRCALPHA)
         PARTICLE_SHAPES[self.shape](image, self.color, size)
         return image
 

@@ -33,27 +33,41 @@ class ParticleTestCase(unittest.TestCase):
         self.assertEqual(particle.angular_velocity, 0.0)
         self.assertEqual(particle.angle, 0.0)
 
-    def test_default_render_output_is_pixel_identical_to_the_original_implementation(
+    def test_default_render_draws_the_same_circle_the_original_implementation_did(
         self,
     ) -> None:
-        # Locks in backward compatibility: a particle created without
-        # any of the new shape/texture/size/rotation arguments must
-        # render exactly like the original circle-only Particle did.
+        # Backward compatibility, at the pixel level, for every pixel
+        # the original circle-only Particle actually drew opaque or
+        # transparent: a particle created without any of the new
+        # shape/texture/size/rotation arguments still draws the exact
+        # same 2px-radius circle in the exact same spot.
+        #
+        # The one deliberate difference: the original implementation
+        # built its circle on a surface with only a whole-surface
+        # alpha (no per-pixel alpha), which left the four corners
+        # just outside the circle a solid, semi-transparent black
+        # instead of transparent -- invisible at a 4px scale, but
+        # exactly the defect that made a rotated shape (a new
+        # feature, with much more of its bounding box left undrawn)
+        # show an opaque black box around it. Fixed by drawing on a
+        # per-pixel-alpha (SRCALPHA) surface instead, so this test
+        # checks the circle itself pixel-for-pixel, and the corners
+        # separately, for what they now correctly are: transparent.
         particle = Particle(5, 5, ax=0, ay=0, life_time=1.0, color=(255, 0, 0, 255))
-        surface = pygame.Surface((20, 20))
+        surface = pygame.Surface((20, 20), pygame.SRCALPHA)
         particle.render(surface)
 
-        expected_surface = pygame.Surface((20, 20))
-        legacy = pygame.Surface((4, 4))
-        legacy.set_alpha(255)
-        pygame.draw.circle(legacy, (255, 0, 0, 255), (2, 2), 2)
-        expected_surface.blit(legacy, (5, 5))
+        expected_surface = pygame.Surface((20, 20), pygame.SRCALPHA)
+        pygame.draw.circle(expected_surface, (255, 0, 0, 255), (5 + 2, 5 + 2), 2)
 
         for x in range(20):
             for y in range(20):
                 self.assertEqual(
                     surface.get_at((x, y)), expected_surface.get_at((x, y))
                 )
+
+        for corner in ((5, 5), (8, 5), (5, 8), (8, 8)):
+            self.assertEqual(surface.get_at(corner).a, 0)
 
     def test_every_registered_shape_renders_without_raising(self) -> None:
         surface = pygame.Surface((20, 20))
@@ -116,6 +130,32 @@ class ParticleTestCase(unittest.TestCase):
         particle.update(1.0)
         surface = pygame.Surface((20, 20))
         particle.render(surface)
+
+    def test_a_rotated_particle_does_not_paint_an_opaque_box_around_its_shape(
+        self,
+    ) -> None:
+        # Regression test: a shape rarely fills its whole size x size
+        # box (a square is the only one that does), and rotating it
+        # exposes that box's corners even wider -- both must stay
+        # transparent rather than show up as a solid, semi-transparent
+        # black square behind/around the shape.
+        particle = Particle(
+            5,
+            5,
+            ax=0,
+            ay=0,
+            life_time=1.0,
+            color=(255, 0, 0, 255),
+            shape=SHAPE_TRIANGLE,
+            size=10,
+            angular_velocity=45.0,
+        )
+        particle.update(1.0)
+        surface = pygame.Surface((30, 30), pygame.SRCALPHA)
+        particle.render(surface)
+
+        corner_alphas = {surface.get_at((x, y)).a for x in (0, 29) for y in (0, 29)}
+        self.assertEqual(corner_alphas, {0})
 
 
 class ParticleSystemTestCase(unittest.TestCase):

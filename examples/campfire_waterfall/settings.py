@@ -44,7 +44,18 @@ FLAME_LIFE_TIME = (0.35, 0.6)
 # ax1, ay1, ax2, ay2 -- mostly straight up (negative y is up), with a
 # little horizontal jitter so the flame flickers instead of standing
 # perfectly still.
-FLAME_ACCELERATION = (-40, -220, 40, -260)
+#
+# gale.particle_system.Particle.update() advances position by the raw
+# per-frame velocity (self.x += self.vx), not velocity * dt, so a
+# velocity/acceleration expressed in "pixels per second" ends up
+# moving a particle roughly 1/dt (60, at 60 FPS) times further than
+# that -- and since velocity itself is accumulated from acceleration
+# every frame, total displacement over a burst's life_time actually
+# grows with life_time squared. These acceleration values (here and
+# below) are deliberately tiny to compensate; see
+# examples/nightwatch and examples/outpost for the same convention
+# with their own (much shorter-lived) particle bursts.
+FLAME_ACCELERATION = (-1, -6, 1, -3)
 FLAME_COLORS = [
     (255, 235, 120, 235),
     (255, 170, 60, 225),
@@ -59,11 +70,15 @@ SMOKE_SPAWN_INTERVAL = 0.18
 SMOKE_PARTICLES_PER_BURST = 2
 SMOKE_Y_OFFSET = 14  # smoke starts a little above the flame's own origin
 SMOKE_LIFE_TIME = (1.4, 2.2)
-SMOKE_ACCELERATION = (-15, -35, 15, -55)
+# Even smaller than the flame's own -- smoke lives much longer, and
+# the quadratic-in-life_time growth described above means a life_time
+# roughly 4x as long needs an acceleration roughly 16x smaller to
+# travel a comparable distance.
+SMOKE_ACCELERATION = (-0.2, -0.6, 0.2, -0.3)
 SMOKE_COLORS = [
-    (150, 150, 160, 110),
-    (100, 100, 112, 90),
-    (66, 66, 76, 70),
+    (170, 170, 180, 170),
+    (120, 120, 132, 140),
+    (80, 80, 92, 110),
 ]
 SMOKE_SPREAD = (3, 1)
 SMOKE_SIZE = (8, 16)
@@ -79,10 +94,14 @@ WATERFALL_WIDTH = 34
 
 SPRAY_SPAWN_INTERVAL = 0.04
 SPRAY_PARTICLES_PER_BURST = 4
-SPRAY_LIFE_TIME = (0.5, 0.9)
+SPRAY_LIFE_TIME = (0.45, 0.75)
 # Gravity-dominated fall (positive y is down), with a little
 # horizontal spread so the stream doesn't look like a single line.
-SPRAY_ACCELERATION = (-10, 500, 10, 620)
+# Tuned (see the note above FLAME_ACCELERATION) so a burst's total
+# fall roughly covers WATERFALL_BOTTOM_Y - WATERFALL_TOP_Y by the end
+# of its life_time, instead of shooting through the whole scene in a
+# couple of frames.
+SPRAY_ACCELERATION = (-1, 9, 1, 12)
 SPRAY_COLORS = [
     (210, 235, 255, 190),
     (170, 215, 245, 170),
@@ -99,7 +118,7 @@ SPLASH_LIFE_TIME = (0.25, 0.45)
 # A wide acceleration range: some droplets kick up and out before
 # gravity pulls them back down, others fall away immediately --
 # reads as a scatter of droplets bouncing off the pool's surface.
-SPLASH_ACCELERATION = (-90, -140, 90, 260)
+SPLASH_ACCELERATION = (-4, -6, 4, 10)
 SPLASH_COLORS = [
     (235, 248, 255, 230),
     (200, 230, 250, 200),
