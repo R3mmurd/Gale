@@ -69,3 +69,60 @@ whatever final values the interrupted tweens were animating towards):
    if skipped:
        Timer.clear()
        self.transition_alpha = 0
+
+``During`` runs a raw per-frame callback instead of interpolating an
+object's attributes — for effects ``Tween`` doesn't fit, such as a
+camera shake or a shader uniform. It's fed ``dt`` and ``progress``
+(0 to 1) every update, then ``on_finish`` once:
+
+.. code-block:: python
+
+   Timer.during(
+       0.3,
+       lambda dt, progress: camera.shake(intensity=8 * (1 - progress)),
+       on_finish=lambda: camera.reset_shake(),
+   )
+
+Any item — ``Every``/``After``/``Tween``/``During`` — exposes its own
+``.progress`` (0 to 1) and can be paused/resumed on its own, without
+touching anything else ``Timer`` is tracking:
+
+.. code-block:: python
+
+   fade = Timer.tween(2.0, [(self, {"alpha": 0})])
+   hud.set_progress(fade.progress)
+
+   fade.pause()
+   fade.resume()
+
+Groups: pausing/clearing a subset
+------------------------------------
+
+Tag any item with ``group`` (a string, or any other hashable — even
+the owning object itself) to pause, resume, or clear just that subset
+instead of everything ``Timer`` is tracking — handy for dropping every
+timer an enemy started when it dies, without touching the player's:
+
+.. code-block:: python
+
+   Timer.every(1.0, enemy.fire, group=enemy)
+   Timer.tween(0.5, [(enemy, {"flash_alpha": 0})], group=enemy)
+
+   # The enemy died -- stop everything it had scheduled, and nothing else.
+   Timer.clear(group=enemy)
+
+``group`` also composes with a global pause/resume for the common
+case of "gameplay timers should freeze while paused, but the pause
+menu's own animations shouldn't" — set ``ignore_global_pause=True`` on
+whatever shouldn't stop for a groupless ``Timer.pause()``:
+
+.. code-block:: python
+
+   Timer.tween(
+       0.2, [(pause_menu, {"alpha": 255})], ignore_global_pause=True
+   )
+   Timer.pause()  # gameplay timers stop; pause_menu's tween keeps animating
+
+A group can still be paused on its own, even if every item in it set
+``ignore_global_pause`` — that flag only exempts an item from a
+*groupless* ``Timer.pause()``, never from ``Timer.pause(group=...)``.

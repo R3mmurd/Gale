@@ -55,3 +55,53 @@ that triggered it (for instance, the color of the object that was hit):
            # is gone, since update/render on the particle system are
            # independent from the brick's own visibility.
            self.particle_system.render(surface)
+
+Shapes, textures, and mixing both
+------------------------------------
+
+Every particle used to render as a plain circle. It still does by
+default — but ``set_shapes`` lets a burst draw from a pool of
+geometric shapes instead (``SHAPE_CIRCLE``, ``SHAPE_SQUARE``,
+``SHAPE_TRIANGLE``, ``SHAPE_DIAMOND``, ``SHAPE_STAR``, ``SHAPE_LINE``
+— every key of ``PARTICLE_SHAPES``), and ``set_textures`` lets it draw
+from a pool of images instead, each tinted by the particle's own
+color:
+
+.. code-block:: python
+
+   from gale.particle_system import ParticleSystem, SHAPE_SQUARE, SHAPE_STAR
+
+   sparks = ParticleSystem(x, y, n=40)
+   sparks.set_life_time(0.3, 0.6)
+   sparks.set_linear_acceleration(-50, -50, 50, 50)
+   sparks.set_colors([(255, 220, 120, 255), (255, 160, 60, 255)])
+   sparks.set_shapes([SHAPE_SQUARE, SHAPE_STAR])
+   sparks.generate()
+
+Set both on the same system to mix them in one burst — each generated
+particle draws its own appearance from the combined pool, the same
+way it already draws its own color from ``set_colors``:
+
+.. code-block:: python
+
+   smoke_puff = pygame.image.load("smoke.png").convert_alpha()
+
+   explosion = ParticleSystem(x, y, n=80)
+   explosion.set_shapes([SHAPE_SQUARE, SHAPE_STAR])   # sharp debris
+   explosion.set_textures([smoke_puff])               # soft smoke
+   explosion.generate()
+
+A texture always wins over a shape on any single particle that draws
+one (there's nothing to combine on one particle — a texture already
+covers its own pixels), so mixing happens at the burst level: some
+particles come out shaped, some textured, both from the same
+``generate()`` call.
+
+``set_size``/``set_angular_velocity`` round things out — a size range
+(every particle defaulted to a fixed 4px box before) and a spin range
+in degrees/second (0 by default, since a circle never needed one):
+
+.. code-block:: python
+
+   sparks.set_size(2, 6)
+   sparks.set_angular_velocity(-180, 180)  # tumbling debris
