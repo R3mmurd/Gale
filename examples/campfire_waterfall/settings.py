@@ -38,8 +38,8 @@ COLOR_POOL = (24, 60, 82)
 CAMPFIRE_X = 110
 CAMPFIRE_Y = 205
 
-FLAME_SPAWN_INTERVAL = 0.05
-FLAME_PARTICLES_PER_BURST = 3
+FLAME_SPAWN_INTERVAL = 0.025
+FLAME_PARTICLES_PER_BURST = 7
 FLAME_LIFE_TIME = (0.35, 0.6)
 # ax1, ay1, ax2, ay2 -- mostly straight up (negative y is up), with a
 # little horizontal jitter so the flame flickers instead of standing
@@ -61,29 +61,29 @@ FLAME_COLORS = [
     (255, 170, 60, 225),
     (255, 100, 40, 200),
 ]
-FLAME_SPREAD = (4, 1)
+FLAME_SPREAD = (3.5, 1)
 FLAME_SHAPES = [SHAPE_TRIANGLE, SHAPE_DIAMOND]
-FLAME_SIZE = (3, 7)
+FLAME_SIZE = (4, 9)
 FLAME_ANGULAR_VELOCITY = (-160, 160)
 
-SMOKE_SPAWN_INTERVAL = 0.18
-SMOKE_PARTICLES_PER_BURST = 2
+SMOKE_SPAWN_INTERVAL = 0.08
+SMOKE_PARTICLES_PER_BURST = 4
 SMOKE_Y_OFFSET = 14  # smoke starts a little above the flame's own origin
-SMOKE_LIFE_TIME = (1.4, 2.2)
+SMOKE_LIFE_TIME = (1.6, 2.4)
 # Even smaller than the flame's own -- smoke lives much longer, and
 # the quadratic-in-life_time growth described above means a life_time
 # roughly 4x as long needs an acceleration roughly 16x smaller to
 # travel a comparable distance.
 SMOKE_ACCELERATION = (-0.2, -0.6, 0.2, -0.3)
 SMOKE_COLORS = [
-    (170, 170, 180, 170),
-    (120, 120, 132, 140),
-    (80, 80, 92, 110),
+    (185, 185, 195, 190),
+    (135, 135, 148, 160),
+    (95, 95, 108, 130),
 ]
-SMOKE_SPREAD = (3, 1)
-SMOKE_SIZE = (8, 16)
+SMOKE_SPREAD = (3.5, 1.5)
+SMOKE_SIZE = (10, 20)
 SMOKE_ANGULAR_VELOCITY = (-30, 30)
-SMOKE_TEXTURE_SIZE = 16
+SMOKE_TEXTURE_SIZE = 20
 
 # --- Waterfall ------------------------------------------------------------
 
@@ -92,8 +92,8 @@ WATERFALL_TOP_Y = 18
 WATERFALL_BOTTOM_Y = 195
 WATERFALL_WIDTH = 34
 
-SPRAY_SPAWN_INTERVAL = 0.04
-SPRAY_PARTICLES_PER_BURST = 4
+SPRAY_SPAWN_INTERVAL = 0.02
+SPRAY_PARTICLES_PER_BURST = 9
 SPRAY_LIFE_TIME = (0.45, 0.75)
 # Gravity-dominated fall (positive y is down), with a little
 # horizontal spread so the stream doesn't look like a single line.
@@ -103,28 +103,28 @@ SPRAY_LIFE_TIME = (0.45, 0.75)
 # couple of frames.
 SPRAY_ACCELERATION = (-1, 9, 1, 12)
 SPRAY_COLORS = [
-    (210, 235, 255, 190),
-    (170, 215, 245, 170),
-    (140, 195, 235, 150),
+    (210, 235, 255, 210),
+    (170, 215, 245, 195),
+    (140, 195, 235, 180),
 ]
-SPRAY_SPREAD = (WATERFALL_WIDTH / 4, 1)
+SPRAY_SPREAD = (WATERFALL_WIDTH / 3, 1)
 SPRAY_SHAPES = [SHAPE_CIRCLE, SHAPE_LINE]
-SPRAY_SIZE = (2, 5)
-SPRAY_TEXTURE_SIZE = 6
+SPRAY_SIZE = (2, 6)
+SPRAY_TEXTURE_SIZE = 7
 
-SPLASH_SPAWN_INTERVAL = 0.12
-SPLASH_PARTICLES_PER_BURST = 5
+SPLASH_SPAWN_INTERVAL = 0.06
+SPLASH_PARTICLES_PER_BURST = 9
 SPLASH_LIFE_TIME = (0.25, 0.45)
 # A wide acceleration range: some droplets kick up and out before
 # gravity pulls them back down, others fall away immediately --
 # reads as a scatter of droplets bouncing off the pool's surface.
 SPLASH_ACCELERATION = (-4, -6, 4, 10)
 SPLASH_COLORS = [
-    (235, 248, 255, 230),
-    (200, 230, 250, 200),
+    (235, 248, 255, 235),
+    (200, 230, 250, 215),
 ]
 SPLASH_SPREAD = (WATERFALL_WIDTH / 2, 1)
-SPLASH_SIZE = (2, 4)
+SPLASH_SIZE = (2, 5)
 
 FONTS = {
     "small": pygame.font.Font(None, 16),
