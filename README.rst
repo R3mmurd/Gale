@@ -117,6 +117,7 @@ Use cases
 - **Top-down adventure** -- `examples/wayfarer <https://github.com/R3mmurd/Gale/blob/main/examples/wayfarer/README.md>`__: an intro cutscene, free-roam quests, a victory cutscene.
 - **Tactical/AI-heavy game** -- `examples/skirmish <https://github.com/R3mmurd/Gale/blob/main/examples/skirmish/README.md>`__: formations, fuzzy logic, GOAP, an influence map, gravity-aware targeting, all driving one squad-tactics demo.
 - **Networked multiplayer** -- `examples/rally <https://github.com/R3mmurd/Gale/blob/main/examples/rally/README.md>`__: an online Pong playable over LAN or the internet.
+- **Ambient particle effects** -- `examples/campfire_waterfall <https://github.com/R3mmurd/Gale/blob/main/examples/campfire_waterfall/README.md>`__: a non-interactive scene combining ``gale.particle_system``'s shapes, textures, and their combination with ``gale.timer``'s groups to drive a campfire and a waterfall at once.
 
 
 Examples
