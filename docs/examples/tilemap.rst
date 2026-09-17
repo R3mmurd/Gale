@@ -66,6 +66,16 @@ entirely up to your game:
        if spawn.type == "enemy":
            spawn_enemy(spawn.x, spawn.y, kind=spawn.properties.get("kind"))
 
+Flipped/rotated tiles (Tiled's Shift+Z/X/Y stamp tools) are rendered
+correctly out of the box — ``render()`` decodes and applies them for
+every tile, and ``get_gid``/``tileset_for_gid``/``properties_of_gid``
+already look up the tile's real identity regardless of how it's
+oriented, so nothing changes if your game never calls ``get_flip``.
+Only reach for ``get_flip(layer_name, row, col)`` (returns
+``(flip_horizontal, flip_vertical, flip_diagonal)``) if you need to
+know a specific cell's orientation yourself — for a one-way platform
+whose "up" side depends on how the tile was flipped, say.
+
 Collision: solid walls and one-way platforms
 ------------------------------------------------
 

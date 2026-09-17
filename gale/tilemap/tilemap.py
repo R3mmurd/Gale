@@ -13,6 +13,51 @@ import pygame
 
 from gale.frames import generate_frames
 
+# Tiled (https://www.mapeditor.org/) encodes a flipped/rotated tile by
+# setting one or more of a gid's top 3 bits instead of using a
+# different gid, so a raw value read from a layer's data always needs
+# decode_gid before it can be used as a plain tile id.
+FLIP_HORIZONTAL_FLAG = 0x80000000
+FLIP_VERTICAL_FLAG = 0x40000000
+FLIP_DIAGONAL_FLAG = 0x20000000
+_FLIP_FLAGS_MASK = FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG | FLIP_DIAGONAL_FLAG
+_GID_MASK = ~_FLIP_FLAGS_MASK & 0xFFFFFFFF
+
+
+def decode_gid(raw_gid: int) -> Tuple[int, bool, bool, bool]:
+    """
+    :param raw_gid: A tile id as read straight from a Tiled layer's data -- a plain gid, or one with its top 3 bits set to flag a flipped/rotated tile.
+    :returns: (gid, flip_horizontal, flip_vertical, flip_diagonal) -- raw_gid with the flip flags cleared, and each flag as a bool. All False and gid == raw_gid for a tile that isn't flipped/rotated.
+    """
+    return (
+        raw_gid & _GID_MASK,
+        bool(raw_gid & FLIP_HORIZONTAL_FLAG),
+        bool(raw_gid & FLIP_VERTICAL_FLAG),
+        bool(raw_gid & FLIP_DIAGONAL_FLAG),
+    )
+
+
+def _flipped_tile_image(
+    tileset: "Tileset",
+    gid: int,
+    flip_horizontal: bool,
+    flip_vertical: bool,
+    flip_diagonal: bool,
+) -> pygame.Surface:
+    tile_image = tileset.image.subsurface(tileset.rect_for(gid))
+
+    if flip_diagonal:
+        # Reflecting across the top-left/bottom-right diagonal is a
+        # 90-degree rotation followed by a vertical flip.
+        tile_image = pygame.transform.flip(
+            pygame.transform.rotate(tile_image, 90), False, True
+        )
+
+    if flip_horizontal or flip_vertical:
+        tile_image = pygame.transform.flip(tile_image, flip_horizontal, flip_vertical)
+
+    return tile_image
+
 
 class Tileset:
     """
@@ -124,6 +169,7 @@ class TileMap:
         self.object_layers: Dict[str, List[Any]] = {}
         self._layers: Dict[str, List[List[int]]] = {}
         self._layer_order: List[str] = []
+        self._flip_cache: Dict[Tuple[int, int, bool, bool, bool], pygame.Surface] = {}
 
     @property
     def pixel_width(self) -> int:
@@ -172,9 +218,22 @@ class TileMap:
         :param layer_name: A layer added through add_layer.
         :param row: A tile row.
         :param col: A tile column.
-        :returns: The gid at that cell (0 means empty).
+        :returns: The gid at that cell (0 means empty), with any Tiled flip/rotation flags (see decode_gid) already cleared -- use get_flip to read those.
         """
-        return self._layers[layer_name][row][col]
+        gid, _, _, _ = decode_gid(self._layers[layer_name][row][col])
+        return gid
+
+    def get_flip(self, layer_name: str, row: int, col: int) -> Tuple[bool, bool, bool]:
+        """
+        :param layer_name: A layer added through add_layer.
+        :param row: A tile row.
+        :param col: A tile column.
+        :returns: (flip_horizontal, flip_vertical, flip_diagonal) for the tile at that cell, decoded from the raw gid Tiled stored there. All False for a tile that isn't flipped/rotated.
+        """
+        _, flip_horizontal, flip_vertical, flip_diagonal = decode_gid(
+            self._layers[layer_name][row][col]
+        )
+        return (flip_horizontal, flip_vertical, flip_diagonal)
 
     def set_gid(self, layer_name: str, row: int, col: int, gid: int) -> None:
         """
@@ -209,9 +268,11 @@ class TileMap:
 
     def tileset_for_gid(self, gid: int) -> Optional[Tileset]:
         """
-        :param gid: A global tile id.
+        :param gid: A global tile id (a raw one straight from Tiled, with its flip flags still set, works too -- see decode_gid).
         :returns: Whichever added Tileset's range gid falls in, or None (gid is 0/empty, or out of range of every tileset added so far).
         """
+        gid, _, _, _ = decode_gid(gid)
+
         if gid <= 0:
             return None
 
@@ -227,11 +288,34 @@ class TileMap:
 
     def properties_of_gid(self, gid: int) -> Dict[str, Any]:
         """
-        :param gid: A global tile id.
+        :param gid: A global tile id (a raw one straight from Tiled, with its flip flags still set, works too -- see decode_gid).
         :returns: That tile's custom properties (as set on the tile in Tiled's tileset editor), or {} if it has none or gid is empty/unknown.
         """
+        gid, _, _, _ = decode_gid(gid)
         tileset = self.tileset_for_gid(gid)
         return tileset.properties_for(gid) if tileset is not None else {}
+
+    def _tile_image(
+        self,
+        tileset: Tileset,
+        gid: int,
+        flip_horizontal: bool,
+        flip_vertical: bool,
+        flip_diagonal: bool,
+    ) -> Tuple[pygame.Surface, Optional[pygame.Rect]]:
+        if not (flip_horizontal or flip_vertical or flip_diagonal):
+            return tileset.image, tileset.rect_for(gid)
+
+        key = (id(tileset), gid, flip_horizontal, flip_vertical, flip_diagonal)
+        tile_image = self._flip_cache.get(key)
+
+        if tile_image is None:
+            tile_image = _flipped_tile_image(
+                tileset, gid, flip_horizontal, flip_vertical, flip_diagonal
+            )
+            self._flip_cache[key] = tile_image
+
+        return tile_image, None
 
     def render(self, surface: pygame.Surface, camera: Optional[Any] = None) -> None:
         """
@@ -249,26 +333,31 @@ class TileMap:
 
             for row in row_range:
                 for col in col_range:
-                    gid = grid[row][col]
+                    raw_gid = grid[row][col]
 
-                    if gid == 0:
+                    if raw_gid == 0:
                         continue
 
+                    gid, flip_horizontal, flip_vertical, flip_diagonal = decode_gid(
+                        raw_gid
+                    )
                     tileset = self.tileset_for_gid(gid)
 
                     if tileset is None:
                         continue
 
-                    source_rect = tileset.rect_for(gid)
+                    tile_image, source_rect = self._tile_image(
+                        tileset, gid, flip_horizontal, flip_vertical, flip_diagonal
+                    )
                     x, y = self.position_of(row, col)
 
                     if camera is None:
-                        surface.blit(tileset.image, (x, y), source_rect)
+                        surface.blit(tile_image, (x, y), source_rect)
                     else:
                         dest_rect = camera.apply(
                             pygame.Rect(x, y, self.tile_width, self.tile_height)
                         )
-                        surface.blit(tileset.image, dest_rect, source_rect)
+                        surface.blit(tile_image, dest_rect, source_rect)
 
     def _visible_range(self, camera: Any) -> Tuple[range, range]:
         offset_x, offset_y = camera.offset
