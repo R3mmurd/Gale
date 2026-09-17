@@ -4,6 +4,12 @@ import pygame
 
 from gale.camera import Camera
 from gale.tilemap import TileMap, Tileset
+from gale.tilemap.tilemap import (
+    FLIP_DIAGONAL_FLAG,
+    FLIP_HORIZONTAL_FLAG,
+    FLIP_VERTICAL_FLAG,
+    decode_gid,
+)
 
 
 class TilesetTestCase(unittest.TestCase):
@@ -135,6 +141,147 @@ class TileMapTestCase(unittest.TestCase):
         big_map.render(surface, camera)
 
         self.assertEqual(surface.get_at((4, 4)), (0, 255, 0, 255))
+
+
+class DecodeGidTestCase(unittest.TestCase):
+    def test_plain_gid_has_no_flags(self) -> None:
+        self.assertEqual(decode_gid(5), (5, False, False, False))
+
+    def test_decodes_each_flag(self) -> None:
+        self.assertEqual(decode_gid(5 | FLIP_HORIZONTAL_FLAG), (5, True, False, False))
+        self.assertEqual(decode_gid(5 | FLIP_VERTICAL_FLAG), (5, False, True, False))
+        self.assertEqual(decode_gid(5 | FLIP_DIAGONAL_FLAG), (5, False, False, True))
+        self.assertEqual(
+            decode_gid(
+                5 | FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG | FLIP_DIAGONAL_FLAG
+            ),
+            (5, True, True, True),
+        )
+
+
+class FlippedTileTestCase(unittest.TestCase):
+    """
+    Uses a 2x2 tileset image (one tile, one distinct color per pixel)
+    so every one of Tiled's 8 flip/rotation combinations can be
+    checked pixel-by-pixel against its known-correct result, derived
+    by hand from the meaning of each flag rather than copied from any
+    particular Tiled implementation.
+    """
+
+    RED = (255, 0, 0, 255)  # top-left
+    GREEN = (0, 255, 0, 255)  # top-right
+    BLUE = (0, 0, 255, 255)  # bottom-left
+    YELLOW = (255, 255, 0, 255)  # bottom-right
+
+    def setUp(self) -> None:
+        pygame.display.init()
+        pygame.display.set_mode((1, 1))
+        image = pygame.Surface((2, 2))
+        image.set_at((0, 0), self.RED)
+        image.set_at((1, 0), self.GREEN)
+        image.set_at((0, 1), self.BLUE)
+        image.set_at((1, 1), self.YELLOW)
+        self.tileset = Tileset(image, 2, 2, first_gid=1)
+        self.tilemap = TileMap(tile_width=2, tile_height=2, cols=1, rows=1)
+        self.tilemap.add_tileset(self.tileset)
+
+    def tearDown(self) -> None:
+        pygame.display.quit()
+
+    def _corners(self, raw_gid: int) -> tuple:
+        ground = self.tilemap.add_layer("ground")
+        ground[0][0] = raw_gid
+        surface = pygame.Surface((2, 2))
+        self.tilemap.render(surface)
+        return (
+            surface.get_at((0, 0)),
+            surface.get_at((1, 0)),
+            surface.get_at((0, 1)),
+            surface.get_at((1, 1)),
+        )
+
+    def test_unflipped(self) -> None:
+        self.assertEqual(
+            self._corners(1), (self.RED, self.GREEN, self.BLUE, self.YELLOW)
+        )
+
+    def test_flip_horizontal(self) -> None:
+        self.assertEqual(
+            self._corners(1 | FLIP_HORIZONTAL_FLAG),
+            (self.GREEN, self.RED, self.YELLOW, self.BLUE),
+        )
+
+    def test_flip_vertical(self) -> None:
+        self.assertEqual(
+            self._corners(1 | FLIP_VERTICAL_FLAG),
+            (self.BLUE, self.YELLOW, self.RED, self.GREEN),
+        )
+
+    def test_flip_horizontal_and_vertical(self) -> None:
+        self.assertEqual(
+            self._corners(1 | FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG),
+            (self.YELLOW, self.BLUE, self.GREEN, self.RED),
+        )
+
+    def test_flip_diagonal(self) -> None:
+        self.assertEqual(
+            self._corners(1 | FLIP_DIAGONAL_FLAG),
+            (self.RED, self.BLUE, self.GREEN, self.YELLOW),
+        )
+
+    def test_flip_diagonal_and_horizontal(self) -> None:
+        self.assertEqual(
+            self._corners(1 | FLIP_DIAGONAL_FLAG | FLIP_HORIZONTAL_FLAG),
+            (self.BLUE, self.RED, self.YELLOW, self.GREEN),
+        )
+
+    def test_flip_diagonal_and_vertical(self) -> None:
+        self.assertEqual(
+            self._corners(1 | FLIP_DIAGONAL_FLAG | FLIP_VERTICAL_FLAG),
+            (self.GREEN, self.YELLOW, self.RED, self.BLUE),
+        )
+
+    def test_flip_all_three(self) -> None:
+        self.assertEqual(
+            self._corners(
+                1 | FLIP_DIAGONAL_FLAG | FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG
+            ),
+            (self.YELLOW, self.GREEN, self.BLUE, self.RED),
+        )
+
+    def test_get_gid_strips_flags(self) -> None:
+        ground = self.tilemap.add_layer("ground")
+        ground[0][0] = 1 | FLIP_HORIZONTAL_FLAG | FLIP_DIAGONAL_FLAG
+        self.assertEqual(self.tilemap.get_gid("ground", 0, 0), 1)
+
+    def test_get_flip(self) -> None:
+        ground = self.tilemap.add_layer("ground")
+        ground[0][0] = 1 | FLIP_HORIZONTAL_FLAG | FLIP_DIAGONAL_FLAG
+        self.assertEqual(self.tilemap.get_flip("ground", 0, 0), (True, False, True))
+
+    def test_get_flip_defaults_to_no_flip(self) -> None:
+        ground = self.tilemap.add_layer("ground")
+        ground[0][0] = 1
+        self.assertEqual(self.tilemap.get_flip("ground", 0, 0), (False, False, False))
+
+    def test_tileset_for_gid_accepts_raw_gid(self) -> None:
+        self.assertIs(
+            self.tilemap.tileset_for_gid(1 | FLIP_HORIZONTAL_FLAG), self.tileset
+        )
+
+    def test_properties_of_gid_accepts_raw_gid(self) -> None:
+        tileset = Tileset(
+            self.tileset.image,
+            2,
+            2,
+            first_gid=1,
+            tile_properties={0: {"collision": "solid"}},
+        )
+        tilemap = TileMap(tile_width=2, tile_height=2, cols=1, rows=1)
+        tilemap.add_tileset(tileset)
+        self.assertEqual(
+            tilemap.properties_of_gid(1 | FLIP_VERTICAL_FLAG), {"collision": "solid"}
+        )
 
 
 if __name__ == "__main__":

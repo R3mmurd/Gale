@@ -15,7 +15,7 @@ from typing import Any, Optional, Tuple
 
 import pygame
 
-from .tilemap import TileMap, Tileset
+from .tilemap import TileMap, Tileset, decode_gid
 
 
 def cartesian_to_isometric(
@@ -147,17 +147,22 @@ class IsometricTileMap(TileMap):
 
             for row in range(self.rows):
                 for col in range(self.cols):
-                    gid = grid[row][col]
+                    raw_gid = grid[row][col]
 
-                    if gid == 0:
+                    if raw_gid == 0:
                         continue
 
+                    gid, flip_horizontal, flip_vertical, flip_diagonal = decode_gid(
+                        raw_gid
+                    )
                     tileset = self.tileset_for_gid(gid)
 
                     if tileset is None:
                         continue
 
-                    source_rect = tileset.rect_for(gid)
+                    tile_image, source_rect = self._tile_image(
+                        tileset, gid, flip_horizontal, flip_vertical, flip_diagonal
+                    )
                     top_x, top_y = self.position_of(row, col)
                     dest_rect = pygame.Rect(
                         round(top_x - self.tile_width / 2),
@@ -167,7 +172,7 @@ class IsometricTileMap(TileMap):
                     )
 
                     if camera is None:
-                        surface.blit(tileset.image, dest_rect, source_rect)
+                        surface.blit(tile_image, dest_rect, source_rect)
                     else:
                         screen_rect = camera.apply(dest_rect)
 
@@ -176,4 +181,4 @@ class IsometricTileMap(TileMap):
                         ):
                             continue
 
-                        surface.blit(tileset.image, screen_rect, source_rect)
+                        surface.blit(tile_image, screen_rect, source_rect)
