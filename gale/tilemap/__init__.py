@@ -30,7 +30,7 @@ from .isometric import (
     isometric_to_cartesian,
 )
 from .tiled_loader import TiledLoadError, TiledObject, load_tiled_map
-from .tilemap import TileMap, Tileset
+from .tilemap import TileMap, Tileset, decode_gid
 
 __all__ = [
     "CollisionType",
@@ -41,6 +41,7 @@ __all__ = [
     "Tileset",
     "cartesian_to_isometric",
     "collision_type_at",
+    "decode_gid",
     "isometric_to_cartesian",
     "load_tiled_map",
     "move_and_collide",
