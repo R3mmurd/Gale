@@ -20,6 +20,7 @@ from typing import Optional, Any, Tuple, Dict
 import pygame
 
 from .conf import settings
+from .memoize import Memo
 from .timer import Timer
 from .input_handler import InputHandler, InputListener, InputData, INPUT_EVENTS
 
@@ -195,8 +196,9 @@ class Game(InputListener):
     def __update(self, dt: float) -> None:
         """
         Advance fixed_update() by as many fixed_timestep steps as the
-        accumulated time covers, update the timer, and call the
-        method update that you should implement.
+        accumulated time covers, update the timer and the memoize
+        cache registry, and call the method update that you should
+        implement.
         """
         self._accumulator += dt
 
@@ -205,6 +207,7 @@ class Game(InputListener):
             self._accumulator -= self.fixed_timestep
 
         Timer.update(dt)
+        Memo.update(dt)
         self.update(dt)
 
     def __render(self) -> None:
