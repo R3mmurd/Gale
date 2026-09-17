@@ -4,6 +4,15 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.17.0] - 2026-09-17
+
+### Added
+- `gale.event`: `Signal` (a single event channel -- connect/disconnect/emit, priority-ordered, with a once option), `EventEmitter` (a mixin owning any number of ad hoc, string-named Signals), and `EventBus` (a global EventEmitter exposed as classmethods, the same shape `InputHandler` already uses) for decoupled publish/subscribe between modules that shouldn't have to import each other. Every emit isolates each listener's exceptions (logged, never propagated), so one broken subscriber never breaks another.
+- `gale.memoize`: `Memoized` (caches a function's return value per argument combination) and `Memo` (a process-wide registry aged by `Memo.update(dt)`, the same shape `Timer` already manages Every/After/Tween -- `Game` now calls both every frame). `ttl` is measured in game time, not the wall clock: `None` caches forever, `0` caches for the rest of the current frame, and a positive number expires the entry after that much accumulated `dt`.
+
+### Changed
+- `gale.event`/`gale.memoize`'s module docstrings no longer describe them by comparison to other game engines/libraries -- they describe behavior on their own terms. No behavior change.
+
 ## [1.16.0] - 2026-08-23
 
 ### Added
