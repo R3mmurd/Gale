@@ -4,6 +4,11 @@ All notable changes to this project are documented here, condensed
 from the [GitHub releases](https://github.com/R3mmurd/Gale/releases),
 newest first. This project follows [semantic versioning](https://semver.org/).
 
+## [1.17.1] - 2026-09-17
+
+### Fixed
+- `load_tiled_map`/`TileMap`/`IsometricTileMap` didn't know how to handle a tile flipped or rotated in Tiled (Shift+Z/X/Y) -- Tiled encodes that by setting the top 3 bits of the tile's gid instead of using a different gid, which put the raw value out of range of every tileset and made the tile silently fail to render. `get_gid`/`tileset_for_gid`/`properties_of_gid` now decode those flags internally (see the new `decode_gid`), and `render` applies the flip/rotation when drawing. `TileMap.get_flip(layer_name, row, col)` exposes a cell's orientation directly, for the rare game that needs to know it.
+
 ## [1.17.0] - 2026-09-17
 
 ### Added
