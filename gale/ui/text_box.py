@@ -7,6 +7,7 @@ explicit Previous/Next buttons instead.
 Author: Alejandro Mujica (aledrums@gmail.com)
 """
 
+import random
 from typing import Callable, List, Optional, Tuple
 
 import pygame
@@ -293,3 +294,164 @@ class PaginatedTextBox(Container):
     def update(self, dt: float) -> None:
         super().update(dt)
         self._sync_buttons()
+
+
+class TypewriterTextBox(TextBox):
+    """
+    A TextBox that reveals its text progressively character by character,
+    popular in RPG dialogues.
+    advance() will instantly reveal all text on the current page if it is
+    still typing, or move to the next page if the text is fully revealed.
+    """
+
+    def __init__(
+        self,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+        text: str,
+        font: Optional[pygame.font.Font] = None,
+        lines_per_page: int = 3,
+        on_close: Optional[Callable[[], None]] = None,
+        theme: Optional[Theme] = None,
+        chars_per_second: float = 40.0,
+        sounds: Optional[List[pygame.mixer.Sound]] = None,
+        on_char_typed: Optional[Callable[[str], None]] = None,
+    ) -> None:
+        """
+        :param x: The box's x position.
+        :param y: The box's y position.
+        :param width: The box's width, used to word-wrap the text.
+        :param height: The box's height.
+        :param text: The full text to page through.
+        :param font: The font used to render and measure the text. The default value is None, so theme.font is used.
+        :param lines_per_page: How many wrapped lines are shown per page. The default value is 3.
+        :param on_close: Called with no arguments once the last page is advanced past. The default value is None.
+        :param theme: This widget's own theme. The default value is None.
+        :param chars_per_second: The typing speed in characters per second. The default value is 40.0.
+        :param sounds: A list of pygame.mixer.Sound objects. One will be played randomly when a non-space character is typed. The default value is None.
+        :param on_char_typed: A callback function invoked with each individual character string as it is revealed. The default value is None.
+        """
+        super().__init__(
+            x,
+            y,
+            width,
+            height,
+            text,
+            font=font,
+            lines_per_page=lines_per_page,
+            on_close=on_close,
+            theme=theme,
+        )
+        self.chars_per_second: float = chars_per_second
+        self.sounds: Optional[List[pygame.mixer.Sound]] = sounds
+        self.on_char_typed: Optional[Callable[[str], None]] = on_char_typed
+        self.char_index: float = 0.0
+        self.total_chars_on_page: int = 0
+        self._calculate_page_chars()
+
+    def set_text(self, text: str) -> None:
+        """
+        Replace the current text, reset pagination, and restart the typewriter effect.
+        """
+        self._pages = self._paginate(text)
+        self.page_index = 0
+        self.char_index = 0.0
+        self._calculate_page_chars()
+
+    def _calculate_page_chars(self) -> None:
+        if self.page_index < len(self._pages):
+            self.total_chars_on_page = sum(
+                len(line) for line in self._pages[self.page_index]
+            )
+        else:
+            self.total_chars_on_page = 0
+
+    def update(self, dt: float) -> None:
+        if self.char_index < self.total_chars_on_page:
+            old_index = int(self.char_index)
+            self.char_index += self.chars_per_second * dt
+            new_index = int(self.char_index)
+
+            if new_index > old_index:
+                full_text = "".join(self._pages[self.page_index])
+                if old_index < len(full_text):
+                    revealed = full_text[old_index:new_index]
+
+                    if self.on_char_typed is not None:
+                        for c in revealed:
+                            self.on_char_typed(c)
+
+                    if any(not c.isspace() for c in revealed):
+                        if self.sounds:
+                            random.choice(self.sounds).play()
+
+    @property
+    def is_typing(self) -> bool:
+        return self.char_index < self.total_chars_on_page
+
+    def advance(self) -> None:
+        if self.is_typing:
+            self.char_index = float(self.total_chars_on_page)
+        else:
+            super().advance()
+            self.char_index = 0.0
+            self._calculate_page_chars()
+
+    def next_page(self) -> bool:
+        if self.is_typing:
+            self.char_index = float(self.total_chars_on_page)
+            return False
+
+        res = super().next_page()
+        if res:
+            self.char_index = 0.0
+            self._calculate_page_chars()
+        return res
+
+    def previous_page(self) -> bool:
+        res = super().previous_page()
+        if res:
+            self.char_index = 0.0
+            self._calculate_page_chars()
+        return res
+
+    def render(self, surface: pygame.Surface) -> None:
+        if not self.visible:
+            return
+
+        pygame.draw.rect(surface, self.theme.background_color, self.rect)
+
+        if self.theme.border_width > 0:
+            pygame.draw.rect(
+                surface, self.theme.border_color, self.rect, self.theme.border_width
+            )
+
+        font = self._font if self._font is not None else self.theme.font
+        line_height = font.get_linesize()
+
+        if self.page_index >= len(self._pages):
+            return
+
+        chars_to_render = int(self.char_index)
+
+        for i, line in enumerate(self._pages[self.page_index]):
+            if chars_to_render <= 0:
+                break
+
+            if len(line) <= chars_to_render:
+                text_to_render = line
+                chars_to_render -= len(line)
+            else:
+                text_to_render = line[:chars_to_render]
+                chars_to_render = 0
+
+            text_obj = Text(
+                text_to_render,
+                font,
+                self.x + self.theme.padding,
+                self.y + self.theme.padding + i * line_height,
+                self.theme.text_color,
+            )
+            text_obj.render(surface)
