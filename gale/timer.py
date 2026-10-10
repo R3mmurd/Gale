@@ -88,13 +88,15 @@ class Tween(TimerItemBase):
         self.plan: Sequence[Tuple[Any, Dict[str, Any]]] = []
 
         for obj, attrs in params:
+            is_dict = isinstance(obj, dict)
             for key, final in attrs.items():
-                initial = getattr(obj, key)
+                initial = obj[key] if is_dict else getattr(obj, key)
 
                 self.plan.append(
                     (
                         obj,
                         {
+                            "is_dict": is_dict,
                             "key": key,
                             "initial": initial,
                             "final": final,
@@ -108,18 +110,22 @@ class Tween(TimerItemBase):
 
         if self.timer >= self.time:
             for obj, data in self.plan:
-                setattr(obj, data["key"], data["final"])
+                if data["is_dict"]:
+                    obj[data["key"]] = data["final"]
+                else:
+                    setattr(obj, data["key"], data["final"])
             self.on_finish()
             self.remove()
             return
 
         for obj, data in self.plan:
-            setattr(
-                obj,
-                data["key"],
-                data["initial"]
-                + data["change"] * self.ease_function(self.timer / self.time),
+            value = data["initial"] + data["change"] * self.ease_function(
+                self.timer / self.time
             )
+            if data["is_dict"]:
+                obj[data["key"]] = value
+            else:
+                setattr(obj, data["key"], value)
 
 
 class Timer:

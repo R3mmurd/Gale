@@ -183,7 +183,7 @@ class GamepadAxisData:
         # ([0.0, 1.0] for a trigger), but fall back to normalizing the
         # raw SDL int16 range ([-32768, 32767]) in case a given build
         # doesn't, so games never have to special-case this themselves.
-        self.value: float = value if abs(value) <= 1.0 else value / 32768.0
+        self.value: float = value if isinstance(value, float) else value / 32768.0
         self.axis: int = event.axis
         self.gamepad_id: int = event.instance_id
 
