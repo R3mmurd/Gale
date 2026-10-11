@@ -25,7 +25,8 @@ class Container(Widget):
     children in reverse add order (top-most first) and stop at the
     first one that consumes the event. on_confirm/on_navigate are
     forwarded only to the currently focused child; an unconsumed
-    on_navigate instead moves focus to the next focusable sibling.
+    on_navigate instead moves focus to the next focusable sibling
+    (linearly by add order by default, or spatially in 2D if spatial=True).
 
     Usage example:
 
@@ -44,8 +45,10 @@ class Container(Widget):
         children: Optional[Sequence[Widget]] = None,
         theme: Optional[Theme] = None,
         visible: bool = True,
+        spatial: bool = False,
     ) -> None:
         super().__init__(x, y, width, height, theme=theme, visible=visible)
+        self.spatial: bool = spatial
         self.children: List[Widget] = []
 
         for child in children or []:
@@ -142,6 +145,21 @@ class Container(Widget):
             child.focused = child is widget
 
     def _move_focus(self, direction: Direction) -> bool:
+        """
+        Move focus to another focusable child in the given direction,
+        delegating to either 2D spatial navigation or linear list-order
+        navigation based on self.spatial.
+        """
+        if self.spatial:
+            return self._spatial_move_focus(direction)
+        return self._linear_move_focus(direction)
+
+    def _linear_move_focus(self, direction: Direction) -> bool:
+        """
+        Move focus forward or backward along the vertical axis based on
+        list index (add order), wrapping around cyclically when reaching
+        either end. Horizontal navigation (dy == 0) is ignored.
+        """
         focusable = self._focusable_children()
 
         if not focusable:
@@ -157,3 +175,56 @@ class Container(Widget):
         next_index = (current_index + dy) % len(focusable)
         self._focus_only(focusable[next_index])
         return True
+
+    def _spatial_move_focus(self, direction: Direction) -> bool:
+        """
+        Move focus spatially across 2D space. Evaluates candidate widgets
+        by calculating centroid distance and directional alignment (dot
+        product), penalizing off-axis deviations. Supports 4-way and
+        diagonal inputs, and stops at edges (returning False) rather than
+        wrapping around.
+        """
+        focusable = self._focusable_children()
+
+        if not focusable:
+            return False
+
+        dx, dy = direction
+        current = self._focused_child()
+
+        if current is None:
+            self._focus_only(focusable[0])
+            return True
+
+        best_child = None
+        best_score = float("inf")
+
+        cx1 = current.x + getattr(current, "width", 0) / 2
+        cy1 = current.y + getattr(current, "height", 0) / 2
+
+        for child in focusable:
+            if child is current:
+                continue
+
+            cx2 = child.x + getattr(child, "width", 0) / 2
+            cy2 = child.y + getattr(child, "height", 0) / 2
+
+            vx = cx2 - cx1
+            vy = cy2 - cy1
+
+            dot = vx * dx + vy * dy
+
+            if dot > 0:
+                dist = (vx**2 + vy**2) ** 0.5
+                cross = abs(vx * dy - vy * dx)
+                score = dist + cross * 2
+
+                if score < best_score:
+                    best_score = score
+                    best_child = child
+
+        if best_child is not None:
+            self._focus_only(best_child)
+            return True
+
+        return False

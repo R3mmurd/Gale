@@ -49,6 +49,7 @@ class Window(Container):
         children: Optional[Sequence[Widget]] = None,
         theme: Optional[Theme] = None,
         visible: bool = True,
+        spatial: bool = False,
     ) -> None:
         """
         :param x: The window's x position.
@@ -62,6 +63,7 @@ class Window(Container):
         :param children: Extra widgets placed on top of the background panel/title/close button, in the given order (so later ones draw on top and are hit-tested first). The default value is None.
         :param theme: This widget's own theme, also handed down to the background panel, title label, and close button unless they're given their own. The default value is None.
         :param visible: Whether the window (and everything in it) is drawn/updated/reachable by input. The default value is True.
+        :param spatial: Whether navigation between child widgets is resolved spatially in 2D instead of by add order. The default value is False.
         """
         self.on_close: Optional[Callable[[], None]] = on_close
         self.close_button: Optional[Button] = None
@@ -89,7 +91,14 @@ class Window(Container):
         widgets.extend(children or [])
 
         super().__init__(
-            x, y, width, height, children=widgets, theme=theme, visible=visible
+            x,
+            y,
+            width,
+            height,
+            children=widgets,
+            theme=theme,
+            visible=visible,
+            spatial=spatial,
         )
 
     def close(self) -> None:
